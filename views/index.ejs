@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- index.html   03:19:49 GMT -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/animate.css" />
+  <link rel="stylesheet" href="assets/css/flaticon.css" />
+  <link rel="stylesheet" href="assets/css/lightcase.css" />
+  <link rel="stylesheet" href="assets/css/swiper.min.css" />
+  <link rel="stylesheet" href="assets/css/nice-select.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
+  <style>
+    #dynamic-text {
+      opacity: 0;
+      animation: slideIn 1s forwards;
+    }
+
+    #small {
+      opacity: 0;
+      animation: slideIn 1s forwards;
+      margin-bottom: 15px;
+      margin-top: -20px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (min-width: 319px) and (max-width: 480px) {
+      #small p .small {
+        width: 300px;
+      }
+    }
+    @media (min-width: 600px) {
+      #small p .small {
+        width: 500px;
+      }
+    }
+  </style>
+
+  <title>SMMBid - Bulk SMS</title>
+</head>
+
+<body>
+  <!-- ==========scrolltotop========== -->
+  <a href="#0" class="scrollToTop">
+    <img src="assets/images/rocket.png" alt="rocket" />
+  </a>
+  <!-- ==========scrolltotop========== -->
+
+  <!-- ==========Header Section========== -->
+  <header>
+    <div class="header-top d-none d-md-block bg-theme">
+      <div class="container">
+        <div class="header-top-wrapper">
+          <div class="row">
+            <div class="col-md-8">
+              <ul>
+                <li class="mr-3">
+                  <a href="Tel:2349058450749"><i class="fas fa-phone-square"></i>+234-905-845-0749</a>
+                </li>
+                <li>
+                  <a href="Mailto:support@smsbid.com"><i class="fas fa-envelope"></i>support@smsbid.com</a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-4 d-flex flex-wrap align-items-center justify-content-end">
+              <ul class="social">
+                <li>
+                  <a href="#0">
+                    <i class="fab fa-facebook-f"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="#0">
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="#0">
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="#0">
+                    <i class="fab fa-linkedin-in"></i>
+                  </a>
+                </li>
+              </ul>
+              <div class="select-area d-none d-md-block">
+                <select class="select-bar">
+                  <option value="01">English</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-bottom">
+      <div class="container">
+        <div class="header-area">
+          <div class="logo">
+            <a href="index.html"><img src="assets/images/logo/logo01.png" alt="logo" /></a>
+          </div>
+          <ul class="menu">
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="#0">company</a>
+              <ul class="submenu">
+                <li>
+                  <a href="/about">About Us</a>
+                </li>
+                <li>
+                  <a href="faq">Faq</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#0">service</a>
+              <ul class="submenu">
+                <li>
+                  <a href="/smmpanel">SMM Panel Services</a>
+                </li>
+                <li>
+                  <a href="/smsverification">SMS Verification</a>
+                </li>
+                <li>
+                  <a href="/marketplace">Social Media Accounts</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#0">account</a>
+              <ul class="submenu">
+                <li>
+                  <a href="/login">Sign In</a>
+                </li>
+                <li>
+                  <a href="/register">Sign Up</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="/contact">contact</a>
+            </li>
+          </ul>
+          <div class="header-bar d-lg-none">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="select-bar-bar">
+            <i class="fas fa-ellipsis-v"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ==========Header Section========== -->
+
+  <!-- =============Banner Section============= -->
+  <section class="banner-section">
+    <div class="container">
+      <div class="banner-content wow fadeInUp" data-wow-delay=".3s">
+        <span class="category"> Build a better customer experience </span>
+        <h3 class="title" id="dynamic-text"></h3>
+        <div>
+          <p>
+          </p><small style="display: none;" id="small" class="small">Don't feel comfortable giving out your phone number? Protect your
+            online identity by using our one-time-use non-VoIP phone
+            numbers.</small>
+        </div>
+
+        <div class="video-button-group">
+          <a href="#0" class="custom-button active">contact to expert</a>
+          <div class="v-button">
+            <!-- <span>watch video</span> -->
+            <a data-rel="lightcase:myCollection" href="https://www.youtube.com/" class="video-button"><i
+                class="flaticon-play-button"></i></a>
+          </div>
+        </div>
+        <div class="round-shape"></div>
+      </div>
+    </div>
+    <div class="maps-shape bg_img bg-contain" data-background="assets/images/banner/banner-bg01.png"></div>
+    <div class="shape-thumb">
+      <img class="wow slideInUp" data-wow-delay=".7s" src="assets/images/offer/offer02.png"" alt=" banner" />
+    </div>
+  </section>
+  <!-- =============Banner Section============= -->
+
+  <!--=================Chooose Us================= -->
+  <section class="choose-us-section padding-top padding-bottom">
+    <div class="container">
+      <div class="section-header wow fadeInUp">
+        <span class="cate">our feature</span>
+        <h3 class="title">Why choose SMMBID?</h3>
+      </div>
+      <div class="row mb-30-none justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="choose-item text-center wow fadeInUp" data-wow-delay=".3s">
+            <div class="choose-thumb">
+              <i class="flaticon-global"></i>
+            </div>
+            <div class="choose-content">
+              <h5 class="title">Global reach and local presence</h5>
+              <p>Our service is available in every part of the world</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="choose-item text-center wow fadeInUp" data-wow-delay=".3s">
+            <div class="choose-thumb">
+              <i class="flaticon-ui"></i>
+            </div>
+            <div class="choose-content">
+              <h5 class="title">customer user experience</h5>
+              <p>
+                Our website is 100% user user-friendly and easy to navigate
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="choose-item text-center wow fadeInUp" data-wow-delay=".3s">
+            <div class="choose-thumb">
+              <i class="flaticon-clock"></i>
+            </div>
+            <div class="choose-content">
+              <h5 class="title">fast & Flexible solutions</h5>
+              <p>
+                Our services sre fast and flexible so you can quickly results
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="container">
+    <div class="bb-dashed"></div>
+  </div>
+  <!--=================Chooose Us================= -->
+
+  <!--=================Bulk Sms================= -->
+  <section class="bulk-sms padding-top">
+    <div class="container">
+      <div class="row flex-wrap-reverse align-items-center">
+        <div class="col-lg-6">
+          <div class="bulk-content text-center text-sm-left wow fadeIn" data-wow-delay=".3s">
+            <span>welcome to SMMBid</span>
+            <h5 class="title">
+              Your All-in-One Platform for Social Media Growth, VoIP Communication, SMS Verification, and Social Media Account Marketplace.
+            </h5>
+            <p>
+              Power Your Online Presence with us SMMBID
+              <br>
+              At SMMBID, we provide a complete suite of services designed to help you thrive in the digital world. 
+              Whether you want to grow your social media influence, manage global communications, 
+              verify accounts easily, or safely trade social media accounts, we've got you covered. 
+              We deliver secure, reliable, and fast services for individuals, businesses, and resellers worldwide.
+            </p>
+            <a href="#0" class="custom-button active">sign-up & start</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bulk-thumb wow slideInRight">
+            <img src="assets/images/bulk/offer03.png" alt="bulk" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--=================Bulk Sms================= -->
+
+  <!--=================Our Offer================= -->
+  <section class="offer-section bg-ash padding-top padding-bottom">
+    <div class="container">
+      <div class="section-header wow fadeInUp">
+        <span class="cate">our offer</span>
+        <h3 class="title">Features of SMMBID</h3>
+      </div>
+    </div>
+    <div class="container mw-lg-100">
+      <div class="row align-items-center flex-wrap-reverse">
+        <div class="col-lg-6">
+          <div class="left-side-offer wow fadeInUp" data-wow-delay=".3s">
+            <h4 class="title">get our best offer for your better business</h4>
+
+            <ul>
+              <li>Boost Followers, Likes, and Views in seconds</li>
+              <li>Targeted Growth with country-specific engagement</li>
+              <li>Non-VoIP Numbers from over 100 countries</li>
+              <li>Privacy Protection for personal and business use</li>
+              <li>Unbelievable Prices</li>
+              <li>Instant Numbers for online account verifications</li>
+              <li>Verified Buyers and Sellers to ensure trust and transparency</li>
+              <li>Escrow Service to guarantee safe and secure transactions</li>
+              <li>Wide Selection of Instagram, TikTok, YouTube, and other accounts</li>
+              <li>24/7 Support to assist you at every step</li>
+            </ul>
+            <p></p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="right-side-offer wow slideInRight" data-wow-delay=".3s">
+            <img src="assets/images/offer/offer04.png" alt="offer" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--=================Our Offer================= -->
+
+  <!--=================Client Say================= -->
+  <section class="client-say padding-bottom padding-top">
+    <div class="container">
+      <div class="section-header wow fadeInUp">
+        <span class="cate">client feedback</span>
+        <h3 class="title">client what say about</h3>
+      </div>
+      <div class="client-say-slider">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="client-item">
+              <div class="client-content">
+                <h4 class="title">
+                  <a style="margin-top: 5px">Vivian Loveth</a>
+                </h4>
+                <span>Cheap and reliable service</span>
+                <blockquote>
+                  Cheap and reliable, easy to navigate and auto refund for
+                  unused numbers. I haven't tried many others but that's
+                  because I found this first and always liked it.
+                </blockquote>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="client-item">
+              <div class="client-content">
+                <h4 class="title">
+                  <a style="margin-top: 5px">Okafor Onyeka</a>
+                </h4>
+                <span>Smooth process</span>
+                <blockquote>
+                  Had an issue of not being able to buy one of the number
+                  services and the owner solved the issue within 30 seconds of
+                  me telling him. 10/10 site, only one I use for sms
+                  verifications.
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="client-pagination"></div>
+      </div>
+    </div>
+  </section>
+  <!--=================Client Say================= -->
+
+  <!--=================Counter================= -->
+  <section class="counter-up-section">
+    <div class="container">
+      <div class="counter-wrapper">
+        <div class="counter-item wow fadeInUp" data-wow-delay=".3s">
+          <div class="counter-header">
+            <i class="flaticon-call-center"></i>
+            <h2 class="title"><span class="counter">1000</span>+</h2>
+          </div>
+          <p>Support Countries</p>
+        </div>
+        <div class="counter-item wow fadeInUp" data-wow-delay=".3s">
+          <div class="counter-header">
+            <i class="flaticon-happiness"></i>
+            <h2 class="title"><span class="counter">35</span>k</h2>
+          </div>
+          <p>happy customers</p>
+        </div>
+        <div class="counter-item wow fadeInUp" data-wow-delay=".3s">
+          <div class="counter-header">
+            <i class="flaticon-project"></i>
+            <h2 class="title">
+              <span class="counter">230</span>
+            </h2>
+          </div>
+          <p>total project done</p>
+        </div>
+        <div class="counter-item wow fadeInUp" data-wow-delay=".3s">
+          <div class="counter-header">
+            <i class="flaticon-collaboration"></i>
+            <h2 class="title">
+              <span class="counter">658</span>
+            </h2>
+          </div>
+          <p>team members</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--=================Counter================= -->
+
+  <!--=================Sponsor Section================= -->
+  <div class="sponsor-section bg-f3 padding-bottom padding-top">
+    <div class="container">
+      <div class="sponsor-slider">
+        <p style="text-align: center; margin-top: 4px; margin-bottom: 56px">
+          Over a thousand services available for SMS verification through our
+          system
+        </p>
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/twitch.svg" alt="sponsor" />
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/whatsApp.svg" alt="sponsor" />
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/facebook.svg" alt="sponsor" />
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/google.svg" alt="sponsor" />
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/linkedin.svg" alt="sponsor" />
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="sponsor-thumb">
+              <img src="assets/images/sponsor/reddit.svg" alt="sponsor" />
+            </div>
+          </div>
+        </div>
+        <p style="text-align: center; margin-top: 34px">
+          <small>We are not affiliated with the brands listed</small>
+        </p>
+      </div>
+    </div>
+  </div>
+  <!--=================Sponsor Section================= -->
+
+  <!--=================Footer Section================= -->
+  <footer>
+    <div class="footer-top padding-top padding-bottom">
+      <div class="container">
+        <div class="row mb-50-none">
+          <div class="col-sm-6 col-lg-3">
+            <div class="footer-widget footer-link">
+              <h5 class="title">bulk SMS</h5>
+              <ul>
+                <li>
+                  <a href="#0">masking SMS</a>
+                </li>
+                <li>
+                  <a href="#0">Non-Masking SMS</a>
+                </li>
+                <li>
+                  <a href="#0">location based SMS</a>
+                </li>
+                <li>
+                  <a href="#0">Voice message</a>
+                </li>
+                <li>
+                  <a href="#0">promo SMS</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="footer-widget footer-link">
+              <h5 class="title">company</h5>
+              <ul>
+                <li>
+                  <a href="#0">about</a>
+                </li>
+                <li>
+                  <a href="#0">pricing plan</a>
+                </li>
+                <li>
+                  <a href="#0">faq</a>
+                </li>
+                <li>
+                  <a href="#0">testiminial</a>
+                </li>
+                <li>
+                  <a href="#0">promotion</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="footer-widget footer-link">
+              <h5 class="title">Partners</h5>
+              <ul>
+                <li>
+                  <a href="#0">kingstar</a>
+                </li>
+                <li>
+                  <a href="#0">laravala click</a>
+                </li>
+                <li>
+                  <a href="#0">yago</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="footer-widget footer-about">
+              <h5 class="title">about us</h5>
+              <p>
+                Tellus fermentum a aenean laoreet libero in, at convallis
+                varius morbi.
+              </p>
+              <ul class="footer-social">
+                <li>
+                  <a href="#0"><i class="fab fa-facebook-f"></i></a>
+                </li>
+                <li>
+                  <a href="#0"><i class="fab fa-twitter"></i></a>
+                </li>
+                <li>
+                  <a href="#0"><i class="fab fa-instagram"></i></a>
+                </li>
+                <li>
+                  <a href="#0"><i class="fab fa-linkedin-in"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom py-3 py-sm-4 text-center">
+      <div class="container">
+        <p class="m-0"><a href="">Made By Big Blinks</a></p>
+      </div>
+    </div>
+  </footer>
+  <!--=================Footer Section================= -->
+
+  <script src="assets/js/jquery-3.3.1.min.js"></script>
+  <script src="assets/js/modernizr-3.6.0.min.js"></script>
+  <script src="assets/js/plugins.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/waypoint.js"></script>
+  <script src="assets/js/isotope.pkgd.min.js"></script>
+  <script src="assets/js/lightcase.js"></script>
+  <script src="assets/js/swiper.min.js"></script>
+  <script src="assets/js/wow.min.js"></script>
+  <script src="assets/js/counterup.min.js"></script>
+  <script src="assets/js/nice-select.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const texts = [
+      "reach more customers with faster, more reliable SMS messaging",
+      "Cheapest and Fastest Online SMS verification",
+      "Cheapest & Fastest SMM Servcie Provider",
+      "Buy & Sell All Social Media Acounts",
+      "Stay connected with us!",
+    ];
+
+    const smallText = document.getElementById("small");
+    const textElement = document.getElementById("dynamic-text");
+    let currentIndex = 0;
+
+    function updateText() {
+      textElement.style.animation = "none";
+      textElement.offsetHeight;
+      textElement.style.animation = null;
+
+      smallText.style.animation = "none";
+      smallText.offsetHeight;
+      smallText.style.animation = null;
+
+      currentIndex = (currentIndex + 1) % texts.length;
+
+      if (texts[currentIndex] === texts[1]) {
+        smallText.style.display = "block";
+      } else {
+        smallText.style.display = "none";
+      }
+      textElement.innerHTML = texts[currentIndex];
+    }
+
+    textElement.innerHTML = texts[0];
+
+    setInterval(updateText, 30000);
+  });
+</script>
+
+</html>
