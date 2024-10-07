@@ -75,7 +75,6 @@ web_modules/
 # System files
 .DS_Store
 Thumbs.db
-queries.sql
 uploads/
 uploads
 
