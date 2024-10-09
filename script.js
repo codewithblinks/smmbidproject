@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const port = process.env.PORT;
+const port = 3000;
 
 env.config();
 
@@ -57,13 +57,12 @@ app.use(bodyParser.json({
     req.rawBody = buf;
   }
 }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static('uploads'));
-app.use(flash());
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static('uploads'));
+app.use(flash());
 app.use(express.json());
 
 // Routes
@@ -105,8 +104,8 @@ import imageUploadRoute from './routes/imageUpload.js'
 import adminsettingsRoute from './routes/admin/adminsettings.js'
 import knowledgebaseRoute from './routes/knowledgebase.js'
 
-app.use("/", loginRoute)
-app.use("/", registerRoute)
+app.use(loginRoute)
+app.use(registerRoute)
 app.use('/', forgotRoute);
 app.use('/', resetRoute);
 app.use("/", loginOutRoute)
