@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS product_list(
     logindetails TEXT,
     verifycode TEXT,
     statustype character varying(50) DEFAULT 'manual',
-    sold_at TIMESTAMPTZ,
-)
+    sold_at TIMESTAMPTZ
+);
 
 -- purchase history 11
 
@@ -120,8 +120,7 @@ CREATE TABLE IF NOT EXISTS admin_products(
 	created_at TIMESTAMPTZ DEFAULT NOW(),
     sold_at TIMESTAMPTZ,
     statustype text
-)
-
+);
 
 -- smm order 17
 
@@ -137,7 +136,7 @@ CREATE TABLE IF NOT EXISTS sms_order
     amount NUMERIC(10,2),
     status TEXT DEFAULT 'pending',
     code VARCHAR(10),
-    "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT now()
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 -- Transactions Table 18
@@ -149,8 +148,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     amount NUMERIC(10, 2) NOT NULL,
     reference VARCHAR(100) NOT NULL,
     status VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- withdrawal details table 19
 
@@ -192,7 +191,7 @@ CREATE TABLE IF NOT EXISTS miscellaneous (
 	smtp_email VARCHAR(255) NOT NULL,
     smtp_pass VARCHAR(255) NOT NULL,
     sms_price numeric(10,2) DEFAULT 2500
-)
+);
 
 -- password_reset_tokens 9
 
@@ -244,7 +243,7 @@ CREATE TABLE IF NOT EXISTS challenge (
   week_end DATE,
   progress DECIMAL DEFAULT 0,
   total_transaction DECIMAL DEFAULT 0,
-  challenge_complete BOOLEAN DEFAULT FALSE
+  challenge_complete BOOLEAN DEFAULT false
 );
 
 -- sessions 16
@@ -268,7 +267,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     type VARCHAR(50),
     message TEXT,
     timestamp TIMESTAMPTZ DEFAULT NOW(),
-    read BOOLEAN DEFAULT FALSE
+    read BOOLEAN DEFAULT false
 );
 
 -- you can retrieve the CREATE TABLE statement for an existing table in your PostgreSQL 
