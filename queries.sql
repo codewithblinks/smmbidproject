@@ -1,4 +1,3 @@
--- userprofile 1
 
 CREATE TABLE IF NOT EXISTS userprofile (
     id SERIAL PRIMARY KEY,
@@ -6,7 +5,7 @@ CREATE TABLE IF NOT EXISTS userprofile (
     firstname VARCHAR(45) NOT NULL,
     lastname VARCHAR(45) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    password text NOT NULL,
+    password TEXT NOT NULL,
     balance numeric(15,2) DEFAULT 0.00,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     is_suspended boolean DEFAULT false,
@@ -22,9 +21,7 @@ CREATE TABLE IF NOT EXISTS userprofile (
     referral_code VARCHAR(50) UNIQUE
 );
 
--- admin 2
-
-CREATE TABLE IF NOT EXISTS admins(
+CREATE TABLE IF NOT EXISTS admins (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     firstname VARCHAR(50) NOT NULL,
@@ -34,11 +31,9 @@ CREATE TABLE IF NOT EXISTS admins(
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- product_list 10
-
-CREATE TABLE IF NOT EXISTS product_list(
+CREATE TABLE IF NOT EXISTS product_list (
     id SERIAL PRIMARY KEY,
-    account_username character NOT NULL,
+    account_username VARCHAR(50) NOT NULL,
     account_type TEXT NOT NULL,
     years integer NOT NULL,
     profile_link TEXT NOT NULL,
@@ -60,10 +55,17 @@ CREATE TABLE IF NOT EXISTS product_list(
     sold_at TIMESTAMPTZ
 );
 
--- purchase history 11
+CREATE TABLE IF NOT EXISTS purchases (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'pending',
+    date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    owner TEXT
+);
 
-CREATE TABLE IF NOT EXISTS purchase_history
-(
+CREATE TABLE IF NOT EXISTS purchase_history (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     charge NUMERIC(10,2) NOT NULL,
@@ -78,20 +80,6 @@ CREATE TABLE IF NOT EXISTS purchase_history
     refund_amount NUMERIC(10,2) DEFAULT 0
 );
 
--- purchases 12
-
-CREATE TABLE IF NOT EXISTS purchases
-(
-    id SERIAL PRIMARY KEY,
-    product_id INTEGER NOT NULL,
-    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    status TEXT DEFAULT 'pending',
-    date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    owner TEXT
-);
-
--- activity_log 1
 CREATE TABLE IF NOT EXISTS activity_log (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -99,10 +87,7 @@ CREATE TABLE IF NOT EXISTS activity_log (
     time TIMESTAMPTZ DEFAULT NOW()
 );
 
--- admin product list 2
--- remember to change the sold_at in the admin product.js
-
-CREATE TABLE IF NOT EXISTS admin_products(
+CREATE TABLE IF NOT EXISTS admin_products (
 	id SERIAL PRIMARY KEY,
 	admin_id INT REFERENCES admins(id) ON DELETE CASCADE,
 	years INT NOT NULL,
@@ -122,10 +107,7 @@ CREATE TABLE IF NOT EXISTS admin_products(
     statustype text
 );
 
--- smm order 17
-
-CREATE TABLE IF NOT EXISTS sms_order
-(
+CREATE TABLE IF NOT EXISTS sms_order (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     phone_number VARCHAR(20),
@@ -139,8 +121,6 @@ CREATE TABLE IF NOT EXISTS sms_order
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- Transactions Table 18
-
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -151,20 +131,14 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- withdrawal details table 19
-
-CREATE TABLE IF NOT EXISTS withdrawal_details
-(
+CREATE TABLE IF NOT EXISTS withdrawal_details (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,,
+    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
     bank_name VARCHAR(100),
     account_number VARCHAR(20),
     bank_code VARCHAR(10),
     recipient_code VARCHAR(100)
 );
-
-
--- Commission Table 5
 
 CREATE TABLE IF NOT EXISTS commissions (
     id SERIAL PRIMARY KEY,
@@ -174,16 +148,12 @@ CREATE TABLE IF NOT EXISTS commissions (
     commission_amount DECIMAL(10, 2)
 );
 
--- deposits tracking table 6
-
 CREATE TABLE IF NOT EXISTS deposits (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     amount DECIMAL(10, 2),
     deposit_number INT
 );
-
--- Miscellaneous 7
 
 CREATE TABLE IF NOT EXISTS miscellaneous (
 	id SERIAL PRIMARY KEY,
@@ -193,10 +163,7 @@ CREATE TABLE IF NOT EXISTS miscellaneous (
     sms_price numeric(10,2) DEFAULT 2500
 );
 
--- password_reset_tokens 9
-
-CREATE TABLE IF NOT EXISTS password_reset_tokens
-(
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     token VARCHAR(255) NOT NULL,
@@ -204,10 +171,7 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens
     used BOOLEAN DEFAULT FALSE
 );
 
--- ratings_reviews 13
-
-CREATE TABLE IF NOT EXISTS ratings_reviews
-(
+CREATE TABLE IF NOT EXISTS ratings_reviews (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     rating INTEGER,
@@ -217,7 +181,7 @@ CREATE TABLE IF NOT EXISTS ratings_reviews
     writer_username VARCHAR(15)
 );
 
--- referral Withdrawals Table 14
+
 CREATE TABLE IF NOT EXISTS referral_withdrawals (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -225,16 +189,12 @@ CREATE TABLE IF NOT EXISTS referral_withdrawals (
     withdrawal_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- referrals 15
-
 CREATE TABLE IF NOT EXISTS referrals (
     id SERIAL PRIMARY KEY,
-    referred_by INT REFERENCES userprofile(id) ON DELETE CASCADE, -- ID of the user who referred
-    referred_user INT REFERENCES userprofile(id) ON DELETE CASCADE, -- ID of the user who was referred
-    commission_earned BOOLEAN DEFAULT FALSE -- To track if commission was given
+    referred_by INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    referred_user INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    commission_earned BOOLEAN DEFAULT FALSE
 );
-
--- challenge 4
 
 CREATE TABLE IF NOT EXISTS challenge (
   id SERIAL PRIMARY KEY,
@@ -245,8 +205,6 @@ CREATE TABLE IF NOT EXISTS challenge (
   total_transaction DECIMAL DEFAULT 0,
   challenge_complete BOOLEAN DEFAULT false
 );
-
--- sessions 16
 
 CREATE TABLE IF NOT EXISTS "session" (
   "sid" varchar NOT NULL COLLATE "default",
@@ -259,8 +217,6 @@ ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFE
 
 CREATE INDEX "IDX_session_expire" ON "session" ("expire");
 
--- notification 8
-
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -270,11 +226,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     read BOOLEAN DEFAULT false
 );
 
--- you can retrieve the CREATE TABLE statement for an existing table in your PostgreSQL 
--- Replace your_username, your_database, and your_table with your PostgreSQL username, the database name, 
---and the table name, respectively. This command will output the CREATE TABLE statement for the specified table.
-
--- userprofile
 
 
 
