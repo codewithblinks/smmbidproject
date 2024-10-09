@@ -1,3 +1,39 @@
+-- userprofile 1
+
+CREATE TABLE userprofile (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(15) NOT NULL,
+    firstname VARCHAR(45) NOT NULL,
+    lastname VARCHAR(45) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password text NOT NULL,
+    balance numeric(15,2) DEFAULT 0.00,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    is_suspended boolean DEFAULT false,
+    is_locked boolean DEFAULT false,
+    temp_2fa_secret VARCHAR(255),
+    two_factor_secret VARCHAR(255) ,
+    two_factor_enabled boolean DEFAULT false,
+    email_verified boolean DEFAULT false,
+    verification_code VARCHAR(6),
+    verification_code_expires_at timestamp without time zone,
+    last_verification_code_sent_at timestamp without time zone,
+    profile_picture VARCHAR(255),
+    referral_code VARCHAR(50) UNIQUE
+);
+
+-- admin 2
+
+CREATE TABLE admins(
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- activity_log 1
 CREATE TABLE activity_log (
     id SERIAL PRIMARY KEY,
@@ -5,7 +41,6 @@ CREATE TABLE activity_log (
     activity text,
     time TIMESTAMPTZ DEFAULT NOW()
 );
-
 
 -- admin product list 2
 -- remember to change the sold_at in the admin product.js
@@ -30,17 +65,7 @@ CREATE TABLE admin_products(
     statustype text
 )
 
--- admin 3
 
-CREATE TABLE admins(
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    firstname VARCHAR(50) NOT NULL,
-    lastname VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
 
 -- challenge 4
 
@@ -96,42 +121,16 @@ CREATE TABLE notifications (
 
 -- password_reset_tokens 9
 
-
-
-
-
-
-
-
--- you can retrieve the CREATE TABLE statement for an existing table in your PostgreSQL 
--- Replace your_username, your_database, and your_table with your PostgreSQL username, the database name, 
---and the table name, respectively. This command will output the CREATE TABLE statement for the specified table.
-
--- userprofile
-
-CREATE TABLE userprofile (
+CREATE TABLE password_reset_tokens
+(
     id SERIAL PRIMARY KEY,
-    username VARCHAR(15) NOT NULL,
-    firstname VARCHAR(45) NOT NULL,
-    lastname VARCHAR(45) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password text NOT NULL,
-    balance numeric(15,2) DEFAULT 0.00,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    is_suspended boolean DEFAULT false,
-    is_locked boolean DEFAULT false,
-    temp_2fa_secret VARCHAR(255),
-    two_factor_secret VARCHAR(255) ,
-    two_factor_enabled boolean DEFAULT false,
-    email_verified boolean DEFAULT false,
-    verification_code VARCHAR(6),
-    verification_code_expires_at timestamp without time zone,
-    last_verification_code_sent_at timestamp without time zone,
-    profile_picture VARCHAR(255),
-    referral_code VARCHAR(50) UNIQUE
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    token VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    used BOOLEAN DEFAULT FALSE
 );
 
--- product_list
+-- product_list 10
 
 CREATE TABLE product_list(
     id SERIAL PRIMARY KEY,
@@ -157,13 +156,59 @@ CREATE TABLE product_list(
     sold_at TIMESTAMPTZ,
 )
 
+-- purchase history 11
 
+CREATE TABLE purchase_history
+(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    charge NUMERIC(10,2) NOT NULL,
+    order_id VARCHAR(20),
+    status VARCHAR(20) NOT NULL,
+    start_count VARCHAR(100),
+    remain TEXT,
+    quantity INTEGER NOT NULL,
+    link TEXT NOT NULL,
+    service TEXT,
+    order_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    refund_amount NUMERIC(10,2) DEFAULT 0
+);
 
+-- purchases 12
 
+CREATE TABLE purchases
+(
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'pending',
+    date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    owner TEXT
+);
 
+-- ratings_reviews 13
 
+CREATE TABLE ratings_reviews
+(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    rating INTEGER,
+    review TEXT,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    writer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    writer_username VARCHAR(15)
+);
 
--- referrals
+-- referral Withdrawals Table 14
+CREATE TABLE referral_withdrawals (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    amount DECIMAL(10, 2),
+    withdrawal_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- referrals 15
 
 CREATE TABLE referrals (
     id SERIAL PRIMARY KEY,
@@ -172,30 +217,7 @@ CREATE TABLE referrals (
     commission_earned BOOLEAN DEFAULT FALSE -- To track if commission was given
 );
 
-
-
-
--- referral Withdrawals Table
-CREATE TABLE referral_withdrawals (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    amount DECIMAL(10, 2),
-    withdrawal_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Transactions Table
-
-CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
-    type VARCHAR(10) NOT NULL,
-    amount NUMERIC(10, 2) NOT NULL,
-    reference VARCHAR(100) NOT NULL,
-    status VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-)
-
--- sessions
+-- sessions 16
 
 CREATE TABLE "session" (
   "sid" varchar NOT NULL COLLATE "default",
@@ -207,3 +229,59 @@ WITH (OIDS=FALSE);
 ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 CREATE INDEX "IDX_session_expire" ON "session" ("expire");
+
+-- smm order 17
+
+CREATE TABLE sms_order
+(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,,
+    phone_number VARCHAR(20),
+    order_id VARCHAR(50),
+    country VARCHAR(30),
+    service TEXT,
+    cost NUMERIC(10,2),
+    amount NUMERIC(10,2),
+    status TEXT DEFAULT 'pending',
+    code VARCHAR(10),
+    "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Transactions Table 18
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
+    type VARCHAR(10) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    reference VARCHAR(100) NOT NULL,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+)
+
+-- withdrawal details table 19
+
+CREATE TABLE withdrawal_details
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,,
+    bank_name VARCHAR(100),
+    account_number VARCHAR(20),
+    bank_code VARCHAR(10),
+    recipient_code VARCHAR(100)
+);
+
+
+-- you can retrieve the CREATE TABLE statement for an existing table in your PostgreSQL 
+-- Replace your_username, your_database, and your_table with your PostgreSQL username, the database name, 
+--and the table name, respectively. This command will output the CREATE TABLE statement for the specified table.
+
+-- userprofile
+
+
+
+
+
+
+
+
