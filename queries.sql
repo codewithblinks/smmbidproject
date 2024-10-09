@@ -226,6 +226,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     read BOOLEAN DEFAULT false
 );
 
+-- hd
 
 
 
