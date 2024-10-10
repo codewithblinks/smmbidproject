@@ -171,6 +171,14 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     used BOOLEAN DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS admin_password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    admin_id INT REFERENCES admins(id) ON DELETE CASCADE,
+    token VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    used BOOLEAN DEFAULT FALSE
+);
+
 CREATE TABLE IF NOT EXISTS ratings_reviews (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -180,7 +188,6 @@ CREATE TABLE IF NOT EXISTS ratings_reviews (
     writer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     writer_username VARCHAR(15)
 );
-
 
 CREATE TABLE IF NOT EXISTS referral_withdrawals (
     id SERIAL PRIMARY KEY,

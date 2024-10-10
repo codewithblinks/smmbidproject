@@ -50,6 +50,20 @@ router.get("/register-admin", (req, res) => {
   res.render("registerAdmin.ejs", { message: req.flash('error') });
 });
 
+
+// router.get("/register-admin", async (req, res) => {
+//   const checkResult = await db.query("SELECT * FROM admins");
+
+//   const admin = checkResult.rows;
+
+//   if (admin.length > 0) {
+//     console.log("jsksj")
+//     res.send("sjsjjk")
+//   } else {
+//      res.render("registerAdmin.ejs", { message: req.flash('error') });
+//   }
+// });
+
 router.post("/register", upload, registrationValidationRules, async (req, res) => {
   const { username, firstname, lastname, password } = req.body;
   const email = req.body.email.toLowerCase();

@@ -103,6 +103,7 @@ import weeklyChaRoute from './routes/weekly_challenges.js'
 import imageUploadRoute from './routes/imageUpload.js'
 import adminsettingsRoute from './routes/admin/adminsettings.js'
 import knowledgebaseRoute from './routes/knowledgebase.js'
+import settingsAdminRoute from './routes/admin/settings.js'
 
 app.use(loginRoute)
 app.use(registerRoute)
@@ -140,6 +141,7 @@ app.use(weeklyChaRoute)
 app.use(imageUploadRoute)
 app.use(adminsettingsRoute)
 app.use(knowledgebaseRoute)
+app.use(settingsAdminRoute)
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
