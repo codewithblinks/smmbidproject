@@ -213,8 +213,7 @@ CREATE TABLE IF NOT EXISTS challenge (
   challenge_complete BOOLEAN DEFAULT false
 );
 
-ALTER TABLE challenge DROP CONSTRAINT challenge_user_week_unique;
-
+ALTER TABLE challenge ADD CONSTRAINT challenge_user_week_unique UNIQUE (user_id, week_start);
 
 CREATE TABLE IF NOT EXISTS "session" (
   "sid" varchar NOT NULL COLLATE "default",
