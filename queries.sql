@@ -215,17 +215,16 @@ CREATE TABLE IF NOT EXISTS challenge (
 
 ALTER TABLE challenge ADD CONSTRAINT challenge_user_week_unique UNIQUE (user_id, week_start);
 
-
 CREATE TABLE IF NOT EXISTS "session" (
-  "sid" varchar NOT NULL COLLATE "default",
+  "sid" varchar NOT NULL,
   "sess" json NOT NULL,
   "expire" timestamp(6) NOT NULL
-)
-WITH (OIDS=FALSE);
+);
 
 ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 CREATE INDEX "IDX_session_expire" ON "session" ("expire");
+
 
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,

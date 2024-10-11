@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
   });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+  if (file.mimetype === 'image/png') {
     cb(null, true);
   } else {
     cb(new Error('Only PNG and JPG files are allowed!'), false);
@@ -81,12 +81,12 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
       .toFile(outputPath);
 
     // Delete the original uploaded file
-    // try {
-    //     await fs.unlink(originalPath);
-    //     console.log('Original image deleted successfully');
-    //   } catch (err) {
-    //     console.error('Error deleting original image:', err);
-    //   }
+    try {
+        await fs.unlink(originalPath);
+        console.log('Original image deleted successfully');
+      } catch (err) {
+        console.error('Error deleting original image:', err);
+      }
 
     // Save the resized image path to PostgreSQL
     const imagePath = `/uploads/resized-${req.file.filename}`;

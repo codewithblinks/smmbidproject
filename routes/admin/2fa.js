@@ -10,27 +10,30 @@ import flash from "connect-flash";
 // Route to get 2FA secret and QR code
 router.get('/auth/2fa/setup', ensureAuthenticated, (req, res) => {
     // Generate a secret with a specified length (e.g., 10 characters)
-    const secret = speakeasy.generateSecret({ length: 10 });
-    const tempSecret = secret.base32;
-    const email = req.user.email;
-
-    // Save the temporary secret to the user's profile in the database
-    db.query('UPDATE userprofile SET temp_2fa_secret = $1 WHERE id = $2', [tempSecret, req.user.id]);
-
-    // Generate a QR code URL
-    const otpAuthUrl = speakeasy.otpauthURL({ secret: tempSecret, label: `SMM ${email}`, encoding: 'base32' });
-
-    // Generate a QR code image
-   qrcode.toDataURL(otpAuthUrl, (err, qr) => {
-        if (err) {
-            return res.send('Error generating QR code');
-        }
-        // Pass both the QR code and the secret key to the template
-        res.json({ qr, secret: tempSecret });
-    });
+    try {
+        const secret = speakeasy.generateSecret({ length: 10 });
+        const tempSecret = secret.base32;
+        const email = req.user.email;
+    
+        // Save the temporary secret to the user's profile in the database
+        db.query('UPDATE userprofile SET temp_2fa_secret = $1 WHERE id = $2', [tempSecret, req.user.id]);
+    
+        // Generate a QR code URL
+        const otpAuthUrl = speakeasy.otpauthURL({ secret: tempSecret, label: `SMM ${email}`, encoding: 'base32' });
+    
+        // Generate a QR code image
+       qrcode.toDataURL(otpAuthUrl, (err, qr) => {
+            if (err) {
+                return res.send('Error generating QR code');
+            }
+            // Pass both the QR code and the secret key to the template
+            res.json({ qr, secret: tempSecret });
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
-
-
   
  // 2FA verification route
 router.post('/auth/2fa/verify', ensureAuthenticated, async (req, res) => {

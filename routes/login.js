@@ -11,7 +11,6 @@ router.get('/login', checkAuthenticated, (req, res) => {
     res.render('login', { message: req.flash('error'), successMessage: req.flash('success')});
 });
 
-
 router.post('/login', (req, res, next) => {
     passport.authenticate('user-local', async (err, user, info) => {
         if (err) {
@@ -47,7 +46,6 @@ router.post('/login', (req, res, next) => {
     }
     })(req, res, next);
 });
-
 
 router.get('/login/admin', (req, res) => {
     res.render('loginAdmin', { message: req.flash('error'), successMessage: req.flash('success') });
