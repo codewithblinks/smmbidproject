@@ -306,5 +306,35 @@ router.post("/updateUserInfo", ensureAuthenticated, async(req, res) => {
   }
 })
 
+router.post('/contact-home', async (req, res) => {
+  const { fullName, email, message, phone, 'g-recaptcha-response': recaptchaToken } = req.body;
+
+  const secretKey = process.env.reCAPTCHA_SecretKey;
+  const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+
+  const adminEmailResult = await db.query("SELECT smtp_email FROM miscellaneous WHERE id = 1");
+
+  const adminEmail = adminEmailResult.rows[0].smtp_email;
+
+  try {
+    const response = await axios.post(verificationURL);
+    if (!response.data.success) {
+      return res.status(400).send('reCAPTCHA verification failed');
+    }
+  } catch (error) {
+    return res.status(500).send('Error verifying reCAPTCHA');
+  }
+
+  const mailOptions = {
+    to: adminEmail,
+    subject: 'New Contact Form Submitted',
+    text: `Name: ${fullName}\nEmail Address: ${email}\nPhone: ${phone}\nMessage: ${message}`
+  };
+
+  await sendEmail(mailOptions);
+  return res.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' });
+
+});
+
 
 export default router;
