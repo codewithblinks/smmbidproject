@@ -66,7 +66,7 @@ async function calculateUserProgress(userId) {
     // Update or insert challenge progress into the database
     await db.query(`
       INSERT INTO challenge (user_id, week_start, week_end, progress, total_transaction)
-      VALUES ($1, $2, $3, $4, $5)
+      VALUES ($1, $2::date, $3::date, $4, $5)
       ON CONFLICT (user_id, week_start) DO UPDATE
       SET progress = EXCLUDED.progress, total_transaction = EXCLUDED.total_transaction;
     `, [userId, startOfWeek, endOfWeek, progress, totalSuccessfulTransaction]);
@@ -76,7 +76,6 @@ async function calculateUserProgress(userId) {
   } catch (error) {
     console.log(error);
     console.error('Error calculating user progress:', error);
-    throw error; // or handle it as needed
   }
 }
 

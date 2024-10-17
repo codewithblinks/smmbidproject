@@ -42,8 +42,8 @@ router.get("/transactions", ensureAuthenticated, userRole, async (req, res) => {
 
   const notifications = notificationsResult.rows;
 
-    const countQuery = "SELECT COUNT(*) FROM transactions";
-    const countResult = await db.query(countQuery);
+    const countQuery = "SELECT COUNT(*) FROM transactions WHERE user_id = $1";
+    const countResult = await db.query(countQuery, [userId]);
     const totalTransactions = parseInt(countResult.rows[0].count);
 
     res.render("transactions", {
