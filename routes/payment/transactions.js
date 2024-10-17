@@ -54,7 +54,6 @@ router.get("/transactions", ensureAuthenticated, userRole, async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });

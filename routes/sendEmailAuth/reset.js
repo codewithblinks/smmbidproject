@@ -36,8 +36,8 @@ router.get('/reset/:token', async(req, res) => {
         }
 
         res.render('reset', { token, message: req.flash('error') });
-    } catch (err) {
-        console.log(err)
+    } catch (error) {
+        console.log(error)
         req.flash('error', 'Invalid or expired token');
         res.redirect('/forgot');
     }
@@ -100,13 +100,12 @@ router.post('/reset/:token', async (req, res) => {
 
         req.flash('success', 'Success! Your password has been changed.');
         res.redirect('/login');
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.log(error);
         req.flash('error', 'An error occurred. Please try again.');
         res.redirect('/forgot');
     }
 });
-
 
   export default router;
   

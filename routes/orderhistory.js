@@ -11,7 +11,6 @@ import timeSince from "../controller/timeSince.js";
     const userId = req.user.id;
   
     try {
-
       const limit = 15;
       const page = parseInt(req.query.page) || 1;
       const offset = (page - 1) * limit;
@@ -47,11 +46,9 @@ import timeSince from "../controller/timeSince.js";
         notifications, timeSince
       })
     } catch (error) {
-      console.error(error);
+        console.log(error);;
         res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-
-
 
   export default router;

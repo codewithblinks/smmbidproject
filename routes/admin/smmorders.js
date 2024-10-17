@@ -7,8 +7,11 @@ import moment from "moment";
 
 
 router.get("/admin/smmorders", adminEnsureAuthenticated, adminRole, async (req, res) => {
-
+  const adminId = req.user.id;
+  
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
 
     const limit = 15;
     const page = parseInt(req.query.page) || 1;
@@ -28,16 +31,12 @@ router.get("/admin/smmorders", adminEnsureAuthenticated, adminRole, async (req, 
 
         res.render("admin/smmOrders", {smmOrder, 
           currentPage: page, 
-          totalPages: Math.ceil(totalOrders / limit),
+          totalPages: Math.ceil(totalOrders / limit), user
         })
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
-
 
 export default router;

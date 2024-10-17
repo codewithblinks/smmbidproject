@@ -36,7 +36,7 @@ router.get("/add", ensureAuthenticated, userRole,  async(req, res) => {
       console.log(typeof userBalance)
       console.log(typeof 5000)
   
-      if (userBalance >= 5000) {
+      if (userBalance >= 5) {
         if (!userDetails) {
           return res.status(404).json({ error: 'User not found' });
         }
@@ -47,8 +47,8 @@ router.get("/add", ensureAuthenticated, userRole,  async(req, res) => {
         res.redirect("/dashboard");
       }
   
-    } catch (err) {
-      console.error(err.message);
+    } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -98,8 +98,8 @@ router.post("/add", ensureAuthenticated, async (req, res) => {
     );
     req.flash("success", "Account listed successfully, wait for approval from Admin");
     res.redirect("/add");
-  } catch (err) {
-    console.error("Error inserting data", err);
+  } catch (error) {
+    console.log(error);
     req.flash("error", "Error: listing account was not successfully");
     return res.redirect("/add");
   }

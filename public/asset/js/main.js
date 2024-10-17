@@ -32,7 +32,7 @@
             "assets/images/logo/logo_dark.jpg"
         } 
       }
-    }
+    } 
 
     // show or hide the back-top-top button
     const backToTop = document.querySelector(".back-to-top");

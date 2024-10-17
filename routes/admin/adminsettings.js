@@ -4,14 +4,17 @@ const router = express.Router();
 import ensureAuthenticated, {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 
 router.get('/admin/settings', adminEnsureAuthenticated, adminRole, async (req, res) => {
-  const userId = req.params.id;
+  const adminId = req.user.id;
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
+
     const rateResult = await db.query("SELECT * FROM Miscellaneous WHERE id = $1", [1]);
     const rate = rateResult.rows[0];
 
-    res.render('admin/adminsettings', {rate});
+    res.render('admin/adminsettings', {rate, user});
   } catch (error) {
-    console.error(err.message);
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
   
@@ -26,7 +29,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
 
         res.redirect('/admin/settings');
     } catch (error) {
-        console.error(err.message);
+        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -40,7 +43,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
 
         res.redirect('/admin/settings');
     } catch (error) {
-        console.error(error.message);
+        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -54,7 +57,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
 
         res.redirect('/admin/settings');
     } catch (error) {
-        console.error(error.message);
+      console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -66,7 +69,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         await db.query("UPDATE miscellaneous SET sms_price = $1 WHERE id = 1", [sms_price])
         res.redirect('/admin/settings');
     } catch (error) {
-        console.error(error.message);
+      console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -80,7 +83,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         res.status(404).json({ error: 'Exchange rate not found' });
       }
     } catch (error) {
-      console.error('Error fetching exchange rate:', error);
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -94,7 +97,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         res.status(404).json({ error: 'Exchange rate not found' });
       }
     } catch (error) {
-      console.error('Error fetching exchange rate:', error);
+       console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });

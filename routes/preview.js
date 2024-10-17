@@ -49,8 +49,8 @@ router.get("/product/:id", ensureAuthenticated, userRole, async (req, res) => {
       notifications,
       timeSince,
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).send("Server error");
   }
 });
@@ -125,8 +125,8 @@ router.post("/buyaccount", ensureAuthenticated, async (req, res) => {
       console.log("Insufficient balance, please topup your balance");
       return res.redirect("/p2p");
     }
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).send("Server error");
   }
 });
@@ -225,8 +225,8 @@ router.get("/purchase/:purchaseId", ensureAuthenticated, userRole, async (req, r
         }
 
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.log(error);
       res.status(500).send("Server error");
     }
   }
@@ -249,8 +249,9 @@ async function sendEmailToSeller(sellerId, productId) {
     });
 
     console.log(`Email sent to ${sellerEmail} about product ${productId}`);
-  } catch (err) {
-    console.error(`Error sending email to seller: ${err.message}`);
+  } catch (error) {
+    console.log(error);
+    console.error(`Error sending email to seller: ${error.message}`);
   }
 }
 
@@ -272,6 +273,7 @@ async function sendEmailToBuyer(buyerId, productId) {
 
     console.log(`Email sent to ${buyerEmail} about product ${productId}`);
   } catch (err) {
+    console.log(err);
     console.error(`Error sending email to seller: ${err.message}`);
   }
 }
@@ -349,7 +351,7 @@ AND
         timeSince, notifications
       });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.send("Error retrieving products");
     }
   }
@@ -381,8 +383,8 @@ router.post("/products/:id/complete", ensureAuthenticated, async (req, res) => {
 
     req.flash("success", `Product Login details successfully updated`);
     res.redirect("/product/complete/add");
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.log(error);
     res.send("Error updating product");
   }
 });
@@ -432,7 +434,7 @@ router.post("/products/:id/reject", ensureAuthenticated, async (req, res) => {
       "errors",
       `There was an error rejecting purchase order please contact support`
     );
-    console.error(err);
+    console.log(err);
     res.send("Error reject order");
   }
 });
@@ -481,7 +483,6 @@ router.post( "/product/complete/order/:id", ensureAuthenticated, async (req, res
         console.log("error update");
       }
     } catch (err) {
-      console.error(err);
       console.log(err);
       res.send("Error updating product");
     }
@@ -505,8 +506,8 @@ router.post("/submit-review", ensureAuthenticated, async (req, res) => {
     );
     req.flash("success", `Review submited`);
     res.redirect("/p2p");
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).send("Server Error");
   }
 });
@@ -523,7 +524,7 @@ router.get('/api/check-approval-status/:purchaseId', async (req, res) => {
           res.status(404).json({ approved: false });
       }
   } catch (error) {
-      console.error('Error fetching approval status:', error);
+      console.log(error);
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });

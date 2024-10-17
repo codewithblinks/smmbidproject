@@ -75,33 +75,32 @@
   <div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
     <!-- start sidebar section -->
     <div :class="{'dark text-white-dark' : $store.app.semidark}">
-      <nav x-data="sidebar"
-        class="sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
-        <div class="h-full bg-white dark:bg-[#0e1726]">
-          <div class="flex items-center justify-between px-4 py-3">
-            <a class="main-logo flex shrink-0 items-center">
-              <img class="inline w-8 ltr:-ml-1 rtl:-mr-1" src="../assets/images/logo01.png" alt="image" />
-              <span class="align-middle text-2sl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
-                <%= user.username %>
-              </span>
-            </a>
-            <a href="javascript:;"
-              class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
-              @click="$store.app.toggleSidebar()">
-              <svg class="m-auto h-5 w-5" width="20" height="20" viewbox="0 0 24 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round"></path>
-                <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"></path>
-              </svg>
-            </a>
-          </div>
-          <ul
-            class="perfect-scrollbar relative h-[calc(100vh-80px)] space-y-0.5 overflow-y-auto overflow-x-hidden p-4 py-0 font-semibold"
-            x-data="{ activeDropdown: 'dashboard' }">
-            <a href="/dashboard">
-              <h2 style="cursor: pointer;"
+        <nav x-data="sidebar"
+          class="sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
+          <div class="h-full bg-white dark:bg-[#0e1726]">
+            <div class="flex items-center justify-between px-4 py-3">
+              <a href="index.html" class="main-logo flex shrink-0 items-center">
+                <img class="ml-[5px] w-8 flex-none" src="../assets/images/logo.png" alt="image" />
+                <span class="align-middle text-2sl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
+                  SMMBIDMEDIA </span>
+              </a>
+              <a href="javascript:;"
+                class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
+                @click="$store.app.toggleSidebar()">
+                <svg class="m-auto h-5 w-5" width="20" height="20" viewbox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                  <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </a>
+            </div>
+            <ul
+              class="perfect-scrollbar relative h-[calc(100vh-80px)] space-y-0.5 overflow-y-auto overflow-x-hidden p-4 py-0 font-semibold"
+              x-data="{ activeDropdown: 'dashboard' }">
+  
+              <h2
                 class="-mx-4 mb-1 flex items-center bg-white-light/30 py-3 px-7 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
                 <svg class="hidden h-5 w-4 flex-none" viewbox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
                   fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -109,525 +108,348 @@
                 </svg>
                 <span>Dashboard</span>
               </h2>
-            </a>
-
-            <li class="nav-item">
-              <ul>
-                <li class="nav-item">
-                  <a href="/dashboard" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M11.25 18C11.25 18.4142 11.5858 18.75 12 18.75C12.4142 18.75 12.75 18.4142 12.75 18V15C12.75 14.5858 12.4142 14.25 12 14.25C11.5858 14.25 11.25 14.5858 11.25 15V18Z"
-                          fill="currentColor" />
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M12 1.25C11.2919 1.25 10.6485 1.45282 9.95055 1.79224C9.27585 2.12035 8.49642 2.60409 7.52286 3.20832L5.45628 4.4909C4.53509 5.06261 3.79744 5.5204 3.2289 5.95581C2.64015 6.40669 2.18795 6.86589 1.86131 7.46263C1.53535 8.05812 1.38857 8.69174 1.31819 9.4407C1.24999 10.1665 1.24999 11.0541 1.25 12.1672V13.7799C1.24999 15.6837 1.24998 17.1866 1.4027 18.3616C1.55937 19.567 1.88856 20.5401 2.63236 21.3094C3.37958 22.0824 4.33046 22.4277 5.50761 22.5914C6.64849 22.75 8.10556 22.75 9.94185 22.75H14.0581C15.8944 22.75 17.3515 22.75 18.4924 22.5914C19.6695 22.4277 20.6204 22.0824 21.3676 21.3094C22.1114 20.5401 22.4406 19.567 22.5973 18.3616C22.75 17.1866 22.75 15.6838 22.75 13.7799V12.1672C22.75 11.0541 22.75 10.1665 22.6818 9.4407C22.6114 8.69174 22.4646 8.05812 22.1387 7.46263C21.8121 6.86589 21.3599 6.40669 20.7711 5.95581C20.2026 5.5204 19.4649 5.06262 18.5437 4.49091L16.4771 3.20831C15.5036 2.60409 14.7241 2.12034 14.0494 1.79224C13.3515 1.45282 12.7081 1.25 12 1.25ZM8.27953 4.50412C9.29529 3.87371 10.0095 3.43153 10.6065 3.1412C11.1882 2.85833 11.6002 2.75 12 2.75C12.3998 2.75 12.8118 2.85833 13.3935 3.14119C13.9905 3.43153 14.7047 3.87371 15.7205 4.50412L17.7205 5.74537C18.6813 6.34169 19.3559 6.76135 19.8591 7.1467C20.3487 7.52164 20.6303 7.83106 20.8229 8.18285C21.0162 8.53589 21.129 8.94865 21.1884 9.58104C21.2492 10.2286 21.25 11.0458 21.25 12.2039V13.725C21.25 15.6959 21.2485 17.1012 21.1098 18.1683C20.9736 19.2163 20.717 19.8244 20.2892 20.2669C19.8649 20.7058 19.2871 20.9664 18.2858 21.1057C17.2602 21.2483 15.9075 21.25 14 21.25H10C8.09247 21.25 6.73983 21.2483 5.71422 21.1057C4.71286 20.9664 4.13514 20.7058 3.71079 20.2669C3.28301 19.8244 3.02642 19.2163 2.89019 18.1683C2.75149 17.1012 2.75 15.6959 2.75 13.725V12.2039C2.75 11.0458 2.75076 10.2286 2.81161 9.58104C2.87103 8.94865 2.98385 8.53589 3.17709 8.18285C3.36965 7.83106 3.65133 7.52164 4.14092 7.1467C4.6441 6.76135 5.31869 6.34169 6.27953 5.74537L8.27953 4.50412Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Home</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
-                    @click="activeDropdown === 'invoice' ? activeDropdown = null : activeDropdown = 'invoice'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M7.30706 1.25002C6.50609 1.24976 5.95648 1.24957 5.468 1.38348C4.44239 1.66464 3.58438 2.36804 3.10754 3.3186C2.88043 3.77133 2.77283 4.3103 2.61601 5.09577L1.99641 8.19389C1.7648 9.35192 2.08215 10.4718 2.75001 11.3115L2.75001 14.0565C2.74999 15.8942 2.74998 17.3499 2.90315 18.4891C3.06077 19.6615 3.39289 20.6104 4.14125 21.3588C4.88962 22.1072 5.83857 22.4393 7.01099 22.5969C8.1502 22.7501 9.60584 22.7501 11.4436 22.75H12.5564C14.3942 22.7501 15.8498 22.7501 16.989 22.5969C18.1615 22.4393 19.1104 22.1072 19.8588 21.3588C20.6071 20.6104 20.9392 19.6615 21.0969 18.4891C21.25 17.3499 21.25 15.8942 21.25 14.0565V11.3116C21.9179 10.4718 22.2352 9.35193 22.0036 8.19389L21.384 5.09576C21.2272 4.3103 21.1196 3.77133 20.8925 3.3186C20.4157 2.36804 19.5577 1.66464 18.532 1.38348C18.0436 1.24957 17.4939 1.24976 16.693 1.25002H7.30706ZM18.2685 12.75C18.7974 12.75 19.2971 12.6436 19.75 12.4524V14C19.75 15.9069 19.7484 17.2615 19.6103 18.2892C19.475 19.2953 19.2213 19.8749 18.7981 20.2981C18.3749 20.7214 17.7953 20.975 16.7892 21.1103C16.3437 21.1702 15.8367 21.2044 15.25 21.224V18.4678C15.25 18.028 15.25 17.6487 15.2218 17.3374C15.192 17.0082 15.1259 16.6823 14.9486 16.375C14.7511 16.033 14.4671 15.749 14.125 15.5515C13.8178 15.3741 13.4918 15.3081 13.1627 15.2782C12.8514 15.25 12.472 15.25 12.0322 15.25H11.9678C11.528 15.25 11.1487 15.25 10.8374 15.2782C10.5082 15.3081 10.1822 15.3741 9.87501 15.5515C9.53297 15.749 9.24893 16.033 9.05145 16.375C8.87408 16.6823 8.80803 17.0082 8.77819 17.3374C8.74998 17.6487 8.74999 18.028 8.75001 18.4678L8.75001 21.224C8.16328 21.2044 7.65635 21.1702 7.21086 21.1103C6.20477 20.975 5.62512 20.7214 5.20191 20.2981C4.7787 19.8749 4.52503 19.2953 4.38977 18.2892C4.2516 17.2615 4.25001 15.9069 4.25001 14V12.4524C4.70289 12.6436 5.20268 12.75 5.73156 12.75C7.00548 12.75 8.14447 12.1217 8.83808 11.1459C9.54758 12.114 10.6932 12.75 11.9998 12.75C13.3066 12.75 14.4523 12.1139 15.1618 11.1456C15.8553 12.1215 16.9944 12.75 18.2685 12.75ZM10.25 21.2481C10.6384 21.25 11.0541 21.25 11.5 21.25H12.5C12.9459 21.25 13.3616 21.25 13.75 21.2481V18.5C13.75 18.0189 13.7493 17.7083 13.728 17.4728C13.7075 17.2477 13.6731 17.1659 13.6495 17.125C13.5837 17.011 13.489 16.9164 13.375 16.8505C13.3341 16.8269 13.2524 16.7925 13.0273 16.7721C12.7918 16.7508 12.4811 16.75 12 16.75C11.5189 16.75 11.2082 16.7508 10.9728 16.7721C10.7476 16.7925 10.6659 16.8269 10.625 16.8505C10.511 16.9164 10.4163 17.011 10.3505 17.125C10.3269 17.1659 10.2925 17.2476 10.2721 17.4728C10.2507 17.7083 10.25 18.0189 10.25 18.5V21.2481ZM8.67107 2.75005H7.41772C6.46327 2.75005 6.1327 2.75661 5.86458 2.83011C5.24921 2.9988 4.73441 3.42084 4.4483 3.99118C4.32364 4.23968 4.25238 4.56254 4.0652 5.49846L3.46728 8.48807C3.18151 9.91693 4.2744 11.25 5.73156 11.25C6.91788 11.25 7.91118 10.3511 8.02922 9.17069L8.09781 8.48481L8.10179 8.44279L8.67107 2.75005ZM9.59127 8.62505L10.1788 2.75005H13.8211L14.4053 8.59204C14.5476 10.0152 13.43 11.25 11.9998 11.25C10.5807 11.25 9.46935 10.0342 9.59127 8.62505ZM18.1355 2.83011C17.8673 2.75661 17.5368 2.75005 16.5823 2.75005H15.3288L15.9708 9.17069C16.0889 10.3511 17.0822 11.25 18.2685 11.25C19.7256 11.25 20.8185 9.91693 20.5328 8.48807L19.9348 5.49846C19.7477 4.56254 19.6764 4.23968 19.5517 3.99118C19.2656 3.42084 18.7508 2.9988 18.1355 2.83011Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Market
-                        Place</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'invoice'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'invoice'" x-collapse="" class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/p2p">Buy Accounts</a>
-                    </li>
-                    <li>
-                      <a href="/products">Your Products</a>
-                    </li>
-                    <li>
-                      <a href="/p2porderhistory">Order History</a>
-                    </li>
-                    <li>
-                      <a href="/add">Sell Acoount</a>
-                    </li>
-                    <li>
-                      <a href="/product/complete/add">Awaiting Orders</a>
-                    </li>
+  
+              <li class="nav-item">
+                <ul>
+                  <li class="nav-item">
+                    <a href="/admin/dashboard" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M9 17.25C8.58579 17.25 8.25 17.5858 8.25 18C8.25 18.4142 8.58579 18.75 9 18.75H15C15.4142 18.75 15.75 18.4142 15.75 18C15.75 17.5858 15.4142 17.25 15 17.25H9Z"
+                            fill="currentColor" />
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M12 1.25C11.2919 1.25 10.6485 1.45282 9.95055 1.79224C9.27585 2.12035 8.49642 2.60409 7.52286 3.20832L5.45628 4.4909C4.53509 5.06261 3.79744 5.5204 3.2289 5.95581C2.64015 6.40669 2.18795 6.86589 1.86131 7.46263C1.53535 8.05812 1.38857 8.69174 1.31819 9.4407C1.24999 10.1665 1.24999 11.0541 1.25 12.1672V13.7799C1.24999 15.6837 1.24998 17.1866 1.4027 18.3616C1.55937 19.567 1.88856 20.5401 2.63236 21.3094C3.37958 22.0824 4.33046 22.4277 5.50761 22.5914C6.64849 22.75 8.10556 22.75 9.94185 22.75H14.0581C15.8944 22.75 17.3515 22.75 18.4924 22.5914C19.6695 22.4277 20.6204 22.0824 21.3676 21.3094C22.1114 20.5401 22.4406 19.567 22.5973 18.3616C22.75 17.1866 22.75 15.6838 22.75 13.7799V12.1672C22.75 11.0541 22.75 10.1665 22.6818 9.4407C22.6114 8.69174 22.4646 8.05812 22.1387 7.46263C21.8121 6.86589 21.3599 6.40669 20.7711 5.95581C20.2026 5.5204 19.4649 5.06262 18.5437 4.49091L16.4771 3.20831C15.5036 2.60409 14.7241 2.12034 14.0494 1.79224C13.3515 1.45282 12.7081 1.25 12 1.25ZM8.27953 4.50412C9.29529 3.87371 10.0095 3.43153 10.6065 3.1412C11.1882 2.85833 11.6002 2.75 12 2.75C12.3998 2.75 12.8118 2.85833 13.3935 3.14119C13.9905 3.43153 14.7047 3.87371 15.7205 4.50412L17.7205 5.74537C18.6813 6.34169 19.3559 6.76135 19.8591 7.1467C20.3487 7.52164 20.6303 7.83106 20.8229 8.18285C21.0162 8.53589 21.129 8.94865 21.1884 9.58104C21.2492 10.2286 21.25 11.0458 21.25 12.2039V13.725C21.25 15.6959 21.2485 17.1012 21.1098 18.1683C20.9736 19.2163 20.717 19.8244 20.2892 20.2669C19.8649 20.7058 19.2871 20.9664 18.2858 21.1057C17.2602 21.2483 15.9075 21.25 14 21.25H10C8.09247 21.25 6.73983 21.2483 5.71422 21.1057C4.71286 20.9664 4.13514 20.7058 3.71079 20.2669C3.28301 19.8244 3.02642 19.2163 2.89019 18.1683C2.75149 17.1012 2.75 15.6959 2.75 13.725V12.2039C2.75 11.0458 2.75076 10.2286 2.81161 9.58104C2.87103 8.94865 2.98385 8.53589 3.17709 8.18285C3.36965 7.83106 3.65133 7.52164 4.14092 7.1467C4.6441 6.76135 5.31869 6.34169 6.27953 5.74537L8.27953 4.50412Z"
+                            fill="currentColor" />
+                        </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Home</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="menu nav-item">
+                    <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'p2p'}"
+                      @click="activeDropdown === 'p2p' ? activeDropdown = null : activeDropdown = 'p2p'">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9.50004 2H14.5L15.1518 8.51737C15.3382 10.382 13.874 12 12 12C10.1261 12 8.66184 10.382 8.8483 8.51737L9.50004 2Z" stroke="currentColor" stroke-width="1.5"/>
+                          <path d="M3.32975 5.35133C3.50783 4.46093 3.59687 4.01573 3.77791 3.65484C4.15938 2.89439 4.84579 2.33168 5.66628 2.10675C6.05567 2 6.50969 2 7.41771 2H9.50002L8.77549 9.24527C8.61911 10.8091 7.30318 12 5.73155 12C3.8011 12 2.35324 10.2339 2.73183 8.34093L3.32975 5.35133Z" stroke="currentColor" stroke-width="1.5"/>
+                          <path d="M20.6703 5.35133C20.4922 4.46093 20.4031 4.01573 20.2221 3.65484C19.8406 2.89439 19.1542 2.33168 18.3337 2.10675C17.9443 2 17.4903 2 16.5823 2H14.5L15.2245 9.24527C15.3809 10.8091 16.6968 12 18.2685 12C20.1989 12 21.6468 10.2339 21.2682 8.34093L20.6703 5.35133Z" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M8.75 21.5C8.75 21.9142 9.08579 22.25 9.5 22.25C9.91421 22.25 10.25 21.9142 10.25 21.5H8.75ZM13.75 21.5C13.75 21.9142 14.0858 22.25 14.5 22.25C14.9142 22.25 15.25 21.9142 15.25 21.5H13.75ZM13.75 16.201L14.125 15.5514L14.125 15.5514L13.75 16.201ZM14.299 16.75L13.6495 17.125L13.6495 17.125L14.299 16.75ZM9.70096 16.75L10.3505 17.125L10.3505 17.125L9.70096 16.75ZM10.25 16.201L10.625 16.8505L10.625 16.8505L10.25 16.201ZM12.5 21.25H11.5V22.75H12.5V21.25ZM4.25 14V11H2.75V14H4.25ZM19.75 11V14H21.25V11H19.75ZM11.5 21.25C9.59318 21.25 8.23851 21.2484 7.21085 21.1102C6.20476 20.975 5.62511 20.7213 5.2019 20.2981L4.14124 21.3588C4.88961 22.1071 5.83855 22.4392 7.01098 22.5969C8.16182 22.7516 9.63558 22.75 11.5 22.75V21.25ZM2.75 14C2.75 15.8644 2.74841 17.3382 2.90313 18.489C3.06076 19.6614 3.39288 20.6104 4.14124 21.3588L5.2019 20.2981C4.77869 19.8749 4.52502 19.2952 4.38976 18.2892C4.25159 17.2615 4.25 15.9068 4.25 14H2.75ZM12.5 22.75C14.3644 22.75 15.8382 22.7516 16.989 22.5969C18.1614 22.4392 19.1104 22.1071 19.8588 21.3588L18.7981 20.2981C18.3749 20.7213 17.7952 20.975 16.7892 21.1102C15.7615 21.2484 14.4068 21.25 12.5 21.25V22.75ZM19.75 14C19.75 15.9068 19.7484 17.2615 19.6102 18.2892C19.475 19.2952 19.2213 19.8749 18.7981 20.2981L19.8588 21.3588C20.6071 20.6104 20.9392 19.6614 21.0969 18.489C21.2516 17.3382 21.25 15.8644 21.25 14H19.75ZM10.25 21.5V18.5H8.75V21.5H10.25ZM13.75 18.5V21.5H15.25V18.5H13.75ZM12 16.75C12.4811 16.75 12.7918 16.7507 13.0273 16.7721C13.2524 16.7925 13.3341 16.8269 13.375 16.8505L14.125 15.5514C13.8178 15.3741 13.4918 15.308 13.1626 15.2782C12.8438 15.2493 12.4535 15.25 12 15.25V16.75ZM15.25 18.5C15.25 18.0465 15.2507 17.6562 15.2218 17.3374C15.192 17.0082 15.1259 16.6822 14.9486 16.375L13.6495 17.125C13.6731 17.1659 13.7075 17.2476 13.7279 17.4727C13.7493 17.7082 13.75 18.0189 13.75 18.5H15.25ZM13.375 16.8505C13.489 16.9163 13.5837 17.011 13.6495 17.125L14.9486 16.375C14.7511 16.033 14.467 15.7489 14.125 15.5514L13.375 16.8505ZM10.25 18.5C10.25 18.0189 10.2507 17.7082 10.2721 17.4727C10.2925 17.2476 10.3269 17.1659 10.3505 17.125L9.05144 16.375C8.87407 16.6822 8.80802 17.0082 8.77818 17.3374C8.74928 17.6562 8.75 18.0465 8.75 18.5H10.25ZM12 15.25C11.5465 15.25 11.1562 15.2493 10.8374 15.2782C10.5082 15.308 10.1822 15.3741 9.875 15.5514L10.625 16.8505C10.6659 16.8269 10.7476 16.7925 10.9727 16.7721C11.2082 16.7507 11.5189 16.75 12 16.75V15.25ZM10.3505 17.125C10.4163 17.011 10.511 16.9163 10.625 16.8505L9.875 15.5514C9.53296 15.7489 9.24892 16.033 9.05144 16.375L10.3505 17.125Z" fill="currentColor"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">P2P</span>
+                      </div>
+                      <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'p2p'}">
+                        <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                    </button>
+                    <ul x-cloak="" x-show="activeDropdown === 'p2p'" x-collapse="" class="sub-menu text-gray-500">
+                      <li>
+                        <a href="/admin/product/active/accounts">Actives Products</a>
+                      </li>
+                      <li>
+                        <a href="/admin/product/awaiting">Awaiting Products</a>
+                      </li>
+                      <li>
+                        <a href="/admin/product/list">Listed Products</a>
+                      </li>
+                      <li>
+                        <a href="/admin/product/sold/accounts">Sold Products</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="menu nav-item">
+                    <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'myProducts'}"
+                      @click="activeDropdown === 'myProducts' ? activeDropdown = null : activeDropdown = 'myProducts'">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M22 22H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.5" d="M20 22V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.5" d="M4 22V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path d="M16.5279 2H7.47226C6.26944 2 5.66803 2 5.18473 2.2987C4.70142 2.5974 4.43247 3.13531 3.89455 4.21114L2.49094 7.75929C2.16665 8.57905 1.88291 9.54525 2.42879 10.2375C2.79501 10.7019 3.36269 11 4.00004 11C5.1046 11 6.00004 10.1046 6.00004 9C6.00004 10.1046 6.89547 11 8.00004 11C9.1046 11 10 10.1046 10 9C10 10.1046 10.8955 11 12 11C13.1046 11 14 10.1046 14 9C14 10.1046 14.8955 11 16 11C17.1046 11 18 10.1046 18 9C18 10.1046 18.8955 11 20 11C20.6374 11 21.2051 10.7019 21.5713 10.2375C22.1172 9.54525 21.8335 8.57905 21.5092 7.75929L20.1056 4.21114C19.5677 3.13531 19.2987 2.5974 18.8154 2.2987C18.3321 2 17.7307 2 16.5279 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                          <path opacity="0.5" d="M9.5 21.5V18.5C9.5 17.5654 9.5 17.0981 9.70096 16.75C9.83261 16.522 10.022 16.3326 10.25 16.201C10.5981 16 11.0654 16 12 16C12.9346 16 13.4019 16 13.75 16.201C13.978 16.3326 14.1674 16.522 14.299 16.75C14.5 17.0981 14.5 17.5654 14.5 18.5V21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          </svg>
+                        <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">My
+                          Products</span>
+                      </div>
+                      <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'myProducts'}">
+                        <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                    </button>
+                    <ul x-cloak="" x-show="activeDropdown === 'myProducts'" x-collapse="" class="sub-menu text-gray-500">
+                      <li>
+                        <a href="/admin/list/product">List Product</a>
+                      </li>
+                      <li>
+                        <a href="/admin/listed/products">All Products</a>
+                      </li>
+                      <li>
+                        <a href="/admin/active/products">Active Products</a>
+                      </li>
+                      <li>
+                        <a href="/admin/sold/products">Sold Products</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/smmorders" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary"  width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M13.0867 21.3877L13.7321 21.7697L13.7321 21.7697L13.0867 21.3877ZM13.6288 20.4718L12.9833 20.0898L12.9833 20.0898L13.6288 20.4718ZM10.3712 20.4718L9.72579 20.8539L9.72579 20.8539L10.3712 20.4718ZM10.9133 21.3877L11.5587 21.0057L11.5587 21.0057L10.9133 21.3877ZM2.3806 15.9134L3.07351 15.6264L3.07351 15.6264L2.3806 15.9134ZM7.78958 18.9915L7.77666 19.7413L7.77666 19.7413L7.78958 18.9915ZM5.08658 18.6194L4.79957 19.3123L4.79957 19.3123L5.08658 18.6194ZM21.6194 15.9134L22.3123 16.2004L22.3123 16.2004L21.6194 15.9134ZM16.2104 18.9915L16.1975 18.2416L16.1975 18.2416L16.2104 18.9915ZM18.9134 18.6194L19.2004 19.3123L19.2004 19.3123L18.9134 18.6194ZM19.6125 2.7368L19.2206 3.37628L19.2206 3.37628L19.6125 2.7368ZM21.2632 4.38751L21.9027 3.99563L21.9027 3.99563L21.2632 4.38751ZM4.38751 2.7368L3.99563 2.09732L3.99563 2.09732L4.38751 2.7368ZM2.7368 4.38751L2.09732 3.99563L2.09732 3.99563L2.7368 4.38751ZM9.40279 19.2098L9.77986 18.5615L9.77986 18.5615L9.40279 19.2098ZM13.7321 21.7697L14.2742 20.8539L12.9833 20.0898L12.4412 21.0057L13.7321 21.7697ZM9.72579 20.8539L10.2679 21.7697L11.5587 21.0057L11.0166 20.0898L9.72579 20.8539ZM12.4412 21.0057C12.2485 21.3313 11.7515 21.3313 11.5587 21.0057L10.2679 21.7697C11.0415 23.0767 12.9585 23.0767 13.7321 21.7697L12.4412 21.0057ZM10.5 2.75H13.5V1.25H10.5V2.75ZM21.25 10.5V11.5H22.75V10.5H21.25ZM2.75 11.5V10.5H1.25V11.5H2.75ZM1.25 11.5C1.25 12.6546 1.24959 13.5581 1.29931 14.2868C1.3495 15.0223 1.45323 15.6344 1.68769 16.2004L3.07351 15.6264C2.92737 15.2736 2.84081 14.8438 2.79584 14.1847C2.75041 13.5189 2.75 12.6751 2.75 11.5H1.25ZM7.8025 18.2416C6.54706 18.2199 5.88923 18.1401 5.37359 17.9265L4.79957 19.3123C5.60454 19.6457 6.52138 19.7197 7.77666 19.7413L7.8025 18.2416ZM1.68769 16.2004C2.27128 17.6093 3.39066 18.7287 4.79957 19.3123L5.3736 17.9265C4.33223 17.4951 3.50486 16.6678 3.07351 15.6264L1.68769 16.2004ZM21.25 11.5C21.25 12.6751 21.2496 13.5189 21.2042 14.1847C21.1592 14.8438 21.0726 15.2736 20.9265 15.6264L22.3123 16.2004C22.5468 15.6344 22.6505 15.0223 22.7007 14.2868C22.7504 13.5581 22.75 12.6546 22.75 11.5H21.25ZM16.2233 19.7413C17.4786 19.7197 18.3955 19.6457 19.2004 19.3123L18.6264 17.9265C18.1108 18.1401 17.4529 18.2199 16.1975 18.2416L16.2233 19.7413ZM20.9265 15.6264C20.4951 16.6678 19.6678 17.4951 18.6264 17.9265L19.2004 19.3123C20.6093 18.7287 21.7287 17.6093 22.3123 16.2004L20.9265 15.6264ZM13.5 2.75C15.1512 2.75 16.337 2.75079 17.2619 2.83873C18.1757 2.92561 18.7571 3.09223 19.2206 3.37628L20.0044 2.09732C19.2655 1.64457 18.4274 1.44279 17.4039 1.34547C16.3915 1.24921 15.1222 1.25 13.5 1.25V2.75ZM22.75 10.5C22.75 8.87781 22.7508 7.6085 22.6545 6.59611C22.5572 5.57256 22.3554 4.73445 21.9027 3.99563L20.6237 4.77938C20.9078 5.24291 21.0744 5.82434 21.1613 6.73809C21.2492 7.663 21.25 8.84876 21.25 10.5H22.75ZM19.2206 3.37628C19.7925 3.72672 20.2733 4.20752 20.6237 4.77938L21.9027 3.99563C21.4286 3.22194 20.7781 2.57144 20.0044 2.09732L19.2206 3.37628ZM10.5 1.25C8.87781 1.25 7.6085 1.24921 6.59611 1.34547C5.57256 1.44279 4.73445 1.64457 3.99563 2.09732L4.77938 3.37628C5.24291 3.09223 5.82434 2.92561 6.73809 2.83873C7.663 2.75079 8.84876 2.75 10.5 2.75V1.25ZM2.75 10.5C2.75 8.84876 2.75079 7.663 2.83873 6.73809C2.92561 5.82434 3.09223 5.24291 3.37628 4.77938L2.09732 3.99563C1.64457 4.73445 1.44279 5.57256 1.34547 6.59611C1.24921 7.6085 1.25 8.87781 1.25 10.5H2.75ZM3.99563 2.09732C3.22194 2.57144 2.57144 3.22194 2.09732 3.99563L3.37628 4.77938C3.72672 4.20752 4.20752 3.72672 4.77938 3.37628L3.99563 2.09732ZM11.0166 20.0898C10.8136 19.7468 10.6354 19.4441 10.4621 19.2063C10.2795 18.9559 10.0702 18.7304 9.77986 18.5615L9.02572 19.8582C9.07313 19.8857 9.13772 19.936 9.24985 20.0898C9.37122 20.2564 9.50835 20.4865 9.72579 20.8539L11.0166 20.0898ZM7.77666 19.7413C8.21575 19.7489 8.49387 19.7545 8.70588 19.7779C8.90399 19.7999 8.98078 19.832 9.02572 19.8582L9.77986 18.5615C9.4871 18.3912 9.18246 18.3215 8.87097 18.287C8.57339 18.2541 8.21375 18.2487 7.8025 18.2416L7.77666 19.7413ZM14.2742 20.8539C14.4916 20.4865 14.6287 20.2564 14.7501 20.0898C14.8622 19.936 14.9268 19.8857 14.9742 19.8582L14.2201 18.5615C13.9298 18.7304 13.7204 18.9559 13.5379 19.2063C13.3646 19.4441 13.1864 19.7468 12.9833 20.0898L14.2742 20.8539ZM16.1975 18.2416C15.7862 18.2487 15.4266 18.2541 15.129 18.287C14.8175 18.3215 14.5129 18.3912 14.2201 18.5615L14.9742 19.8582C15.0192 19.832 15.096 19.7999 15.2941 19.7779C15.5061 19.7545 15.7842 19.7489 16.2233 19.7413L16.1975 18.2416Z" fill="currentColor"/>
+                          <path opacity="0.5" d="M8 9H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.5" d="M8 12.5H13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">SMS
+                          Orders</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/smsorders" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 22C14.4183 22 18 18.4183 18 14C18 9.58172 14.4183 6 10 6C5.58172 6 2 9.58172 2 14C2 15.2355 2.28008 16.4056 2.7802 17.4502C2.95209 17.8093 3.01245 18.2161 2.90955 18.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L5.39939 21.0904C5.78393 20.9876 6.19071 21.0479 6.54976 21.2198C7.5944 21.7199 8.76449 22 10 22Z" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M18 14.5018C18.0665 14.4741 18.1324 14.4453 18.1977 14.4155C18.5598 14.2501 18.9661 14.1882 19.3506 14.2911L19.8267 14.4185C20.793 14.677 21.677 13.793 21.4185 12.8267L21.2911 12.3506C21.1882 11.9661 21.2501 11.5598 21.4155 11.1977C21.7908 10.376 22 9.46242 22 8.5C22 4.91015 19.0899 2 15.5 2C12.7977 2 10.4806 3.64899 9.5 5.9956" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M6.51828 14H6.52728M10.009 14H10.018M13.5 14H13.509" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Verification</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/deposits" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 20V14M19 14L21 16M19 14L17 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M22 12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.4" d="M13 16H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deposits</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/withdrawals" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M7 15L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.994 22 13.9167V10.0833C22 10.006 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9Z" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M20.965 9C20.8873 7.1277 20.6366 5.97975 19.8284 5.17157C18.6569 4 16.7712 4 13 4L10 4C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M17.991 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">withdrawals</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li class="menu nav-item">
+                    <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
+                      @click="activeDropdown === 'invoice' ? activeDropdown = null : activeDropdown = 'invoice'">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <ellipse cx="12" cy="17" rx="6" ry="4" stroke="currentColor" stroke-width="1.5"/>
+                          <path opacity="0.5" d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          <path opacity="0.5" d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Manage
+                          Users</span>
+                      </div>
+                      <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'invoice'}">
+                        <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                    </button>
+                    <ul x-cloak="" x-show="activeDropdown === 'invoice'" x-collapse="" class="sub-menu text-gray-500">
+                      <li>
+                        <a href="/admin/users/list">Active Users</a>
+                      </li>
+                      <li>
+                        <a href="/admin/users/list/suspend">Suspended Users</a>
+                      </li>
+                      <li>
+                        <a href="/admin/users/list/unverified">Unverified Users</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/settings" class="group">
+                      <div class="flex items-center">
+                        <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.5" d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z" stroke="currentColor" stroke-width="1.5"/>
+                          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+                          </svg>
+                        <span
+                          class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Settings</span>
+                      </div>
+                    </a>
+                  </li>
                   </ul>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
-                    @click="activeDropdown === 'invoice2' ? activeDropdown = null : activeDropdown = 'invoice2'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M9.63786 21.75C8.55269 21.75 7.6716 21.75 6.96278 21.6653C6.22377 21.5769 5.58914 21.3888 5.03451 20.9558C4.47989 20.5227 4.14349 19.9527 3.87852 19.2572C3.62438 18.5901 3.4107 17.7353 3.14753 16.6825L3.12113 16.5769C2.70491 14.9121 2.37241 13.5822 2.26504 12.5261C2.15439 11.4377 2.26455 10.4888 2.88654 9.6922C3.16941 9.32992 3.50849 9.06269 3.89599 8.86426L4.52386 6.56133C4.76094 5.68968 4.93319 5.05639 5.30012 4.5623C5.66383 4.07255 6.15805 3.69505 6.72623 3.47298C7.20178 3.28712 7.73453 3.25574 8.41807 3.25077C8.69877 2.65912 9.30162 2.25 10 2.25H14C14.6984 2.25 15.3013 2.65912 15.582 3.25077C16.2655 3.25574 16.7983 3.28712 17.2738 3.47298C17.842 3.69505 18.3362 4.07255 18.6999 4.5623C19.0669 5.05639 19.2391 5.68968 19.4762 6.56133L20.1041 8.86431C20.4915 9.06274 20.8306 9.32995 21.1134 9.6922C21.7354 10.4888 21.8456 11.4377 21.7349 12.5261C21.6276 13.5822 21.2951 14.9121 20.8788 16.5769L20.8525 16.6824C20.5893 17.7352 20.3756 18.5901 20.1214 19.2572C19.8565 19.9527 19.5201 20.5227 18.9654 20.9558C18.4108 21.3888 17.7762 21.5769 17.0372 21.6653C16.3284 21.75 15.4473 21.75 14.3621 21.75H9.63786ZM7.27226 4.87007C7.49206 4.78416 7.75764 4.75888 8.41948 4.75219C8.70079 5.34225 9.30279 5.75 10 5.75H14C14.6973 5.75 15.2993 5.34225 15.5806 4.75219C16.2424 4.75888 16.508 4.78416 16.7278 4.87007C17.0337 4.98964 17.2998 5.19291 17.4957 5.45663C17.6718 5.69377 17.7751 6.02508 18.066 7.09194L18.4196 8.3887C17.3818 8.24996 16.042 8.24998 14.3774 8.25L12.0058 8.25C12.0022 8.24997 11.9986 8.24997 11.9951 8.25L9.62259 8.25C7.958 8.24998 6.61822 8.24996 5.58043 8.38868L5.934 7.09195C6.2249 6.02508 6.32824 5.69376 6.50435 5.45662C6.7002 5.19291 6.96632 4.98964 7.27226 4.87007ZM10.3987 9.75H9.68464C7.8923 9.75 6.63046 9.75187 5.69983 9.88649C5.58189 9.90355 5.47184 9.92243 5.36899 9.94313L7.55996 13.1565L10.3987 9.75ZM4.03889 10.655C3.78111 11.0086 3.66764 11.4919 3.75735 12.3744C3.85246 13.3099 4.15668 14.5345 4.59139 16.2733C4.62089 16.3913 4.64944 16.5054 4.67717 16.6159L6.56144 14.3548L4.03889 10.655ZM5.1596 18.38C5.19941 18.5018 5.23938 18.6159 5.28025 18.7231C5.49156 19.2778 5.69847 19.5711 5.95763 19.7735C6.2168 19.9758 6.55152 20.1054 7.14088 20.1759C7.75027 20.2488 8.54145 20.25 9.68464 20.25H10.5809L7.44009 15.6435L5.1596 18.38ZM13.4191 20.25L16.5725 15.625L18.8407 18.3791C18.8008 18.5013 18.7607 18.6156 18.7197 18.7231C18.5084 19.2778 18.3015 19.5711 18.0423 19.7735C17.7832 19.9758 17.4484 20.1054 16.8591 20.1759C16.2497 20.2488 15.4585 20.25 14.3153 20.25H13.4191ZM19.3249 16.6075C19.352 16.4997 19.3798 16.3883 19.4086 16.2733C19.8433 14.5345 20.1475 13.3099 20.2426 12.3744C20.3323 11.492 20.2189 11.0086 19.9611 10.6551L17.4527 14.3341L19.3249 16.6075ZM18.6311 9.94314C18.5282 9.92243 18.4181 9.90356 18.3001 9.88649C17.3695 9.75187 16.1077 9.75 14.3153 9.75H13.6775L16.4595 13.1281L18.6311 9.94314ZM10 3.75C9.86195 3.75 9.75002 3.86193 9.75002 4C9.75002 4.13807 9.86195 4.25 10 4.25H14C14.1381 4.25 14.25 4.13807 14.25 4C14.25 3.86193 14.1381 3.75 14 3.75H10ZM12.041 10.1224L15.5793 14.419L12 19.6686L8.43861 14.4452L12.041 10.1224Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Buy
-                        From Us</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'invoice'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'invoice2'" x-collapse="" class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/all/accounts">Buy Accounts</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'SMM'}"
-                    @click="activeDropdown === 'SMM' ? activeDropdown = null : activeDropdown = 'SMM'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 13.4811 3.09753 14.8788 3.7148 16.1181C3.96254 16.6155 4.05794 17.2103 3.90163 17.7945L3.30602 20.0205C3.19663 20.4293 3.57066 20.8034 3.97949 20.694L6.20553 20.0984C6.78973 19.9421 7.38451 20.0375 7.88191 20.2852C9.12121 20.9025 10.5189 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75ZM1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C10.2817 22.75 8.65552 22.3463 7.21315 21.6279C6.99791 21.5207 6.77814 21.4979 6.59324 21.5474L4.3672 22.143C2.84337 22.5507 1.44927 21.1566 1.857 19.6328L2.4526 17.4068C2.50208 17.2219 2.47933 17.0021 2.37213 16.7869C1.65371 15.3445 1.25 13.7183 1.25 12ZM7.25 10.5C7.25 10.0858 7.58579 9.75 8 9.75H16C16.4142 9.75 16.75 10.0858 16.75 10.5C16.75 10.9142 16.4142 11.25 16 11.25H8C7.58579 11.25 7.25 10.9142 7.25 10.5ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H13.5C13.9142 13.25 14.25 13.5858 14.25 14C14.25 14.4142 13.9142 14.75 13.5 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">SMM</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'SMM'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'SMM'" x-collapse="" class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/smm">SMM Panel</a>
-                    </li>
-                    <li>
-                      <a href="/orderhistory">SMS Order History</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'verification'}"
-                    @click="activeDropdown === 'verification' ? activeDropdown = null : activeDropdown = 'verification'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M5.73262 2.043C6.94995 0.832583 8.95433 1.04804 9.97364 2.40962L11.2346 4.09402C12.064 5.20191 11.9908 6.75032 11.0063 7.72923L10.7676 7.96665C10.7571 7.99694 10.7318 8.09215 10.7599 8.2731C10.8231 8.6806 11.1634 9.545 12.5919 10.9654C14.0199 12.3853 14.8905 12.7253 15.3037 12.7887C15.491 12.8174 15.589 12.7906 15.6193 12.78L16.0273 12.3743C16.9025 11.5041 18.2474 11.3414 19.331 11.9305L21.2415 12.9691C22.8775 13.8584 23.2908 16.0821 21.9505 17.4148L20.5299 18.8273C20.0824 19.2723 19.4805 19.6434 18.7459 19.7119C16.9369 19.8806 12.7186 19.6654 8.28653 15.2584C4.14862 11.144 3.35456 7.556 3.25409 5.78817L4.00288 5.74562L3.25409 5.78817C3.20328 4.89426 3.6257 4.13796 4.16302 3.60369L5.73262 2.043ZM8.77285 3.30856C8.26622 2.63182 7.32194 2.57801 6.79026 3.10668L5.22066 4.66737C4.89074 4.99542 4.732 5.35695 4.75167 5.70307C4.8315 7.10766 5.47279 10.3453 9.34417 14.1947C13.4056 18.2331 17.1568 18.3536 18.6067 18.2184C18.9029 18.1908 19.1975 18.0369 19.4723 17.7636L20.8928 16.3511C21.4703 15.777 21.3429 14.7315 20.5251 14.2869L18.6146 13.2484C18.0871 12.9616 17.469 13.0562 17.085 13.438L16.6295 13.8909L16.1007 13.359C16.6295 13.8909 16.6288 13.8916 16.6281 13.8923L16.6266 13.8937L16.6236 13.8967L16.6171 13.903L16.6024 13.9166C16.5919 13.9262 16.5799 13.9367 16.5663 13.948C16.5392 13.9705 16.5057 13.9959 16.4658 14.0227C16.3857 14.0763 16.28 14.1347 16.1472 14.1841C15.8763 14.285 15.5192 14.3392 15.0763 14.2713C14.2095 14.1384 13.0613 13.5474 11.5343 12.0291C10.0078 10.5113 9.41188 9.36834 9.27764 8.50306C9.209 8.06061 9.26375 7.70331 9.36588 7.43225C9.41593 7.29941 9.47491 7.19378 9.52904 7.11389C9.55604 7.07405 9.58173 7.04074 9.6044 7.01368C9.61574 7.00015 9.62633 6.98817 9.63598 6.9777L9.64971 6.96312L9.656 6.95666L9.65899 6.95363L9.66045 6.95217C9.66116 6.95146 9.66188 6.95075 10.1907 7.48258L9.66188 6.95075L9.94869 6.66556C10.3773 6.23939 10.4373 5.53194 10.0338 4.99297L8.77285 3.30856Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Verification</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'verification'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'verification'" x-collapse=""
-                    class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/verification">Buy Numbers</a>
-                    </li>
-                    <li>
-                      <a href="/smsorderhistory">SMS Order Historys</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="nav-item">
-                  <a href="/deposit" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M11.948 1.25H12.052C12.9505 1.24997 13.6997 1.24995 14.2945 1.32991C14.9223 1.41432 15.4891 1.59999 15.9445 2.05546C16.4 2.51093 16.5857 3.07773 16.6701 3.70552C16.7292 4.14512 16.7446 4.66909 16.7486 5.27533C17.3971 5.29614 17.9752 5.33406 18.489 5.40314C19.6614 5.56076 20.6104 5.89288 21.3588 6.64124C22.1071 7.38961 22.4392 8.33856 22.5969 9.51098C22.75 10.6502 22.75 12.1058 22.75 13.9436V14.0564C22.75 15.8942 22.75 17.3498 22.5969 18.489C22.4392 19.6614 22.1071 20.6104 21.3588 21.3588C20.6104 22.1071 19.6614 22.4392 18.489 22.5969C17.3498 22.75 15.8942 22.75 14.0564 22.75H9.94359C8.10583 22.75 6.65019 22.75 5.51098 22.5969C4.33856 22.4392 3.38961 22.1071 2.64124 21.3588C1.89288 20.6104 1.56076 19.6614 1.40314 18.489C1.24997 17.3498 1.24998 15.8942 1.25 14.0564V13.9436C1.24998 12.1058 1.24997 10.6502 1.40314 9.51098C1.56076 8.33856 1.89288 7.38961 2.64124 6.64124C3.38961 5.89288 4.33856 5.56076 5.51098 5.40314C6.02475 5.33406 6.60288 5.29614 7.2514 5.27533C7.2554 4.66909 7.27081 4.14512 7.32991 3.70552C7.41432 3.07773 7.59999 2.51093 8.05546 2.05546C8.51093 1.59999 9.07773 1.41432 9.70552 1.32991C10.3003 1.24995 11.0495 1.24997 11.948 1.25ZM8.7518 5.25178C9.12993 5.24999 9.52694 5.25 9.94358 5.25H14.0564C14.4731 5.25 14.8701 5.24999 15.2482 5.25178C15.244 4.68146 15.23 4.25125 15.1835 3.90539C15.1214 3.44393 15.0142 3.24644 14.8839 3.11612C14.7536 2.9858 14.5561 2.87858 14.0946 2.81654C13.6116 2.7516 12.964 2.75 12 2.75C11.036 2.75 10.3884 2.7516 9.90539 2.81654C9.44393 2.87858 9.24643 2.9858 9.11612 3.11612C8.9858 3.24644 8.87858 3.44393 8.81654 3.90539C8.77004 4.25125 8.75601 4.68146 8.7518 5.25178ZM5.71085 6.88976C4.70476 7.02503 4.12511 7.2787 3.7019 7.70191C3.27869 8.12511 3.02502 8.70476 2.88976 9.71085C2.75159 10.7385 2.75 12.0932 2.75 14C2.75 15.9068 2.75159 17.2615 2.88976 18.2892C3.02502 19.2952 3.27869 19.8749 3.7019 20.2981C4.12511 20.7213 4.70476 20.975 5.71085 21.1102C6.73851 21.2484 8.09318 21.25 10 21.25H14C15.9068 21.25 17.2615 21.2484 18.2892 21.1102C19.2952 20.975 19.8749 20.7213 20.2981 20.2981C20.7213 19.8749 20.975 19.2952 21.1102 18.2892C21.2484 17.2615 21.25 15.9068 21.25 14C21.25 12.0932 21.2484 10.7385 21.1102 9.71085C20.975 8.70476 20.7213 8.12511 20.2981 7.70191C19.8749 7.2787 19.2952 7.02503 18.2892 6.88976C17.2615 6.7516 15.9068 6.75 14 6.75H10C8.09318 6.75 6.73851 6.7516 5.71085 6.88976ZM12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V10.0102C13.8388 10.2845 14.75 11.143 14.75 12.3333C14.75 12.7475 14.4142 13.0833 14 13.0833C13.5858 13.0833 13.25 12.7475 13.25 12.3333C13.25 11.9493 12.8242 11.4167 12 11.4167C11.1758 11.4167 10.75 11.9493 10.75 12.3333C10.75 12.7174 11.1758 13.25 12 13.25C13.3849 13.25 14.75 14.2098 14.75 15.6667C14.75 16.857 13.8388 17.7155 12.75 17.9898V18C12.75 18.4142 12.4142 18.75 12 18.75C11.5858 18.75 11.25 18.4142 11.25 18V17.9898C10.1612 17.7155 9.25 16.857 9.25 15.6667C9.25 15.2525 9.58579 14.9167 10 14.9167C10.4142 14.9167 10.75 15.2525 10.75 15.6667C10.75 16.0507 11.1758 16.5833 12 16.5833C12.8242 16.5833 13.25 16.0507 13.25 15.6667C13.25 15.2826 12.8242 14.75 12 14.75C10.6151 14.75 9.25 13.7903 9.25 12.3333C9.25 11.143 10.1612 10.2845 11.25 10.0102V10C11.25 9.58579 11.5858 9.25 12 9.25Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deposit</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/withdraw" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M19 12C19 12.5523 18.5523 13 18 13C17.4477 13 17 12.5523 17 12C17 11.4477 17.4477 11 18 11C18.5523 11 19 11.4477 19 12Z"
-                          fill="currentColor" />
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M9.94358 3.25H13.0564C14.8942 3.24998 16.3498 3.24997 17.489 3.40314C18.6614 3.56076 19.6104 3.89288 20.3588 4.64124C21.2831 5.56563 21.5777 6.80363 21.6847 8.41008C22.2619 8.6641 22.6978 9.2013 22.7458 9.88179C22.7501 9.94199 22.75 10.0069 22.75 10.067C22.75 10.0725 22.75 10.0779 22.75 10.0833V13.9167C22.75 13.9221 22.75 13.9275 22.75 13.933C22.75 13.9931 22.7501 14.058 22.7458 14.1182C22.6978 14.7987 22.2619 15.3359 21.6847 15.5899C21.5777 17.1964 21.2831 18.4344 20.3588 19.3588C19.6104 20.1071 18.6614 20.4392 17.489 20.5969C16.3498 20.75 14.8942 20.75 13.0564 20.75H9.94359C8.10583 20.75 6.65019 20.75 5.51098 20.5969C4.33856 20.4392 3.38961 20.1071 2.64124 19.3588C1.89288 18.6104 1.56076 17.6614 1.40314 16.489C1.24997 15.3498 1.24998 13.8942 1.25 12.0564V11.9436C1.24998 10.1058 1.24997 8.65019 1.40314 7.51098C1.56076 6.33856 1.89288 5.38961 2.64124 4.64124C3.38961 3.89288 4.33856 3.56076 5.51098 3.40314C6.65019 3.24997 8.10582 3.24998 9.94358 3.25ZM20.1679 15.75H18.2308C16.0856 15.75 14.25 14.1224 14.25 12C14.25 9.87756 16.0856 8.25 18.2308 8.25H20.1679C20.0541 6.90855 19.7966 6.20043 19.2981 5.7019C18.8749 5.27869 18.2952 5.02502 17.2892 4.88976C16.2615 4.75159 14.9068 4.75 13 4.75H10C8.09318 4.75 6.73851 4.75159 5.71085 4.88976C4.70476 5.02502 4.12511 5.27869 3.7019 5.7019C3.27869 6.12511 3.02502 6.70476 2.88976 7.71085C2.75159 8.73851 2.75 10.0932 2.75 12C2.75 13.9068 2.75159 15.2615 2.88976 16.2892C3.02502 17.2952 3.27869 17.8749 3.7019 18.2981C4.12511 18.7213 4.70476 18.975 5.71085 19.1102C6.73851 19.2484 8.09318 19.25 10 19.25H13C14.9068 19.25 16.2615 19.2484 17.2892 19.1102C18.2952 18.975 18.8749 18.7213 19.2981 18.2981C19.7966 17.7996 20.0541 17.0915 20.1679 15.75ZM5.25 8C5.25 7.58579 5.58579 7.25 6 7.25H10C10.4142 7.25 10.75 7.58579 10.75 8C10.75 8.41421 10.4142 8.75 10 8.75H6C5.58579 8.75 5.25 8.41421 5.25 8ZM20.9235 9.75023C20.9032 9.75001 20.8766 9.75 20.8333 9.75H18.2308C16.8074 9.75 15.75 10.8087 15.75 12C15.75 13.1913 16.8074 14.25 18.2308 14.25H20.8333C20.8766 14.25 20.9032 14.25 20.9235 14.2498C20.936 14.2496 20.9426 14.2495 20.9457 14.2493L20.9479 14.2492C21.1541 14.2367 21.2427 14.0976 21.2495 14.0139C21.2495 14.0139 21.2497 14.0076 21.2498 13.9986C21.25 13.9808 21.25 13.9572 21.25 13.9167V10.0833C21.25 10.0428 21.25 10.0192 21.2498 10.0014C21.2497 9.99238 21.2495 9.98609 21.2495 9.98609C21.2427 9.90242 21.1541 9.7633 20.9479 9.75076C20.9479 9.75076 20.943 9.75043 20.9235 9.75023Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Withdraw</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/transactions" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M7.09872 1.25004C7.14677 1.25006 7.19553 1.25008 7.24502 1.25008H16.755C16.8045 1.25008 16.8532 1.25006 16.9013 1.25004C17.918 1.2496 18.6178 1.24929 19.2071 1.45435C20.3201 1.84161 21.1842 2.73726 21.5546 3.86559L20.8421 4.09954L21.5546 3.86559C21.7507 4.46271 21.7504 5.17254 21.75 6.22655C21.75 6.27372 21.75 6.32158 21.75 6.37014V20.3743C21.75 21.8395 20.023 22.7118 18.8856 21.671C18.8061 21.5983 18.6939 21.5983 18.6144 21.671L18.1313 22.1131C17.2031 22.9624 15.7969 22.9624 14.8687 22.1131C14.5137 21.7882 13.9863 21.7882 13.6313 22.1131C12.7031 22.9624 11.2969 22.9624 10.3687 22.1131C10.0137 21.7882 9.48631 21.7882 9.13132 22.1131C8.20313 22.9624 6.79688 22.9624 5.86869 22.1131L5.3856 21.671C5.30612 21.5983 5.19389 21.5983 5.11442 21.671C3.97699 22.7118 2.25001 21.8395 2.25001 20.3743V6.37014C2.25001 6.32158 2.24999 6.27372 2.24997 6.22655C2.24959 5.17255 2.24933 4.46271 2.44539 3.86559C2.81585 2.73726 3.67996 1.84161 4.79292 1.45435C5.38224 1.24929 6.08197 1.2496 7.09872 1.25004ZM7.24502 2.75008C6.02394 2.75008 5.60334 2.76057 5.28587 2.87103C4.62649 3.10047 4.09913 3.63728 3.87054 4.3335C3.75945 4.67183 3.75001 5.11796 3.75001 6.37014V20.3743C3.75001 20.4933 3.80993 20.5661 3.88511 20.6009C3.92427 20.619 3.96258 20.6237 3.99449 20.6194C4.02263 20.6156 4.05904 20.6035 4.10179 20.5644C4.75447 19.9671 5.74555 19.9671 6.39822 20.5644L6.88132 21.0065C7.23631 21.3313 7.76371 21.3313 8.11869 21.0065C9.04688 20.1571 10.4531 20.1571 11.3813 21.0065C11.7363 21.3313 12.2637 21.3313 12.6187 21.0065C13.5469 20.1571 14.9531 20.1571 15.8813 21.0065C16.2363 21.3313 16.7637 21.3313 17.1187 21.0065L17.6018 20.5644C18.2545 19.9671 19.2455 19.9671 19.8982 20.5644C19.941 20.6035 19.9774 20.6156 20.0055 20.6194C20.0374 20.6237 20.0757 20.619 20.1149 20.6009C20.1901 20.5661 20.25 20.4934 20.25 20.3743V6.37014C20.25 5.11797 20.2406 4.67183 20.1295 4.3335C19.9009 3.63728 19.3735 3.10047 18.7141 2.87103C18.3967 2.76057 17.9761 2.75008 16.755 2.75008H7.24502ZM6.25001 7.50008C6.25001 7.08587 6.58579 6.75008 7.00001 6.75008H7.50001C7.91422 6.75008 8.25001 7.08587 8.25001 7.50008C8.25001 7.9143 7.91422 8.25008 7.50001 8.25008H7.00001C6.58579 8.25008 6.25001 7.9143 6.25001 7.50008ZM9.75001 7.50008C9.75001 7.08587 10.0858 6.75008 10.5 6.75008H17C17.4142 6.75008 17.75 7.08587 17.75 7.50008C17.75 7.9143 17.4142 8.25008 17 8.25008H10.5C10.0858 8.25008 9.75001 7.9143 9.75001 7.50008ZM6.25001 11.0001C6.25001 10.5859 6.58579 10.2501 7.00001 10.2501H7.50001C7.91422 10.2501 8.25001 10.5859 8.25001 11.0001C8.25001 11.4143 7.91422 11.7501 7.50001 11.7501H7.00001C6.58579 11.7501 6.25001 11.4143 6.25001 11.0001ZM9.75001 11.0001C9.75001 10.5859 10.0858 10.2501 10.5 10.2501H17C17.4142 10.2501 17.75 10.5859 17.75 11.0001C17.75 11.4143 17.4142 11.7501 17 11.7501H10.5C10.0858 11.7501 9.75001 11.4143 9.75001 11.0001ZM6.25001 14.5001C6.25001 14.0859 6.58579 13.7501 7.00001 13.7501H7.50001C7.91422 13.7501 8.25001 14.0859 8.25001 14.5001C8.25001 14.9143 7.91422 15.2501 7.50001 15.2501H7.00001C6.58579 15.2501 6.25001 14.9143 6.25001 14.5001ZM9.75001 14.5001C9.75001 14.0859 10.0858 13.7501 10.5 13.7501H17C17.4142 13.7501 17.75 14.0859 17.75 14.5001C17.75 14.9143 17.4142 15.2501 17 15.2501H10.5C10.0858 15.2501 9.75001 14.9143 9.75001 14.5001Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Transactions
-                        History</span>
-                    </div>
-                  </a>
-                </li>
-            </li>
-          </ul>
-          </li>
-
-          <h2
-            class="-mx-4 mb-1 flex items-center bg-white-light/30 py-3 px-7 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
-            <svg class="hidden h-5 w-4 flex-none" viewbox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
-              fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>USER AND SECURITY</span>
-          </h2>
-
-          <li class="menu nav-item">
-            <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'users'}"
-              @click="activeDropdown === 'users' ? activeDropdown = null : activeDropdown = 'users'">
-              <div class="flex items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M12 1.25C9.37665 1.25 7.25 3.37665 7.25 6C7.25 8.62335 9.37665 10.75 12 10.75C14.6234 10.75 16.75 8.62335 16.75 6C16.75 3.37665 14.6234 1.25 12 1.25ZM8.75 6C8.75 4.20507 10.2051 2.75 12 2.75C13.7949 2.75 15.25 4.20507 15.25 6C15.25 7.79493 13.7949 9.25 12 9.25C10.2051 9.25 8.75 7.79493 8.75 6Z"
-                    fill="currentColor" />
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M13.9107 21.6083C13.2991 21.7009 12.6587 21.75 12 21.75C9.96067 21.75 8.07752 21.2792 6.67815 20.4796C5.3 19.6921 4.25 18.4899 4.25 17C4.25 15.5101 5.3 14.3079 6.67815 13.5204C8.07752 12.7208 9.96067 12.25 12 12.25C13.8045 12.25 15.4825 12.6184 16.8117 13.2537C16.8742 13.2512 16.937 13.25 17 13.25C19.6234 13.25 21.75 15.3766 21.75 18C21.75 20.6234 19.6234 22.75 17 22.75C15.8204 22.75 14.7413 22.32 13.9107 21.6083ZM13.75 18C13.75 16.2051 15.2051 14.75 17 14.75C17.6257 14.75 18.2102 14.9268 18.7061 15.2333L14.2333 19.7061C13.9268 19.2102 13.75 18.6257 13.75 18ZM15.2939 20.7667L19.7667 16.2939C20.0732 16.7898 20.25 17.3743 20.25 18C20.25 19.7949 18.7949 21.25 17 21.25C16.3743 21.25 15.7898 21.0732 15.2939 20.7667ZM14.4176 14.0127C13.113 14.8593 12.25 16.3289 12.25 18C12.25 18.8029 12.4492 19.5593 12.8009 20.2224C12.5388 20.2406 12.2715 20.25 12 20.25C10.1733 20.25 8.55649 19.8253 7.42236 19.1772C6.26701 18.517 5.75 17.7193 5.75 17C5.75 16.2807 6.26701 15.483 7.42236 14.8228C8.55649 14.1747 10.1733 13.75 12 13.75C12.8611 13.75 13.6767 13.8444 14.4176 14.0127Z"
-                    fill="currentColor" />
-                </svg>
-                <span
-                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Users</span>
-              </div>
-              <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'users'}">
-                <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </div>
-            </button>
-            <ul x-cloak="" x-show="activeDropdown === 'users'" x-collapse="" class="sub-menu text-gray-500">
-              <li>
-                <a href="/profile">Profile</a>
               </li>
-              <li>
-                <a href="settings">Account Settings</a>
-              </li>
-            </ul>
-          </li>
-          <li class="menu nav-item">
-            <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'authentication'}"
-              @click="activeDropdown === 'authentication' ? activeDropdown = null : activeDropdown = 'authentication'">
-              <div class="flex items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M9.25 16C9.25 14.4812 10.4812 13.25 12 13.25C13.5188 13.25 14.75 14.4812 14.75 16C14.75 17.5188 13.5188 18.75 12 18.75C10.4812 18.75 9.25 17.5188 9.25 16ZM12 14.75C11.3096 14.75 10.75 15.3096 10.75 16C10.75 16.6904 11.3096 17.25 12 17.25C12.6904 17.25 13.25 16.6904 13.25 16C13.25 15.3096 12.6904 14.75 12 14.75Z"
-                    fill="currentColor" />
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M5.25 9.30277V8C5.25 4.27208 8.27208 1.25 12 1.25C15.7279 1.25 18.75 4.27208 18.75 8V9.30277C18.9768 9.31872 19.1906 9.33948 19.3918 9.36652C20.2919 9.48754 21.0497 9.74643 21.6517 10.3483C22.2536 10.9503 22.5125 11.7081 22.6335 12.6082C22.75 13.4752 22.75 14.5775 22.75 15.9451V16.0549C22.75 17.4225 22.75 18.5248 22.6335 19.3918C22.5125 20.2919 22.2536 21.0497 21.6517 21.6516C21.0497 22.2536 20.2919 22.5125 19.3918 22.6335C18.5248 22.75 17.4225 22.75 16.0549 22.75H7.94513C6.57754 22.75 5.47522 22.75 4.60825 22.6335C3.70814 22.5125 2.95027 22.2536 2.34835 21.6516C1.74643 21.0497 1.48754 20.2919 1.36652 19.3918C1.24996 18.5248 1.24998 17.4225 1.25 16.0549V15.9451C1.24998 14.5775 1.24996 13.4752 1.36652 12.6082C1.48754 11.7081 1.74643 10.9503 2.34835 10.3483C2.95027 9.74643 3.70814 9.48754 4.60825 9.36652C4.80938 9.33948 5.02317 9.31872 5.25 9.30277ZM6.75 8C6.75 5.10051 9.10051 2.75 12 2.75C14.8995 2.75 17.25 5.10051 17.25 8V9.25344C16.8765 9.24999 16.4784 9.24999 16.0549 9.25H7.94513C7.52161 9.24999 7.12353 9.24999 6.75 9.25344V8ZM4.80812 10.8531C4.07435 10.9518 3.68577 11.1322 3.40901 11.409C3.13225 11.6858 2.9518 12.0743 2.85315 12.8081C2.75159 13.5635 2.75 14.5646 2.75 16C2.75 17.4354 2.75159 18.4365 2.85315 19.1919C2.9518 19.9257 3.13225 20.3142 3.40901 20.591C3.68577 20.8678 4.07435 21.0482 4.80812 21.1469C5.56347 21.2484 6.56459 21.25 8 21.25H16C17.4354 21.25 18.4365 21.2484 19.1919 21.1469C19.9257 21.0482 20.3142 20.8678 20.591 20.591C20.8678 20.3142 21.0482 19.9257 21.1469 19.1919C21.2484 18.4365 21.25 17.4354 21.25 16C21.25 14.5646 21.2484 13.5635 21.1469 12.8081C21.0482 12.0743 20.8678 11.6858 20.591 11.409C20.3142 11.1322 19.9257 10.9518 19.1919 10.8531C18.4365 10.7516 17.4354 10.75 16 10.75H8C6.56459 10.75 5.56347 10.7516 4.80812 10.8531Z"
-                    fill="currentColor" />
-                </svg>
-                <span
-                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Authentication</span>
-              </div>
-              <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'authentication'}">
-                <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </div>
-            </button>
-            <ul x-cloak="" x-show="activeDropdown === 'authentication'" x-collapse="" class="sub-menu text-gray-500">
-              <li>
-                <a href="" target="_blank">Identity Verification</a>
-              </li>
-            </ul>
-          </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
+            
+          </div>
+        </nav>
+      </div>
     <!-- end sidebar section -->
 
     <div class="main-content flex flex-col min-h-screen">
       <!-- start header section -->
       <header class="z-40" :class="{'dark' : $store.app.semidark && $store.app.menu === 'horizontal'}">
         <div class="shadow-sm">
-          <div class="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-[#0e1726]">
-            <div class="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
-              <a class="main-logo flex shrink-0 items-center">
-                <% if (user.profile_picture) { %>
-                  <img class="inline w-8 ltr:-ml-1 rtl:-mr-1" style="border-radius: 50%;" src="<%= user.profile_picture %>" alt="image" />
-               
-                <% } else { %>
-                  <img class="inline w-8 ltr:-ml-1 rtl:-mr-1" src="../assets/images/logo.png" alt="image" />
-                  <% } %>
-              </a>
-
-              <a href="javascript:;"
-                class="collapse-icon flex flex-none rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary ltr:ml-2 rtl:mr-2 dark:bg-dark/40 dark:text-[#d0d2d6] dark:hover:bg-dark/60 dark:hover:text-primary lg:hidden"
-                @click="$store.app.toggleSidebar()">
-                <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 7L4 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                  <path opacity="0.5" d="M20 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                  </path>
-                  <path d="M20 17L4 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                </svg>
-              </a>
-            </div>
-            <div x-data="header"
-              class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
-              <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
-                <form
-                  class="absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0"
-                  :class="{'!block' : search}" @submit.prevent="search = false">
-                  <div class="relative">
-                    <input type="text"
-                      class="peer form-input bg-gray-100 placeholder:tracking-widest ltr:pl-9 ltr:pr-9 rtl:pr-9 rtl:pl-9 sm:bg-transparent ltr:sm:pr-4 rtl:sm:pl-4"
-                      placeholder="Search..." />
-                    <button type="button"
-                      class="absolute inset-0 h-9 w-9 appearance-none peer-focus:text-primary ltr:right-auto rtl:left-auto">
-                      <svg class="mx-auto" width="16" height="16" viewbox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5">
-                        </circle>
-                        <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                        </path>
-                      </svg>
-                    </button>
-                    <button type="button"
-                      class="absolute top-1/2 block -translate-y-1/2 hover:opacity-80 ltr:right-2 rtl:left-2 sm:hidden"
-                      @click="search = false">
-                      <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-                <button type="button"
-                  class="search_btn rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 dark:bg-dark/40 dark:hover:bg-dark/60 sm:hidden"
-                  @click="search = ! search">
-                  <svg class="mx-auto h-4.5 w-4.5 dark:text-[#d0d2d6]" width="20" height="20" viewbox="0 0 24 24"
-                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5"></circle>
-                    <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                  </svg>
-                </button>
-              </div>
-              <div>
-                <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'light'" href="javascript:;"
-                  class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="$store.app.toggleTheme('dark')">
-                  <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"></circle>
-                    <path d="M12 2V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path d="M12 20V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path d="M4 12L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path d="M22 12L20 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path opacity="0.5" d="M19.7778 4.22266L17.5558 6.25424" stroke="currentColor" stroke-width="1.5"
-                      stroke-linecap="round"></path>
-                    <path opacity="0.5" d="M4.22217 4.22266L6.44418 6.25424" stroke="currentColor" stroke-width="1.5"
-                      stroke-linecap="round"></path>
-                    <path opacity="0.5" d="M6.44434 17.5557L4.22211 19.7779" stroke="currentColor" stroke-width="1.5"
-                      stroke-linecap="round"></path>
-                    <path opacity="0.5" d="M19.7778 19.7773L17.5558 17.5551" stroke="currentColor" stroke-width="1.5"
-                      stroke-linecap="round"></path>
-                  </svg>
-                </a>
-                <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'dark'" href="javascript:;"
-                  class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="$store.app.toggleTheme('system')">
-                  <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M21.0672 11.8568L20.4253 11.469L21.0672 11.8568ZM12.1432 2.93276L11.7553 2.29085V2.29085L12.1432 2.93276ZM21.25 12C21.25 17.1086 17.1086 21.25 12 21.25V22.75C17.9371 22.75 22.75 17.9371 22.75 12H21.25ZM12 21.25C6.89137 21.25 2.75 17.1086 2.75 12H1.25C1.25 17.9371 6.06294 22.75 12 22.75V21.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75V1.25C6.06294 1.25 1.25 6.06294 1.25 12H2.75ZM15.5 14.25C12.3244 14.25 9.75 11.6756 9.75 8.5H8.25C8.25 12.5041 11.4959 15.75 15.5 15.75V14.25ZM20.4253 11.469C19.4172 13.1373 17.5882 14.25 15.5 14.25V15.75C18.1349 15.75 20.4407 14.3439 21.7092 12.2447L20.4253 11.469ZM9.75 8.5C9.75 6.41182 10.8627 4.5828 12.531 3.57467L11.7553 2.29085C9.65609 3.5593 8.25 5.86509 8.25 8.5H9.75ZM12 2.75C11.9115 2.75 11.8077 2.71008 11.7324 2.63168C11.6686 2.56527 11.6538 2.50244 11.6503 2.47703C11.6461 2.44587 11.6482 2.35557 11.7553 2.29085L12.531 3.57467C13.0342 3.27065 13.196 2.71398 13.1368 2.27627C13.0754 1.82126 12.7166 1.25 12 1.25V2.75ZM21.7092 12.2447C21.6444 12.3518 21.5541 12.3539 21.523 12.3497C21.4976 12.3462 21.4347 12.3314 21.3683 12.2676C21.2899 12.1923 21.25 12.0885 21.25 12H22.75C22.75 11.2834 22.1787 10.9246 21.7237 10.8632C21.286 10.804 20.7293 10.9658 20.4253 11.469L21.7092 12.2447Z"
-                      fill="currentColor"></path>
-                  </svg>
-                </a>
-                <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'system'" href="javascript:;"
-                  class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="$store.app.toggleTheme('light')">
-                  <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M3 9C3 6.17157 3 4.75736 3.87868 3.87868C4.75736 3 6.17157 3 9 3H15C17.8284 3 19.2426 3 20.1213 3.87868C21 4.75736 21 6.17157 21 9V14C21 15.8856 21 16.8284 20.4142 17.4142C19.8284 18 18.8856 18 17 18H7C5.11438 18 4.17157 18 3.58579 17.4142C3 16.8284 3 15.8856 3 14V9Z"
-                      stroke="currentColor" stroke-width="1.5"></path>
-                    <path opacity="0.5" d="M22 21H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                    </path>
-                    <path opacity="0.5" d="M15 15H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                    </path>
-                  </svg>
-                </a>
-              </div>
-
-              <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
+            <div class="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-[#0e1726]">
+              <div class="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
+  
                 <a href="javascript:;"
-                  class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="toggle">
-                  <img :src="`../assets/images/flags/${$store.app.locale.toUpperCase()}.svg`" alt="image"
-                    class="h-5 w-5 rounded-full object-cover" />
-                </a>
-                <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                  class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark ltr:-right-14 rtl:-left-14 dark:text-white-dark dark:text-white-light/90 sm:ltr:-right-2 sm:rtl:-left-2">
-                  <template x-for="item in languages">
-                    <li>
-                      <a href="javascript:;" class="hover:text-primary"
-                        @click="$store.app.toggleLocale(item.value),toggle()"
-                        :class="{'bg-primary/10 text-primary' : $store.app.locale == item.value}">
-                        <img class="h-5 w-5 rounded-full object-cover"
-                          :src="`../assets/images/flags/${item.value.toUpperCase()}.svg`" alt="image" />
-                        <span class="ltr:ml-3 rtl:mr-3" x-text="item.key"></span>
-                      </a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-
-              <div class="dropdown" x-data="dropdown" @click.outside="open = false">
-                <a href="javascript:;"
-                  class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="toggle">
+                  class="collapse-icon flex flex-none rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary ltr:ml-2 rtl:mr-2 dark:bg-dark/40 dark:text-[#d0d2d6] dark:hover:bg-dark/60 dark:hover:text-primary lg:hidden"
+                  @click="$store.app.toggleSidebar()">
                   <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M22 10C22.0185 10.7271 22 11.0542 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H13"
-                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path
-                      d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908"
-                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <circle cx="19" cy="5" r="3" stroke="currentColor" stroke-width="1.5"></circle>
+                    <path d="M20 7L4 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path opacity="0.5" d="M20 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    </path>
+                    <path d="M20 17L4 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
                   </svg>
                 </a>
-                <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                  class="top-11 w-[300px] !py-0 text-xs text-dark ltr:-right-16 rtl:-left-16 dark:text-white-dark sm:w-[375px] sm:ltr:-right-2 sm:rtl:-left-2">
-                  <li class="mb-5">
-                    <div class="relative overflow-hidden rounded-t-md !p-5 text-white">
-                      <div
-                        class="absolute inset-0 h-full w-full bg-[url('../assets/images/menu-heade.jpg')] bg-cover bg-center bg-no-repeat">
-                        <img src="../assets/images/menu-heade.jpg" alt="">
-                      </div>
-                      <h4 class="relative z-10 text-lg font-semibold">
-                        Messages
-                      </h4>
-                    </div>
-                  </li>
-                  <template x-if="messages.length">
-                    <li class="mt-5 border-t border-white-light text-center dark:border-white/10">
-                      <div
-                        class="group flex cursor-pointer items-center justify-center px-4 py-4 font-semibold text-primary dark:text-gray-400"
-                        @click="toggle">
-                        <span class="group-hover:underline ltr:mr-1 rtl:ml-1">VIEW ALL ACTIVITIES</span>
-                        <svg class="h-4 w-4 transition duration-300 group-hover:translate-x-1 ltr:ml-1 rtl:mr-1"
-                          viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round"></path>
+              </div>
+              <div x-data="header"
+                class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
+                <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
+                  <form
+                    class="absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0"
+                    :class="{'!block' : search}" @submit.prevent="search = false">
+                    <div class="relative">
+                      <input type="text"
+                        class="peer form-input bg-gray-100 placeholder:tracking-widest ltr:pl-9 ltr:pr-9 rtl:pr-9 rtl:pl-9 sm:bg-transparent ltr:sm:pr-4 rtl:sm:pl-4"
+                        placeholder="Search..." />
+                      <button type="button"
+                        class="absolute inset-0 h-9 w-9 appearance-none peer-focus:text-primary ltr:right-auto rtl:left-auto">
+                        <svg class="mx-auto" width="16" height="16" viewbox="0 0 24 24" fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5">
+                          </circle>
+                          <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                          </path>
                         </svg>
-                      </div>
-                    </li>
-                  </template>
-                  <template x-if="!messages.length">
-                    <li class="mb-5">
-                      <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
-                        <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
-                          <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.5"
-                              d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
-                              fill="currentColor"></path>
-                          </svg>
-                        </div>
-                        No data available.
-                      </div>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-              <div class="dropdown" x-data="dropdown" @click.outside="open = false">
-                <a href="javascript:;"
-                  class="relative block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="toggle">
-                  <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M19.0001 9.7041V9C19.0001 5.13401 15.8661 2 12.0001 2C8.13407 2 5.00006 5.13401 5.00006 9V9.7041C5.00006 10.5491 4.74995 11.3752 4.28123 12.0783L3.13263 13.8012C2.08349 15.3749 2.88442 17.5139 4.70913 18.0116C9.48258 19.3134 14.5175 19.3134 19.291 18.0116C21.1157 17.5139 21.9166 15.3749 20.8675 13.8012L19.7189 12.0783C19.2502 11.3752 19.0001 10.5491 19.0001 9.7041Z"
-                      stroke="currentColor" stroke-width="1.5"></path>
-                    <path d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C14.0775 22 15.845 20.7478 16.5 19"
-                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path d="M12 6V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                  </svg>
-
-                  <% if (notifications.length===0) { %>
-
-                    <% } else { %>
-                      <span class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0">
-                        <span
-                          class="absolute -top-[3px] inline-flex h-full w-full animate-ping rounded-full bg-success/50 opacity-75 ltr:-left-[3px] rtl:-right-[3px]"></span>
-                        <span class="relative inline-flex h-[6px] w-[6px] rounded-full bg-success"></span>
-                      </span>
-                      <% } %>
-
-
-                </a>
-                <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms="" id="notification-list"
-                  class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
-                  <li>
-                    <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
-                      <h4 class="text-lg">Notification</h4>
-                      <template x-if="notifications.length">
-                        <span class="badge bg-primary/80">
-                          <%= notifications.length %>New
-                        </span>
-                      </template>
+                      </button>
+                      <button type="button"
+                        class="absolute top-1/2 block -translate-y-1/2 hover:opacity-80 ltr:right-2 rtl:left-2 sm:hidden"
+                        @click="search = false">
+                        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
+                          <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round"></path>
+                        </svg>
+                      </button>
                     </div>
-                  </li>
-                  <% notifications.forEach(function(notification) { %>
-                    <li class="dark:text-white-light/90" data-id="<%= notification.id %>">
-                      <div class="group flex items-center px-4 py-2" @click.self="toggle">
-                        <div class="grid place-content-center rounded">
-                          <div class="relative h-12 w-12">
-                            <img class="h-12 w-12 rounded-full object-cover" src="../assets/images/logo.png"
-                              alt="image" />
-                            <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
-                          </div>
-                        </div>
-                        <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
-                          <div class="ltr:pr-3 rtl:pl-3">
-                            <h6>
-                              <%= notification.message %>
-                            </h6>
-                            <span class="block text-xs font-normal dark:text-gray-500">
-                              <%= timeSince(notification.timestamp) %>
-                            </span>
-                          </div>
-                          <button type="button"
-                            class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto mark-as-read"
-                            data-id="<%= notification.id %>">
+                  </form>
+                  <button type="button"
+                    class="search_btn rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 dark:bg-dark/40 dark:hover:bg-dark/60 sm:hidden"
+                    @click="search = ! search">
+                    <svg class="mx-auto h-4.5 w-4.5 dark:text-[#d0d2d6]" width="20" height="20" viewbox="0 0 24 24"
+                      fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5"></circle>
+                      <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+                <div>
+                  <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'light'" href="javascript:;"
+                    class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                    @click="$store.app.toggleTheme('dark')">
+                    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"></circle>
+                      <path d="M12 2V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path d="M12 20V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path d="M4 12L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path d="M22 12L20 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path opacity="0.5" d="M19.7778 4.22266L17.5558 6.25424" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round"></path>
+                      <path opacity="0.5" d="M4.22217 4.22266L6.44418 6.25424" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round"></path>
+                      <path opacity="0.5" d="M6.44434 17.5557L4.22211 19.7779" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round"></path>
+                      <path opacity="0.5" d="M19.7778 19.7773L17.5558 17.5551" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round"></path>
+                    </svg>
+                  </a>
+                  <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'dark'" href="javascript:;"
+                    class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                    @click="$store.app.toggleTheme('system')">
+                    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21.0672 11.8568L20.4253 11.469L21.0672 11.8568ZM12.1432 2.93276L11.7553 2.29085V2.29085L12.1432 2.93276ZM21.25 12C21.25 17.1086 17.1086 21.25 12 21.25V22.75C17.9371 22.75 22.75 17.9371 22.75 12H21.25ZM12 21.25C6.89137 21.25 2.75 17.1086 2.75 12H1.25C1.25 17.9371 6.06294 22.75 12 22.75V21.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75V1.25C6.06294 1.25 1.25 6.06294 1.25 12H2.75ZM15.5 14.25C12.3244 14.25 9.75 11.6756 9.75 8.5H8.25C8.25 12.5041 11.4959 15.75 15.5 15.75V14.25ZM20.4253 11.469C19.4172 13.1373 17.5882 14.25 15.5 14.25V15.75C18.1349 15.75 20.4407 14.3439 21.7092 12.2447L20.4253 11.469ZM9.75 8.5C9.75 6.41182 10.8627 4.5828 12.531 3.57467L11.7553 2.29085C9.65609 3.5593 8.25 5.86509 8.25 8.5H9.75ZM12 2.75C11.9115 2.75 11.8077 2.71008 11.7324 2.63168C11.6686 2.56527 11.6538 2.50244 11.6503 2.47703C11.6461 2.44587 11.6482 2.35557 11.7553 2.29085L12.531 3.57467C13.0342 3.27065 13.196 2.71398 13.1368 2.27627C13.0754 1.82126 12.7166 1.25 12 1.25V2.75ZM21.7092 12.2447C21.6444 12.3518 21.5541 12.3539 21.523 12.3497C21.4976 12.3462 21.4347 12.3314 21.3683 12.2676C21.2899 12.1923 21.25 12.0885 21.25 12H22.75C22.75 11.2834 22.1787 10.9246 21.7237 10.8632C21.286 10.804 20.7293 10.9658 20.4253 11.469L21.7092 12.2447Z"
+                        fill="currentColor"></path>
+                    </svg>
+                  </a>
+                  <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'system'" href="javascript:;"
+                    class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                    @click="$store.app.toggleTheme('light')">
+                    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M3 9C3 6.17157 3 4.75736 3.87868 3.87868C4.75736 3 6.17157 3 9 3H15C17.8284 3 19.2426 3 20.1213 3.87868C21 4.75736 21 6.17157 21 9V14C21 15.8856 21 16.8284 20.4142 17.4142C19.8284 18 18.8856 18 17 18H7C5.11438 18 4.17157 18 3.58579 17.4142C3 16.8284 3 15.8856 3 14V9Z"
+                        stroke="currentColor" stroke-width="1.5"></path>
+                      <path opacity="0.5" d="M22 21H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      </path>
+                      <path opacity="0.5" d="M15 15H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      </path>
+                    </svg>
+                  </a>
+                </div>
+  
+                <div class="dropdown" x-data="dropdown" @click.outside="open = false">
+                  <a href="javascript:;"
+                    class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                    @click="toggle">
+                    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M22 10C22.0185 10.7271 22 11.0542 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H13"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path
+                        d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <circle cx="19" cy="5" r="3" stroke="currentColor" stroke-width="1.5"></circle>
+                    </svg>
+                  </a>
+                  <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                    class="top-11 w-[300px] !py-0 text-xs text-dark ltr:-right-16 rtl:-left-16 dark:text-white-dark sm:w-[375px] sm:ltr:-right-2 sm:rtl:-left-2">
+                    <li class="mb-5">
+                      <div class="relative overflow-hidden rounded-t-md !p-5 text-white">
+                        <div
+                          class="absolute inset-0 h-full w-full bg-[url('../assets/images/menu-heade.jpg')] bg-cover bg-center bg-no-repeat">
+                          <img src="../assets/images/menu-heade.jpg" alt=""></div>
+                        <h4 class="relative z-10 text-lg font-semibold">
+                          Messages
+                        </h4>
+                      </div>
+                    </li>
+                    <template x-for="msg in messages">
+                      <li>
+                        <div class="flex items-center px-5 py-3" @click.self="toggle">
+                          <div x-html="msg.image"></div>
+                          <span class="px-3 dark:text-gray-500">
+                            <div class="text-sm font-semibold dark:text-white-light/90" x-text="msg.title"></div>
+                            <div x-text="msg.message"></div>
+                          </span>
+                          <span
+                            class="whitespace-pre rounded bg-white-dark/20 px-1 font-semibold text-dark/60 ltr:ml-auto ltr:mr-2 rtl:mr-auto rtl:ml-2 dark:text-white-dark"
+                            x-text="msg.time"></span>
+                          <button type="button" class="text-neutral-300 hover:text-danger" @click="removeMessage(msg.id)">
                             <svg width="20" height="20" viewbox="0 0 24 24" fill="none"
                               xmlns="http://www.w3.org/2000/svg">
                               <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5">
@@ -637,133 +459,225 @@
                             </svg>
                           </button>
                         </div>
+                      </li>
+                    </template>
+                    <template x-if="messages.length">
+                      <li class="mt-5 border-t border-white-light text-center dark:border-white/10">
+                        <div
+                          class="group flex cursor-pointer items-center justify-center px-4 py-4 font-semibold text-primary dark:text-gray-400"
+                          @click="toggle">
+                          <span class="group-hover:underline ltr:mr-1 rtl:ml-1">VIEW ALL ACTIVITIES</span>
+                          <svg class="h-4 w-4 transition duration-300 group-hover:translate-x-1 ltr:ml-1 rtl:mr-1"
+                            viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="1.5"
+                              stroke-linecap="round" stroke-linejoin="round"></path>
+                          </svg>
+                        </div>
+                      </li>
+                    </template>
+                    <template x-if="!messages.length">
+                      <li class="mb-5">
+                        <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
+                          <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
+                            <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path opacity="0.5"
+                                d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
+                                fill="currentColor"></path>
+                              <path
+                                d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
+                                fill="currentColor"></path>
+                              <path
+                                d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
+                                fill="currentColor"></path>
+                            </svg>
+                          </div>
+                          No data available.
+                        </div>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+                <div class="dropdown" x-data="dropdown" @click.outside="open = false">
+                  <a href="javascript:;"
+                    class="relative block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                    @click="toggle">
+                    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M19.0001 9.7041V9C19.0001 5.13401 15.8661 2 12.0001 2C8.13407 2 5.00006 5.13401 5.00006 9V9.7041C5.00006 10.5491 4.74995 11.3752 4.28123 12.0783L3.13263 13.8012C2.08349 15.3749 2.88442 17.5139 4.70913 18.0116C9.48258 19.3134 14.5175 19.3134 19.291 18.0116C21.1157 17.5139 21.9166 15.3749 20.8675 13.8012L19.7189 12.0783C19.2502 11.3752 19.0001 10.5491 19.0001 9.7041Z"
+                        stroke="currentColor" stroke-width="1.5"></path>
+                      <path d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C14.0775 22 15.845 20.7478 16.5 19"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      <path d="M12 6V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+  
+                    <span class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0">
+                      <span
+                        class="absolute -top-[3px] inline-flex h-full w-full animate-ping rounded-full bg-success/50 opacity-75 ltr:-left-[3px] rtl:-right-[3px]"></span>
+                      <span class="relative inline-flex h-[6px] w-[6px] rounded-full bg-success"></span>
+                    </span>
+                  </a>
+                  <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                    class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
+                    <li>
+                      <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
+                        <h4 class="text-lg">Notification</h4>
+                        <template x-if="notifications.length">
+                          <span class="badge bg-primary/80" x-text="notifications.length + 'New'"></span>
+                        </template>
                       </div>
                     </li>
-                    <% }); %>
+                    <template x-for="notification in notifications">
+                      <li class="dark:text-white-light/90">
+                        <div class="group flex items-center px-4 py-2" @click.self="toggle">
+                          <div class="grid place-content-center rounded">
+                            <div class="relative h-12 w-12">
+                              <img class="h-12 w-12 rounded-full object-cover"
+                                :src="`../assets/images/${notification.profile}`" alt="image" />
+                              <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
+                            </div>
+                          </div>
+                          <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
+                            <div class="ltr:pr-3 rtl:pl-3">
+                              <h6 x-html="notification.message"></h6>
+                              <span class="block text-xs font-normal dark:text-gray-500"
+                                x-text="notification.time"></span>
+                            </div>
+                            <button type="button"
+                              class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
+                              @click="removeNotification(notification.id)">
+                              <svg width="20" height="20" viewbox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5">
+                                </circle>
+                                <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor"
+                                  stroke-width="1.5" stroke-linecap="round"></path>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    </template>
+                    <template x-if="notifications.length">
                       <li>
                         <div class="p-4">
-                          <button
-                            class="<%= notifications.length === 0 ? 'hidden' : 'block' %> btn btn-primary btn-small w-full"
-                            @click="toggle">
+                          <button class="btn btn-primary btn-small block w-full" @click="toggle">
                             Read All Notifications
                           </button>
                         </div>
                       </li>
-                      <template x-if="!notifications.length">
-                        <li>
-                          <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
-                            <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
-                              <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.5"
-                                  d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
-                                  fill="currentColor"></path>
-                                <path
-                                  d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
-                                  fill="currentColor"></path>
-                                <path
-                                  d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
-                                  fill="currentColor"></path>
-                              </svg>
-                            </div>
-                            No data available.
+                    </template>
+                    <template x-if="!notifications.length">
+                      <li>
+                        <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
+                          <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
+                            <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path opacity="0.5"
+                                d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
+                                fill="currentColor"></path>
+                              <path
+                                d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
+                                fill="currentColor"></path>
+                              <path
+                                d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
+                                fill="currentColor"></path>
+                            </svg>
                           </div>
-                        </li>
-                      </template>
-                </ul>
-              </div>
-              <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
-                <a href="javascript:;" class="group relative" @click="toggle()">
-                      <% if (user.profile_picture) { %>
-                        <span><img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-                        src="<%= user.profile_picture %>" alt="image" /></span>
-                      <% } else { %>
-                        <span><img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-                          src="../assets/images/user-profile.jpeg" alt="image" /></span>
-                        <% } %>
-                </a>
-                <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                  class="top-11 w-[230px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90">
-                  <li>
-                    <div class="flex items-center px-4 py-4">
-
-                      <div class="truncate ltr:pl-4 rtl:pr-4">
-                        <h4 class="text-base">
-                          <%= user.firstname %>
-                            <%= user.lastname %><span
-                                class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">User</span>
-                        </h4>
-                        <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
-                          href="javascript:;">
-                          <%= user.email %>
-                        </a>
+                          No data available.
+                        </div>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+                <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
+                  <a href="javascript:;" class="group relative" @click="toggle()">
+                    <span><img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
+                        src="../assets/images/user-profile.jpeg" alt="image" /></span>
+                  </a>
+                  <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                    class="top-11 w-[230px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90">
+                    <li>
+                      <div class="flex items-center px-4 py-4">
+  
+                        <div class="truncate ltr:pl-4 rtl:pr-4">
+                          <h4 class="text-base">
+                            <%= user.firstname %> <%= user.lastname %><span
+                              class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
+                          </h4>
+                          <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
+                            href="javascript:;"><%= user.email %> </a>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li>
-                    <a href="/profile" class="dark:hover:text-white" @click="toggle">
-                      <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
-                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"></circle>
-                        <path opacity="0.5"
-                          d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
-                          stroke="currentColor" stroke-width="1.5"></path>
-                      </svg>
-                      Profile</a>
-                  </li>
-                  <li>
-                    <a href="/settings" class="dark:hover:text-white" @click="toggle">
-                      <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
-                      fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="3" stroke="black" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z" stroke="currentColor" stroke-width="1.5"/>
+                    </li>
+                    <li>
+                      <a href="profile" class="dark:hover:text-white" @click="toggle">
+                        <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
+                          fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"></circle>
+                          <path opacity="0.5"
+                            d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
+                            stroke="currentColor" stroke-width="1.5"></path>
                         </svg>
-                      Settings</a>
-                  </li>
-                  <li>
-                    <a href="" class="dark:hover:text-white" @click="toggle">
-                      <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
-                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M2 16C2 13.1716 2 11.7574 2.87868 10.8787C3.75736 10 5.17157 10 8 10H16C18.8284 10 20.2426 10 21.1213 10.8787C22 11.7574 22 13.1716 22 16C22 18.8284 22 20.2426 21.1213 21.1213C20.2426 22 18.8284 22 16 22H8C5.17157 22 3.75736 22 2.87868 21.1213C2 20.2426 2 18.8284 2 16Z"
-                          stroke="currentColor" stroke-width="1.5"></path>
-                        <path opacity="0.5" d="M6 10V8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8V10"
-                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <g opacity="0.5">
+                        Profile</a>
+                    </li>
+                    <li>
+                      <a href="apps-mailbox.html" class="dark:hover:text-white" @click="toggle">
+                        <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
+                          fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.5"
+                            d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
+                            stroke="currentColor" stroke-width="1.5"></path>
                           <path
-                            d="M9 16C9 16.5523 8.55228 17 8 17C7.44772 17 7 16.5523 7 16C7 15.4477 7.44772 15 8 15C8.55228 15 9 15.4477 9 16Z"
-                            fill="currentColor"></path>
+                            d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        </svg>
+                        Inbox</a>
+                    </li>
+                    <li>
+                      <a href="auth-boxed-lockscreen.html" class="dark:hover:text-white" @click="toggle">
+                        <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
+                          fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
-                            d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z"
-                            fill="currentColor"></path>
-                          <path
-                            d="M17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16C15 15.4477 15.4477 15 16 15C16.5523 15 17 15.4477 17 16Z"
-                            fill="currentColor"></path>
-                        </g>
-                      </svg>
-                      Lock Screen</a>
-                  </li>
-                  <li class="border-t border-white-light dark:border-white-light/10">
-                    <a href="logout" class="!py-3 text-danger" @click="toggle">
-                      <svg class="h-4.5 w-4.5 rotate-90 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
-                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity="0.5"
-                          d="M17 9.00195C19.175 9.01406 20.3529 9.11051 21.1213 9.8789C22 10.7576 22 12.1718 22 15.0002V16.0002C22 18.8286 22 20.2429 21.1213 21.1215C20.2426 22.0002 18.8284 22.0002 16 22.0002H8C5.17157 22.0002 3.75736 22.0002 2.87868 21.1215C2 20.2429 2 18.8286 2 16.0002L2 15.0002C2 12.1718 2 10.7576 2.87868 9.87889C3.64706 9.11051 4.82497 9.01406 7 9.00195"
-                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path d="M12 15L12 2M12 2L15 5.5M12 2L9 5.5" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                      Sign Out
-                    </a>
-                  </li>
-                </ul>
+                            d="M2 16C2 13.1716 2 11.7574 2.87868 10.8787C3.75736 10 5.17157 10 8 10H16C18.8284 10 20.2426 10 21.1213 10.8787C22 11.7574 22 13.1716 22 16C22 18.8284 22 20.2426 21.1213 21.1213C20.2426 22 18.8284 22 16 22H8C5.17157 22 3.75736 22 2.87868 21.1213C2 20.2426 2 18.8284 2 16Z"
+                            stroke="currentColor" stroke-width="1.5"></path>
+                          <path opacity="0.5" d="M6 10V8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8V10"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <g opacity="0.5">
+                            <path
+                              d="M9 16C9 16.5523 8.55228 17 8 17C7.44772 17 7 16.5523 7 16C7 15.4477 7.44772 15 8 15C8.55228 15 9 15.4477 9 16Z"
+                              fill="currentColor"></path>
+                            <path
+                              d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z"
+                              fill="currentColor"></path>
+                            <path
+                              d="M17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16C15 15.4477 15.4477 15 16 15C16.5523 15 17 15.4477 17 16Z"
+                              fill="currentColor"></path>
+                          </g>
+                        </svg>
+                        Settings</a>
+                    </li>
+                    <li class="border-t border-white-light dark:border-white-light/10">
+                      <a href="/admin/logout" class="!py-3 text-danger" @click="toggle">
+                        <svg class="h-4.5 w-4.5 rotate-90 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24"
+                          fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.5"
+                            d="M17 9.00195C19.175 9.01406 20.3529 9.11051 21.1213 9.8789C22 10.7576 22 12.1718 22 15.0002V16.0002C22 18.8286 22 20.2429 21.1213 21.1215C20.2426 22.0002 18.8284 22.0002 16 22.0002H8C5.17157 22.0002 3.75736 22.0002 2.87868 21.1215C2 20.2429 2 18.8286 2 16.0002L2 15.0002C2 12.1718 2 10.7576 2.87868 9.87889C3.64706 9.11051 4.82497 9.01406 7 9.00195"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                          <path d="M12 15L12 2M12 2L15 5.5M12 2L9 5.5" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        Sign Out
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
+  
+            <!-- horizontal menu -->
+  
           </div>
-
-          <!-- horizontal menu -->
-
-        </div>
       </header>
       <!-- end header section -->
 
@@ -1069,7 +983,7 @@
 
       <!-- start footer section -->
       <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
-        © <span id="footer-year"></span>.
+        SMMBIDMEDIA © <span id="footer-year"></span>.
       </div>
       <!-- end footer section -->
     </div>

@@ -8,17 +8,19 @@ CREATE TABLE IF NOT EXISTS userprofile (
     password TEXT NOT NULL,
     balance numeric(15,2) DEFAULT 0.00,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    is_suspended boolean DEFAULT false,
+    is_suspended BOOLEAN DEFAULT false,
     is_locked boolean DEFAULT false,
     temp_2fa_secret VARCHAR(255),
     two_factor_secret VARCHAR(255) ,
-    two_factor_enabled boolean DEFAULT false,
-    email_verified boolean DEFAULT false,
+    two_factor_enabled BOOLEAN DEFAULT false,
+    email_verified BOOLEAN DEFAULT false,
     verification_code VARCHAR(6),
     verification_code_expires_at timestamp without time zone,
     last_verification_code_sent_at timestamp without time zone,
     profile_picture VARCHAR(255),
-    referral_code VARCHAR(50) UNIQUE
+    referral_code VARCHAR(50) UNIQUE,
+    notify_unusual_activity BOOLEAN DEFAULT FALSE,
+    last_login_ip VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -205,7 +207,7 @@ CREATE TABLE IF NOT EXISTS referrals (
 
 CREATE TABLE IF NOT EXISTS challenge (
   id SERIAL PRIMARY KEY,
-  user_id INT REFERENCES userprofile(id),
+  user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
   week_start DATE,
   week_end DATE,
   progress DECIMAL DEFAULT 0,
@@ -233,6 +235,14 @@ CREATE TABLE IF NOT EXISTS notifications (
     message TEXT,
     timestamp TIMESTAMPTZ DEFAULT NOW(),
     read BOOLEAN DEFAULT false
+);
+
+CREATE TABLE user_archives (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL,
+  archived_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, product_id)
 );
 
 -- hd

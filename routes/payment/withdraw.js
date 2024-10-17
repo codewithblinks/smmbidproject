@@ -40,6 +40,7 @@ router.get("/withdraw", ensureAuthenticated, userRole, async (req, res) => {
   } catch (error) {
     console.error("Error fetching banks or user bank accounts:", error);
     res.send("Error fetching banks or user bank accounts");
+    console.log(error);
   }
 });
 
@@ -135,6 +136,7 @@ router.post("/withdraw", ensureAuthenticated, async (req, res) => {
     return res.redirect("/dashboard");
   } catch (error) {
     console.error("Error initiating transfer:", error.message);
+    console.log(error);
 
     // Check if Paystack API returned an error
     if (error.response && error.response.data && error.response.data.message) {
@@ -149,7 +151,8 @@ router.post("/withdraw", ensureAuthenticated, async (req, res) => {
 router.post("/webhook", async (req, res) => {
   const event = req.body;
 
-  if (event.event === "transfer.success" || event.event === "transfer.failed") {
+  try {
+      if (event.event === "transfer.success" || event.event === "transfer.failed") {
     const transferReference = event.data.reference;
     const transferStatus = event.data.status;
 
@@ -167,6 +170,12 @@ router.post("/webhook", async (req, res) => {
   }
 
   return res.status(400).json({ error: "Unsupported event type" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+
 });
 
 export default router;

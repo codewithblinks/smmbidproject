@@ -99,6 +99,7 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
     req.flash('success', 'Profile picture updated successfully!');
     res.redirect('/profile');
   } catch (error) {
+    console.log(error);
     console.error('Error uploading profile picture:', error);
     req.flash('error', 'Error uploading profile picture');
     res.redirect('/settings');

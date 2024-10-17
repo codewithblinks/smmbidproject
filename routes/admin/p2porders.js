@@ -7,13 +7,16 @@ import numeral from "numeral";
 
 router.get("/admin/product/active/accounts", adminEnsureAuthenticated, adminRole, 
     async (req, res) => {
+        const userId = req.user.id;
+        
         try {
+            const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+            const user = adminResult.rows[0];
 
             const limit = 15;
             const page = parseInt(req.query.page) || 1;
             const offset = (page - 1) * limit;
-
-            
+  
             const activeOrderResult = await db.query(`
                 SELECT 
                 product_list.*,
@@ -33,10 +36,11 @@ router.get("/admin/product/active/accounts", adminEnsureAuthenticated, adminRole
 
             res.render("admin/allactiveaccounts", {activeOrder, messages: req.flash(),
                 currentPage: page, 
-                totalPages: Math.ceil(totalOrders / limit)
+                totalPages: Math.ceil(totalOrders / limit), user
             })
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
 })
 
@@ -51,14 +55,20 @@ router.post("/product/delete/active/account", adminEnsureAuthenticated, adminRol
             req.flash("success", "Product has been deleted");
             res.redirect("/admin/product/active/accounts");
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
 })
 
 router.get("/admin/product/sold/accounts",
     adminEnsureAuthenticated, adminRole,
     async(req, res) => {
+        const adminId = req.user.id;
+
         try {
+            const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+            const user = adminResult.rows[0];
+
             const limit = 15;
             const page = parseInt(req.query.page) || 1;
             const offset = (page - 1) * limit;
@@ -89,17 +99,27 @@ router.get("/admin/product/sold/accounts",
 
             res.render("admin/soldproducts", {products,
                 currentPage: page, 
-                totalPages: Math.ceil(totalOrders / limit)
+                totalPages: Math.ceil(totalOrders / limit), user
             })
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 )
 
 router.get("/admin/product/awaiting", adminEnsureAuthenticated, adminRole,
     async(req, res) =>{
+        const adminId = req.user.id;
+
         try {
+            const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+            const user = adminResult.rows[0];
+
+            const limit = 15;
+            const page = parseInt(req.query.page) || 1;
+            const offset = (page - 1) * limit;
+
             const awaitingResult = await db.query(`
 SELECT 
     purchases.product_id,
@@ -111,7 +131,7 @@ SELECT
 	buyer.lastname AS buyerlast_name,
     seller.firstname AS sellerfirst_name,
     seller.lastname AS sellerlast_name,
-    product_list.* -- Assuming you want all product details as well
+    product_list.*
 FROM 
     purchases
 JOIN 
@@ -123,19 +143,29 @@ JOIN
 WHERE 
     purchases.status = 'pending'
 AND 
-    product_list.payment_status = 'awaiting' ORDER BY purchases.date DESC
+    product_list.payment_status = 'awaiting' ORDER BY purchases.date DESC LIMIT $1 OFFSET $2
 
-                `)
+                `, [limit, offset])
 
                 const awaiting = awaitingResult.rows;
 
                 awaiting.forEach((awaiting) => {
                     awaiting.purchases_date = moment(awaiting.purchases_date).format("D MMM h:mmA");
+                    awaiting.amount = numeral(awaiting.amount).format("0,0.00");
                   });
 
-            res.render("admin/allAwaitingProducts", {awaiting})
+                  const countQuery = "SELECT COUNT(*) FROM purchases WHERE purchases.status = 'pending'";
+                  const countResult = await db.query(countQuery);
+                  const totalOrders = parseInt(countResult.rows[0].count);
+
+            res.render("admin/allAwaitingProducts", {
+                awaiting, user,
+                currentPage: page, 
+                totalPages: Math.ceil(totalOrders / limit)
+            })
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 )
@@ -179,10 +209,9 @@ router.post( "/admin/product/complete/order/:id", adminEnsureAuthenticated, admi
 
         res.redirect("/admin/product/awaiting");
       } 
-    } catch (err) {
-      console.error(err);
-      console.log(err);
-      res.send("Error updating product");
+    } catch (error) {
+        console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
     }
   }
 );

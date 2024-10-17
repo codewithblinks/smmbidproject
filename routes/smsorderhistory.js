@@ -9,7 +9,6 @@ import moment from "moment";
   router.get('/smsorderhistory', ensureAuthenticated, userRole, async (req, res) => {
     const userId = req.user.id; 
     try {
-      
       const users = await db.query("SELECT * FROM userprofile WHERE id = $1", [userId]);
       const user = users.rows[0];
 
@@ -43,7 +42,7 @@ import moment from "moment";
           totalPages: Math.ceil(totalSms / limit),
         });
     } catch (error) {
-        
+      console.log(error);
     }
   });
   

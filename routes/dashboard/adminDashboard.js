@@ -387,9 +387,8 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
         totalSmsAmount, adminSold, totalAdminSoldp2p
        });
     
-  } catch (err) {
-    // console.err(err.message);
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

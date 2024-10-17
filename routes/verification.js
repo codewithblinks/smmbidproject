@@ -41,8 +41,9 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
   const notifications = notificationsResult.rows;
       res.render('verification', { messages: req.flash(), user: userDetails, countries, services, notifications, timeSince });
 
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
+    console.error(error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -122,6 +123,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
     const filteredOrders = activeOrders.filter(order => order.status === 'pending' || order.status === 'completed' && orderCodes.includes(order.order_code));
     return filteredOrders;
   } catch (error) {
+    console.log(error);
     console.error('Error fetching and filtering data:', error);
     return [];
   }
@@ -131,7 +133,7 @@ const notifyOrderStatusChange = (order) => {
   io.emit('orderStatusUpdated', order);
 };
 
-cron.schedule('*/2 * * * *', async () => {
+cron.schedule('*/30 * * * * *', async () => {
 
   try {
     const userIds = await fetchAllUserIds();
@@ -140,6 +142,7 @@ cron.schedule('*/2 * * * *', async () => {
       const filteredOrders = await fetchAndFilterActiveOrders(orderCodes);
     }
   } catch (error) {
+    console.log(error);
     console.error('Error during scheduled task:', error);
   }
 });
@@ -159,8 +162,9 @@ const getPhoneNumbersByStatus = async (userId) => {
       pendingNumbers: pendingResult.rows,
       completedNumbers: completedResult.rows,
     };
-  } catch (err) {
-    console.error('Error fetching phone numbers by status:', err);
+  } catch (error) {
+    console.log(error);
+    console.error('Error fetching phone numbers by status:', error);
     return { pendingNumbers: [], completedNumbers: [] };
   }
 };
@@ -178,6 +182,7 @@ router.get("/sms/check", ensureAuthenticated, async (req, res) => {
     res.json({ filteredOrders, allNumbers });
 
   } catch (error) {
+    console.log(error);
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -228,6 +233,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     return res.json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
 
   } catch (error) {
+    console.log(error);
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -282,6 +288,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     return res.json({ success: true, message: `${resend.message}` });
 
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ success: false, message: error.response ? error.response.data.message : error.message });
   }
 })
@@ -291,9 +298,6 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   const { country, service, pricing_option, quantity, charge } = req.body;
 
   const displaycharge1 = Number(req.body.displaycharge1);
-
-
-  console.log(quantity)
 
 
   try {
@@ -332,6 +336,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
     }
 
   } catch (error) {
+    console.log(error);
 
     if (error.response) {
       if (error.response.data.type === "BALANCE_ERROR") {
@@ -360,7 +365,6 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       req.flash('error', "error from the network, try later")
       res.redirect('/verification')
     } else {
-      console.log('3')
       console.error('Error setting up request:', error.message);
       res.status(500).json({ error: 'Error setting up request' });
     }

@@ -33,6 +33,11 @@ router.get("/p2p", ensureAuthenticated, userRole, async (req, res) => {
       AND status != 'deleted'  
       AND payment_status != 'sold'
       AND payment_status != 'awaiting'
+      AND product_list.id NOT IN (
+      SELECT product_id 
+      FROM user_archives 
+      WHERE user_id = $1
+      )
       ORDER BY 
       CASE 
       WHEN status LIKE '%instant%' THEN 1
@@ -80,7 +85,7 @@ router.get("/p2p", ensureAuthenticated, userRole, async (req, res) => {
       notifications, timeSince
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -89,7 +94,6 @@ router.get("/p2porderhistory", ensureAuthenticated, userRole, async (req, res) =
   const buyer_id = req.user.id;
 
   try {
-
     const limit = 20;
     const page = parseInt(req.query.page) || 1;
     const offset = (page - 1) * limit;
@@ -220,7 +224,7 @@ const totalOrders = parseInt(countResult.rows[0].total_count, 10);
       totalPages: Math.ceil(totalOrders / limit),
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -230,7 +234,6 @@ router.get('/searchProducts', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   
   try {
-
       const result = await db.query(
         `SELECT product_list.*, userprofile.firstname, userprofile.lastname, userprofile.username
          FROM product_list 
@@ -256,18 +259,61 @@ router.get('/searchProducts', ensureAuthenticated, async (req, res) => {
           case "tiktok":
             return "bi bi-tiktok";
           default:
-            return "bi bi-question-circle"; // Default icon if type is unknown
+            return "bi bi-question-circle";
         }
       };
 
       const processedProducts = result.rows.map(product => ({
         ...product,
-        iconClass: getIconClass(product.account_type) // Assuming 'account_type' holds the social media type
+        iconClass: getIconClass(product.account_type) 
       }));
 
-      res.json(processedProducts); // Send back the matching products as JSON
-  } catch (err) {
-      console.error(err);
+      res.json(processedProducts);
+  } catch (error) {
+     console.log(error);
+      res.status(500).json({ error: 'An error occurred while searching for products' });
+  }
+});
+
+router.get('/searchAdminProducts', ensureAuthenticated, async (req, res) => {
+  const query = req.query.query || '';
+  const userId = req.user.id;
+  
+  try {
+      const result = await db.query(
+        `SELECT * FROM admin_products
+         WHERE payment_status != 'sold' 
+         AND payment_status != 'awaiting'
+         AND (account_type ILIKE $1 OR CAST(amount AS TEXT) ILIKE $1)
+         `,
+        [`%${query}%`]
+      );
+
+      const getIconClass = (type) => {
+        switch (type.toLowerCase()) {
+          case "facebook":
+            return "bi bi-facebook";
+          case "twitter":
+            return "bi bi-twitter";
+          case "snapchat":
+            return "bi bi-snapchat";
+          case "instagram":
+            return "bi bi-instagram";
+          case "tiktok":
+            return "bi bi-tiktok";
+          default:
+            return "bi bi-question-circle";
+        }
+      };
+
+      const processedProducts = result.rows.map(product => ({
+        ...product,
+        iconClass: getIconClass(product.account_type) 
+      }));
+
+      res.json(processedProducts);
+  } catch (error) {
+     console.log(error);
       res.status(500).json({ error: 'An error occurred while searching for products' });
   }
 });
@@ -276,7 +322,6 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
 
   try {
-
     const usersResult = await db.query(
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]
@@ -325,7 +370,7 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
       user, timeSince, notifications
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -381,7 +426,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       return res.redirect("/all/accounts");
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -439,10 +484,31 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
         } 
     }
   } catch (err) {
-    console.error(err);
+    console.log(error);
     res.status(500).send("Server error");
   }
 }
 );
+
+router.post('/archive/product', ensureAuthenticated, async (req, res) => {
+ const userId = req.user.id
+  const { productId } = req.body;
+
+  console.log(productId)
+
+  try {
+    await db.query(`
+      INSERT INTO user_archives (user_id, product_id)
+      VALUES ($1, $2)
+      ON CONFLICT DO NOTHING;
+    `, [userId, productId]);
+
+    res.json({ success: true, message: 'Product archived successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: 'Failed to archive product' });
+  }
+});
+
 
 export default router;

@@ -74,6 +74,7 @@ async function calculateUserProgress(userId) {
     return { totalSuccessfulTransaction, progress };
     
   } catch (error) {
+    console.log(error);
     console.error('Error calculating user progress:', error);
     throw error; // or handle it as needed
   }
@@ -81,74 +82,81 @@ async function calculateUserProgress(userId) {
 
 
 router.get('/weekly-progress', ensureAuthenticated, async (req, res) => {
-  // const userId = req.params.userId;
   const userId = req.user.id;
+try {
+    const { totalSuccessfulTransaction, progress } = await calculateUserProgress(userId);
+    const formattedTransaction = numeral(totalSuccessfulTransaction).format('0,0.00');
+    res.json({
+        totalSuccessfulTransaction: formattedTransaction,
+        progress
+       });
+} catch (error) {
+  console.log(error);
+}
 
-  // Calculate the user's progress for the current week
-  const { totalSuccessfulTransaction, progress } = await calculateUserProgress(userId);
-
-  const formattedTransaction = numeral(totalSuccessfulTransaction).format('0,0.00');
-
-  // Render the progress view with the progress bar
-  res.json({
-    totalSuccessfulTransaction: formattedTransaction,
-    progress
-  });
 });
 
 async function resetChallenges() {
   const { startOfWeek } = getCurrentWeek();
 
-  // Find users who haven't completed the challenge
-  await db.query(`
+  try {
+     await db.query(`
     UPDATE challenge
     SET progress = 0, total_transaction = 0, challenge_complete = FALSE
     WHERE week_start < $1 AND challenge_complete = FALSE;
   `, [startOfWeek]);
+  } catch (error) {
+    console.log(error);
+    console.error('Error fetching completed challenges:', error.message);
+  }
 }
 
 async function awardPrizes() {
   const { startOfWeek, endOfWeek } = getCurrentWeek();
 
-  // Find all users who completed the challenge
-  const completedChallenges = await db.query(`
-    SELECT user_id, total_transaction 
-    FROM challenge 
-    WHERE week_start = $1 AND progress = 100 AND challenge_complete = FALSE;
-  `, [startOfWeek]);
-
-  // Loop through each user and award them the prize
-  for (const row of completedChallenges.rows) {
-    const userId = row.user_id;
-    const totalTransaction = row.total_transaction;
-    const prize = totalTransaction * 0.1; // 20% of total transactions
-
-    // Update the user's balance
-    await db.query(`
-      UPDATE userprofile 
-      SET balance = balance + $1
-      WHERE id = $2;
-    `, [prize, userId]);
-
-    // Mark the challenge as complete and award the prize
-    await db.query(`
-      UPDATE challenge 
-      SET challenge_complete = TRUE
-      WHERE user_id = $1 AND week_start = $2;
-    `, [userId, startOfWeek]);
-
-    await db.query(
-      `INSERT INTO activity_log 
-      (user_id, activity)
-      VALUES
-      ($1, $2)`,
-      [userId, `You won this week Transaction Challenge and ${prize} credited into your Total Balance`]
-  );
-
-    console.log(`Awarded ${prize} Naira to user ${userId}.`);
+  try {
+    const completedChallenges = await db.query(`
+      SELECT user_id, total_transaction 
+      FROM challenge 
+      WHERE week_start = $1 AND progress = 100 AND challenge_complete = FALSE;
+    `, [startOfWeek]);
+  
+    // Loop through each user and award them the prize
+    for (const row of completedChallenges.rows) {
+      const userId = row.user_id;
+      const totalTransaction = row.total_transaction;
+      const prize = totalTransaction * 0.1; // 20% of total transactions
+  
+      // Update the user's balance
+      await db.query(`
+        UPDATE userprofile 
+        SET balance = balance + $1
+        WHERE id = $2;
+      `, [prize, userId]);
+  
+      // Mark the challenge as complete and award the prize
+      await db.query(`
+        UPDATE challenge 
+        SET challenge_complete = TRUE
+        WHERE user_id = $1 AND week_start = $2;
+      `, [userId, startOfWeek]);
+  
+      await db.query(
+        `INSERT INTO activity_log 
+        (user_id, activity)
+        VALUES
+        ($1, $2)`,
+        [userId, `You won this week Transaction Challenge and ${prize} credited into your Total Balance`]
+    );
+  
+      console.log(`Awarded ${prize} Naira to user ${userId}.`);
+    }
+  
+    console.log('Prizes awarded to all users who completed the challenge.');
+  } catch (error) {
+    console.log(error)
+    console.error('Error fetching completed challenges:', error.message);
   }
-
-  console.log('Prizes awarded to all users who completed the challenge.');
 }
 
 // Reset Challenges every Monday at 12:00 AM

@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Dashboard Template</title>
+  <title>
+    SMMBIMEDIA | Build a better customer experience
+  </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,6 +16,11 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
+  <link
+  rel="shortcut icon"
+  href="assets/images/favicon.png"
+  type="image/x-icon"
+/>
 
   <style>
     .fa h4 {
@@ -1263,15 +1270,19 @@
                     </label>
                   </div>
                   <div class="panel space-y-5">
+                    <form method="POST" action="/update-notification-preference">
                     <h5 class="mb-4 text-lg font-semibold">Email me if encounter unusual activity</h5>
                     <p>You will get <span class="text-primary">Email</span> notification whenever encounter invalid login activity.</p>
                     <label class="relative h-6 w-12">
                       <input type="checkbox"
                         class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                        id="custom_switch_checkbox3">
+                        id="notify_unusual_activity" name="notify_unusual_activity" 
+                        <%= user.notify_unusual_activity ? 'checked' : '' %> onchange="this.form.submit()"
+                        >
                       <span for="custom_switch_checkbox3"
                         class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
                     </label>
+                  </form>
                   </div>
                 </div>
               </div>

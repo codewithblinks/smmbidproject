@@ -8,6 +8,13 @@ router.get("/admin/product/list", adminEnsureAuthenticated, adminRole, async (re
   const userId = req.user.id;
 
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+    const user = adminResult.rows[0];
+
+                const limit = 15;
+            const page = parseInt(req.query.page) || 1;
+            const offset = (page - 1) * limit;
+    
     const userResult = await db.query(`
       SELECT
         product_list.*,
@@ -16,38 +23,47 @@ router.get("/admin/product/list", adminEnsureAuthenticated, adminRole, async (re
         userprofile.lastname
         FROM product_list JOIN
         userprofile ON product_list.user_id = userprofile.id
-        WHERE status = 'pending'`);
+        WHERE status = 'pending'
+        ORDER BY product_list.id DESC LIMIT $1 OFFSET $2
+        `, [limit, offset]);
     const userDetails = userResult.rows;
 
-      res.render('admin/pendingaprrovalproducts', { messages: req.flash(), user: userDetails });
+    const countQuery = "SELECT COUNT(*) FROM product_list WHERE product_list.status = 'pending'";
+    const countResult = await db.query(countQuery);
+    const totalOrders = parseInt(countResult.rows[0].count);
 
-  } catch (err) {
-    console.log(err);
+      res.render('admin/pendingaprrovalproducts', { 
+        messages: req.flash(), user, userDetails,
+        currentPage: page, 
+        totalPages: Math.ceil(totalOrders / limit)
+       });
+
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.post('/admin/products/approve/:id', adminEnsureAuthenticated, async (req, res) => {
+router.post('/admin/products/approve/:id', adminEnsureAuthenticated, adminRole, async (req, res) => {
     try {
         const { id } = req.params;
         await db.query("UPDATE product_list SET status = 'approved' WHERE id = $1", [id]);
         res.redirect('/admin/product/list');
-    } catch (err) {
-        console.err(err);
-        console.log(err);
-        res.status(500).send("Server Error");
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-router.post('/admin/products/reject/:id', adminEnsureAuthenticated, async (req, res) => {
+router.post('/admin/products/reject/:id', adminEnsureAuthenticated, adminRole, async (req, res) => {
     try {
         const { id } = req.params;
         await db.query("UPDATE product_list SET status = 'rejected' WHERE id = $1", [id]);
         req.flash("success", "Product rejected successfully")
         res.redirect('/admin/product/list');
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Internal server error' });
     }
 });
 

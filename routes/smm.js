@@ -90,6 +90,7 @@ cron.schedule("*/2 * * * *", async () => {
 
     console.log("Order statuses, start_count, and remain updated successfully");
   } catch (err) {
+    console.log(err)
     console.error("Error updating order statuses:", err.message);
   }
 });
@@ -99,6 +100,7 @@ router.get("/exchange-rate", async (req, res) => {
     const rates = await getExchangeRate();
     res.json({ rate: rates.NGN });
   } catch (error) {
+    console.log(error);
     console.error("Error fetching exchange rate:", error);
     res.status(500).json({ error: "Unable to fetch exchange rate" });
   }
@@ -148,8 +150,9 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       details,
       filteredData, notifications, timeSince
     });
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
+    console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -163,8 +166,9 @@ router.get("/smm/options", ensureAuthenticated, async (req, res) => {
 
     const data = response.data;
     res.json(data);
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
+    console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -235,8 +239,9 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
       req.flash("error", "Insufficient balance, please topup your balance");
       return res.redirect("/smm");
     }
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
+    console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });

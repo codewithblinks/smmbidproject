@@ -54,8 +54,8 @@ router.get("/products", ensureAuthenticated, userRole, async (req, res) => {
       totalPages: Math.ceil(totalTransactions / limit),
       notifications, timeSince
     });
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

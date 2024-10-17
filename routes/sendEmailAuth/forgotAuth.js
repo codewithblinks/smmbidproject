@@ -47,8 +47,8 @@ router.get("/forgot", (req, res) => {
   
         req.flash('success', 'An email has been sent to ' + user.email + ' with further instructions.');
         res.redirect('/login');
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.log(error);
         req.flash('error', 'An error occurred. Please try again.');
         res.redirect('/forgot');
     }

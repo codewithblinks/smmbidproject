@@ -7,8 +7,11 @@ import moment from "moment";
 
 
 router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
 
     const limit = 15;
     const page = parseInt(req.query.page) || 1;
@@ -23,24 +26,27 @@ router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, r
             transactions.amount = numeral(transactions.amount).format("0,0.00");
         })
 
-        const countQuery = "SELECT COUNT(*) FROM transactions";
+        const countQuery = "SELECT COUNT(*) FROM transactions WHERE transactions.type = 'deposit'";
         const countResult = await db.query(countQuery);
         const totalTransactions = parseInt(countResult.rows[0].count);
 
         res.render("admin/deposits", {
           transactions,
           currentPage: page,
-          totalPages: Math.ceil(totalTransactions / limit),
+          totalPages: Math.ceil(totalTransactions / limit), user
         })
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get("/admin/withdrawals", adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
 
     const limit = 15;
     const page = parseInt(req.query.page) || 1;
@@ -55,17 +61,17 @@ router.get("/admin/withdrawals", adminEnsureAuthenticated, adminRole, async (req
             transactions.amount = numeral(transactions.amount).format("0,0.00");
         })
 
-        const countQuery = "SELECT COUNT(*) FROM transactions";
+        const countQuery = "SELECT COUNT(*) FROM transactions WHERE transactions.type = 'withdraw'";
         const countResult = await db.query(countQuery);
         const totalTransactions = parseInt(countResult.rows[0].count);
 
         res.render("admin/withdraws", {
           transactions,
           currentPage: page,
-          totalPages: Math.ceil(totalTransactions / limit),
+          totalPages: Math.ceil(totalTransactions / limit), user
         })
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

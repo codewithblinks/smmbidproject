@@ -13,24 +13,11 @@ const getDaysSinceRegistration = (registrationDate) => {
   return diffDays;
 };
 
-  router.get("/review", ensureAuthenticated, async(req, res) => {
-    const userId = req.user.id;
-    const {rateCount} = req.body
-  
-    try {
-      res.render('ratings_reviews')
-    } catch (error) {
-      console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-  router.get("/review/profile/:id", ensureAuthenticated, async(req, res) => {
+  router.get("/review/profile/:id", ensureAuthenticated, userRole, async(req, res) => {
     const userId = req.user.id;
     const id = req.params.id
   
     try {
-
       const usersResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [userId]);
       const user = usersResult.rows[0]
 
@@ -73,28 +60,10 @@ const getDaysSinceRegistration = (registrationDate) => {
         badReview, goodReview
       })
     } catch (error) {
-      console.error(error);
+        console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-
-
-  router.post("/review", ensureAuthenticated, async(req, res) => {
-    const userId = req.user.id;
-    const {rateCount} = req.body
-  
-    try {
-
-      console.log(rateCount)
-      res.redirect('/ratings_reviews')
-    } catch (error) {
-      console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-
-
 
 
   export default router;

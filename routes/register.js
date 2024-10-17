@@ -11,6 +11,7 @@ import { body, validationResult } from "express-validator";
 import multer from "multer";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { error } from "console";
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 const router = express.Router();
@@ -49,7 +50,6 @@ router.get("/register", checkAuthenticated, (req, res) => {
 router.get("/register-admin", (req, res) => {
   res.render("registerAdmin.ejs", { message: req.flash('error') });
 });
-
 
 // router.get("/register-admin", async (req, res) => {
 //   const checkResult = await db.query("SELECT * FROM admins");
@@ -132,8 +132,8 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
     await sendEmail(mailOptions);
     return res.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' });
 
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ success: false, errors: ['An error occurred. Please try again.'] });
   }
 });

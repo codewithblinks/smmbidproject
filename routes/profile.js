@@ -54,8 +54,8 @@ function generateTransferId() {
           totalincome, totalProfit,
           referralLink
          });
-      } catch (err) {
-        console.error(err.message);
+      } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
       }
   });
@@ -64,7 +64,6 @@ function generateTransferId() {
    const userId = req.user.id;
 
     try {
-
       const limit = 10;
       const page = parseInt(req.query.page) || 1;
       const offset = (page - 1) * limit;
@@ -121,7 +120,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         totalPages: Math.ceil(totalcommissions / limit)
       })
     } catch (error) {
-      console.error(error.message);
+        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
   })
@@ -186,7 +185,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         res.redirect("/referrals")
       }
     } catch (error) {
-      console.error(error.message);
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   })

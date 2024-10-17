@@ -31,7 +31,8 @@ router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
    res.render('deposit', {user, notifications, timeSince});
     
   } catch (error) {
-    
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
   });
 
@@ -90,7 +91,7 @@ router.post('/deposit', ensureAuthenticated, async (req, res) => {
   return res.redirect(authorization_url);
   } catch (error) {
     console.error('Error initializing deposit:', error.message);
-
+    console.log(error);
     // Check if Paystack API returned an error
     if (error.response && error.response.data && error.response.data.message) {
       const paystackErrorMessage = error.response.data.message;
@@ -130,10 +131,10 @@ router.get('/cancel-deposit', ensureAuthenticated, async (req, res) => {
     res.redirect('/dashboard');
   } catch (error) {
     console.error('Error updating transaction status:', error.message);
+    console.log(error);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
   const { reference } = req.query;
@@ -233,12 +234,12 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
     
   } catch (error) {
     console.error('Error verifying deposit:', error.message);
+    console.log(error);
     return res.status(500).json({ error: 'Server error' });
   }
 });
 
-
-  router.post('/webhook', express.json(), ensureAuthenticated, async (req, res) => {
+router.post('/webhook', express.json(), ensureAuthenticated, async (req, res) => {
     const { event, data } = req.body;
     
     try {
@@ -255,6 +256,7 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
       res.status(200).send('Webhook received');
     } catch (error) {
       console.error('Error handling Paystack webhook:', error.message);
+      console.log(error);
       res.status(500).send('Server error');
     }
   });

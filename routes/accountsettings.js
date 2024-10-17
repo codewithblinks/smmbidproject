@@ -9,6 +9,7 @@ import {sendEmail} from "../config/transporter.js";
 import session from "express-session";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
+import { error } from "console";
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 
@@ -56,8 +57,8 @@ router.get("/settings", ensureAuthenticated, userRole, async (req, res) => {
       timeSince,
       notifications
     });
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -170,6 +171,7 @@ router.post("/user/deleteBankAccount/:accountId", ensureAuthenticated, async (re
       req.flash("success", "Bank account successfully deleted");
       res.redirect("/settings");
     } catch (error) {
+      console.log(error);
       req.flash("error", "Error: unable to delete bank account");
       res.status(500).send("Error deleting account");
     }
@@ -231,12 +233,11 @@ router.post("/changeEmail", ensureAuthenticated, async (req, res) => {
         res.json({ success: true });
       }
     }
-  } catch (err) {
+  } catch (error) {
     res.redirect("/settings");
-    console.log(err);
+    console.log(error);
   }
 });
-
 
 router.post('/change-email-verify-code', ensureAuthenticated, async(req, res) => {
   const { verificationCode } = req.body;
@@ -263,7 +264,7 @@ router.post('/change-email-verify-code', ensureAuthenticated, async(req, res) =>
         res.redirect('/settings');
       }
   } catch (err) {
-      console.error(err.message);
+      console.log(error);
       res.status(500).send('Server Error');
   }
 });
@@ -280,7 +281,7 @@ router.post('/cancelEmailVerify', ensureAuthenticated, async(req, res) => {
         res.redirect('/settings');
 
   } catch (err) {
-      console.error(err.message);
+      console.log(error);
       res.status(500).send('Server Error');
   }
 });
@@ -300,9 +301,9 @@ router.post("/updateUserInfo", ensureAuthenticated, async(req, res) => {
       req.flash('success', 'User details updated.')
       res.redirect("/settings")
     }
-  } catch (err) {
-    console.error(err.message);
-      res.status(500).send('Server Error');
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Server Error');
   }
 })
 
@@ -322,6 +323,7 @@ router.post('/contact-home', async (req, res) => {
       return res.status(400).send('reCAPTCHA verification failed');
     }
   } catch (error) {
+    console.log(error);
     return res.status(500).send('Error verifying reCAPTCHA');
   }
 
@@ -332,8 +334,21 @@ router.post('/contact-home', async (req, res) => {
   };
 
   await sendEmail(mailOptions);
-  return res.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' });
+});
 
+router.post('/update-notification-preference', ensureAuthenticated, userRole, async (req, res) => {
+  const userId = req.user.id; 
+
+  try {
+     const notifyUnusualActivity = req.body.notify_unusual_activity ? true : false;
+
+  await db.query('UPDATE userprofile SET notify_unusual_activity = $1 WHERE id = $2', [notifyUnusualActivity, userId]);
+
+  res.redirect('/settings');
+  } catch (error) {
+    console.log(error)
+  }
+ 
 });
 
 

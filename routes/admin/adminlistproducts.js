@@ -7,14 +7,17 @@ import moment from "moment";
 import numeral from "numeral";
 
 
-
 router.get("/admin/list/product", adminEnsureAuthenticated, adminRole, async(req, res) => {
   const userId = req.user.id;
+
   try {
-      res.render('admin/adminListProducts', {messages: req.flash(),  });
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+    const user = adminResult.rows[0];
+
+      res.render('admin/adminListProducts', {messages: req.flash(), user });
       
-    } catch (err) {
-      console.error(err.message);
+    } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -41,10 +44,10 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
        (
       admin_id, years, profile_link,
       account_type, country,
-      description, amount, status,
+      description, amount,
       payment_status,
       loginusername, loginemail, loginpassword, logindetails ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) 
       RETURNING *`,
       [
         adminId,
@@ -54,7 +57,6 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
         country,
         description,
         price,
-        'pending',
         'not sold',
         loginusername,
         loginemail,
@@ -64,8 +66,8 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
     );
     req.flash("success", "Account listed successfully");
     res.redirect("/admin/list/product");
-  } catch (err) {
-    console.error("Error inserting data", err);
+  } catch (error) {
+    console.log(error);
     req.flash("error", "Error: listing account was not successfully");
     return res.redirect("/admin/list/product");
   }
@@ -74,12 +76,18 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
 router.get("/admin/listed/products", adminEnsureAuthenticated, adminRole, async(req, res) => {
   const userId = req.user.id;
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+    const user = adminResult.rows[0];
 
     const limit = 15;
     const page = parseInt(req.query.page) || 1;
     const offset = (page - 1) * limit;
 
-      const productResult = await db.query('SELECT * FROM admin_products WHERE id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3', [userId, limit, offset]);
+      const productResult = await db.query(`
+        SELECT * FROM admin_products 
+        WHERE admin_id = $1 
+        ORDER BY created_at DESC LIMIT $2 OFFSET $3`, 
+        [userId, limit, offset]);
       const products = productResult.rows;
 
       products.forEach(products => {
@@ -93,11 +101,11 @@ router.get("/admin/listed/products", adminEnsureAuthenticated, adminRole, async(
 
       res.render('admin/listedproductAdmin', {messages: req.flash(), products, 
         currentPage: page, 
-        totalPages: Math.ceil(totalOrders / limit),
+        totalPages: Math.ceil(totalOrders / limit), user
        });
       
-    } catch (err) {
-      console.error(err.message);
+    } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -106,11 +114,20 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
     const userId = req.user.id;
     try {
 
+      const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+      const user = adminResult.rows[0];
+
       const limit = 15;
       const page = parseInt(req.query.page) || 1;
       const offset = (page - 1) * limit;
 
-        const productResult = await db.query('SELECT * FROM admin_products WHERE id = $1 AND payment_status != $2 ORDER BY created_at DESC LIMIT $3 OFFSET $4', [userId, "sold", limit, offset]);
+        const productResult = await db.query(`
+          SELECT * FROM admin_products 
+          WHERE
+           admin_id = $1 AND payment_status != $2 
+          ORDER BY 
+          created_at DESC LIMIT $3 OFFSET $4`, 
+          [userId, "sold", limit, offset]);
         const products = productResult.rows;
   
         products.forEach(products => {
@@ -126,10 +143,11 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
         res.render('admin/activeproductsadmin', {messages: req.flash(), products, 
           currentPage: page, 
           totalPages: Math.ceil(totalOrders / limit),
+          user
         });
         
-      } catch (err) {
-        console.error(err.message);
+      } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
       }
     });
@@ -137,6 +155,8 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
  router.get("/admin/sold/products", adminEnsureAuthenticated, adminRole, async(req, res) => {
       const userId = req.user.id;
       try {
+        const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+        const user = adminResult.rows[0];
 
         const limit = 15;
         const page = parseInt(req.query.page) || 1;
@@ -156,11 +176,11 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
     
           res.render('admin/soldproductsadmin', {messages: req.flash(), products, 
             currentPage: page, 
-            totalPages: Math.ceil(totalOrders / limit),
+            totalPages: Math.ceil(totalOrders / limit), user
            });
           
-        } catch (err) {
-          console.error(err.message);
+        } catch (error) {
+          console.log(error);
           res.status(500).json({ error: 'Internal server error' });
         }
       });

@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Dashboard Template</title>
+  <title>
+    SMMBIMEDIA | Build a better customer experience
+  </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
@@ -14,6 +16,11 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
   <link rel="stylesheet" href="assets/css/style.css">
+  <link
+  rel="shortcut icon"
+  href="assets/images/favicon.png"
+  type="image/x-icon"
+/>
   <style>
     .my-button:focus {
     outline: none;
@@ -786,7 +793,7 @@
               <div
                 class="flex h-full min-h-[400px] items-center justify-center text-lg font-semibold sm:min-h-[300px]"
               >
-                No data available
+              No product available.
               </div>
             </div>
               <div class="min-h-[400px] sm:min-h-[300px]" style="<%=products.length ? "display: block;" : "display: none;"%>" >
@@ -794,7 +801,7 @@
                   class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" id="productsContainer"
                 >
                 <% products.forEach(details=> { %>
-                    <div
+                    <div id="product-<%= details.id %>"
                       class="panel pb-12 <%= details.account_type === 'Facebook' ? 'bg-primary-light shadow-primary' : (details.account_type === 'Instagram' ? 'bg-warning-light shadow-warning' : (details.account_type === 'Twitter' ? 'bg-info-light shadow-info' : 'bg-danger-light shadow-danger') ) %>">
                       <div class="min-h-[142px]">
                         <div class="flex justify-between">
@@ -864,10 +871,10 @@
                               x-transition.duration.300ms=""
                               class="text-sm font-medium ltr:right-0 rtl:left-0"
                             >
-                              <li>
+                              <li id="product-<%= details.id %>">
                                 <button
-                                  class="w-full my-button"
-                                  style="border: none; border-width: 0;"
+                                  class="w-full my-button archive-btn"
+                                  style="border: none; border-width: 0;" id="archiveBTN" data-product-id="<%= details.id %>"
                                 >
                                   <svg
                                     width="24"
@@ -910,7 +917,7 @@
                                       stroke-width="1.5"
                                     ></path>
                                   </svg>
-                                  Delete
+                                  Archive
                                 </button>
                               </li>
                               <a href="/product/<%= details.id %>">
@@ -1111,6 +1118,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastr@latest/build/toastr.min.js"></script>
     <script src="../assets/js/notification.js"></script>
+    
     <script>
       $(function() {
           var errorMessage = $('#error-message').text();
@@ -1127,7 +1135,41 @@
   </script>
 
 <script>
-  // JavaScript to handle the search input
+   function attachArchiveListeners() {
+    const archiveButtons = document.querySelectorAll('.archive-btn');
+
+    archiveButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+
+        fetch('/archive/product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Remove the product from the DOM after successful archiving
+            document.getElementById(`product-${productId}`).remove();
+            
+            // Show Toastr success message
+            toastr.success('Product archived successfully!');
+          } else {
+            toastr.error('Failed to archive product.');
+          }
+        })
+        .catch(error => {
+          console.error('Error archiving product:', error);
+          toastr.error('An error occurred while trying to archive the product.');
+        });
+      });
+    });
+  }
+</script>
+
+
+<script>
   document.getElementById('searchInput').addEventListener('input', function() {
       const searchValue = this.value;
       
@@ -1140,6 +1182,7 @@
               products.forEach(product => {
                   const productDiv = document.createElement('div');
                   productDiv.className = 'product';
+                  productDiv.id = `product-${product.id}`;
                   productDiv.innerHTML = `
                      <div
                       class="panel pb-12  ${product.account_type === 'Facebook' ? 'bg-primary-light shadow-primary' : (product.account_type === 'Instagram' ? 'bg-warning-light shadow-warning' : (product.account_type === 'Twitter' ? 'bg-info-light shadow-info' : 'bg-danger-light shadow-danger') ) }">
@@ -1213,8 +1256,8 @@
                             >
                               <li>
                                 <button
-                                  class="w-full my-button"
-                                  style="border: none; border-width: 0;"
+                                  class="w-full my-button archive-btn"
+                                  style="border: none; border-width: 0;" id="archiveBTN" data-product-id="${product.id}"
                                 >
                                   <svg
                                     width="24"
@@ -1257,7 +1300,7 @@
                                       stroke-width="1.5"
                                     ></path>
                                   </svg>
-                                  Delete
+                                  Archive
                                 </button>
                               </li>
                               <a href="/product/ ${product.id }">
@@ -1360,8 +1403,10 @@
                   `;
                   productsContainer.appendChild(productDiv);
               });
+              attachArchiveListeners();
           });
   });
+  attachArchiveListeners();
 </script>
 
     <script>

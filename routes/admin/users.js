@@ -4,6 +4,7 @@ const router = express.Router();
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
+import timeSince from "../../controller/timeSince.js";
 
 function getCurrentWeek() {
   const startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
@@ -11,61 +12,123 @@ function getCurrentWeek() {
   return { startOfWeek, endOfWeek };
 }
 
+const getDaysSinceRegistration = (registrationDate) => {
+  const registrationMoment = moment(registrationDate);
+  const now = moment();
+  const diffDays = now.diff(registrationMoment, 'days');
+  return diffDays;
+};
+
 
 router.get("/admin/users/list", adminEnsureAuthenticated, adminRole, async (req, res) => {
-  const userId = req.user.id;
+  const adminId = req.user.id;
 
   try {
-    const userResult = await db.query("SELECT * FROM userprofile WHERE is_suspended = $1 AND email_verified = $2 ORDER BY id DESC", [false, true]);
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
+
+    const limit = 15;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
+
+    const userResult = await db.query(`
+      SELECT * FROM userprofile 
+      WHERE is_suspended = $1 
+      AND email_verified = $2 
+      ORDER BY id DESC LIMIT $3 OFFSET $4`
+      , 
+      [false, true, limit, offset]);
     const userDetails = userResult.rows;
 
     userDetails.forEach(userDetails => {
       userDetails.balance = numeral(userDetails.balance).format('0,0.00');
   });
 
-      res.render('admin/users', { messages: req.flash(), user: userDetails });
+  const countQuery = "SELECT COUNT(*) FROM userprofile WHERE is_suspended = $1 AND email_verified = $2";
+  const countResult = await db.query(countQuery, [false, true]);
+  const totalOrders = parseInt(countResult.rows[0].count);
+
+      res.render('admin/users', { 
+        messages: req.flash(), user, userDetails,
+        currentPage: page, 
+        totalPages: Math.ceil(totalOrders / limit)
+      });
   
-  } catch (err) {
-    console.err(err);
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get("/admin/users/list/suspend", adminEnsureAuthenticated, adminRole, async (req, res) => {
-  const userId = req.user.id;
+  const adminId = req.user.id;
 
   try {
-    const suspendUserResult = await db.query("SELECT * FROM userprofile WHERE is_suspended = $1 AND email_verified = $2 ORDER BY id DESC", [true, true]);
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
+
+    const limit = 15;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
+
+    const suspendUserResult = await db.query(`
+      SELECT * FROM userprofile 
+      WHERE is_suspended = $1 
+      AND email_verified = $2 
+      ORDER BY id DESC LIMIT $3 OFFSET $4`, 
+      [true, true, limit, offset]);
     const suspendUser = suspendUserResult.rows;
 
     suspendUser.forEach(suspendUser => {
       suspendUser.balance = numeral(suspendUser.balance).format('0,0.00');
   });
 
-      res.render('admin/suspendedUsers', { messages: req.flash(), user: suspendUser });
+  const countQuery = "SELECT COUNT(*) FROM userprofile WHERE is_suspended = $1 AND email_verified = $2";
+  const countResult = await db.query(countQuery, [true, true]);
+  const totalOrders = parseInt(countResult.rows[0].count);
+
+      res.render('admin/suspendedUsers', { 
+        messages: req.flash(), user, suspendUser, 
+        currentPage: page, 
+        totalPages: Math.ceil(totalOrders / limit)
+       });
   
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get("/admin/users/list/unverified", adminEnsureAuthenticated, adminRole, async (req, res) => {
-  const userId = req.user.id;
+  const adminId = req.user.id;
 
   try {
-    const suspendUserResult = await db.query("SELECT * FROM userprofile WHERE email_verified = $1 ORDER BY id DESC", [false]);
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
+
+    const limit = 15;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
+
+    const suspendUserResult = await db.query("SELECT * FROM userprofile WHERE email_verified = $1 ORDER BY id DESC LIMIT $2 OFFSET $3", [false, limit, offset]);
     const suspendUser = suspendUserResult.rows;
 
     suspendUser.forEach(suspendUser => {
       suspendUser.balance = numeral(suspendUser.balance).format('0,0.00');
   });
 
-      res.render('admin/unverifiedUsers', { messages: req.flash(), user: suspendUser });
+  const countQuery = "SELECT COUNT(*) FROM userprofile WHERE email_verified = $1";
+  const countResult = await db.query(countQuery, [false]);
+  const totalOrders = parseInt(countResult.rows[0].count);
+
+      res.render('admin/unverifiedUsers', { 
+        messages: req.flash(), user, suspendUser,
+        currentPage: page, 
+        totalPages: Math.ceil(totalOrders / limit)
+       });
   
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -86,9 +149,9 @@ router.get('/searchActiveUsers', adminEnsureAuthenticated, async (req, res) => {
       );
 
       res.json(result.rows); 
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred while searching for products' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -108,9 +171,9 @@ router.get('/searchSuspendedUsers', adminEnsureAuthenticated, async (req, res) =
       );
 
       res.json(result.rows); 
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred while searching for products' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -130,16 +193,20 @@ router.get('/searchUnverifiedUsers', adminEnsureAuthenticated, async (req, res) 
       );
 
       res.json(result.rows); 
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred while searching for products' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get('/admin/users/user/:userId/personal', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const {userId} = req.params;
+  const adminId = req.user.id;
   
   try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const admin = adminResult.rows[0];
+    
       const limit = 15;
       const page = parseInt(req.query.page) || 1;
       const offset = (page - 1) * limit;
@@ -213,21 +280,21 @@ router.get('/admin/users/user/:userId/personal', adminEnsureAuthenticated, admin
     smm.order_date = moment(smm.order_date).format("D MMM h:mmA");
 });
 
-    const countQuery = "SELECT COUNT(*) FROM transactions";
-    const countResult = await db.query(countQuery);
+    const countQuery = "SELECT COUNT(*) FROM transactions WHERE user_id = $1";
+    const countResult = await db.query(countQuery, [userId]);
     const totalOrders = parseInt(countResult.rows[0].count);
 
-    const smsQuery = "SELECT COUNT(*) FROM sms_order";
-    const smsResultQuery = await db.query(smsQuery);
+    const smsQuery = "SELECT COUNT(*) FROM sms_order WHERE user_id = $1";
+    const smsResultQuery = await db.query(smsQuery, [userId]);
     const smsOrders = parseInt(smsResultQuery.rows[0].count);
 
-    const smmQuery = "SELECT COUNT(*) FROM purchase_history";
-    const smmResultQuery = await db.query(smmQuery);
+    const smmQuery = "SELECT COUNT(*) FROM purchase_history WHERE user_id = $1";
+    const smmResultQuery = await db.query(smmQuery, [userId]);
     const smmOrders = parseInt(smmResultQuery.rows[0].count);
   
 
       res.render("admin/userPersonalProfile", {
-        user, transactions,
+        user, transactions, admin,
         currentPage: page, 
         totalPages: Math.ceil(totalOrders / limit),
         sms, smm,
@@ -235,9 +302,9 @@ router.get('/admin/users/user/:userId/personal', adminEnsureAuthenticated, admin
         smmtotalPages: Math.ceil(smmOrders / limit),
         referralBalance
       })
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred while searching for products' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -269,9 +336,55 @@ router.get("/admin/weekly/challenges/history", adminEnsureAuthenticated, adminRo
       totalPages: Math.ceil(totalOrders / limit),
      })
   } catch (error) {
-    
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 })
+
+router.get("/admin/review/profile/:id", adminEnsureAuthenticated, adminRole, async(req, res) => {
+  const userId = req.user.id;
+  const id = req.params.id
+
+  try {
+    const usersResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
+    const user = usersResult.rows[0]
+
+    const productResult = await db.query("SELECT payment_status FROM product_list WHERE user_id = $1 AND payment_status = $2", [id, 'sold'])
+    const soldProductCount = productResult.rows;
+
+       const badReviewResult = await db.query("SELECT * FROM ratings_reviews WHERE user_id = $1 AND rating IN (1, 3)", [id])
+       const badReview = badReviewResult.rows
+
+       const goodReviewResult = await db.query("SELECT * FROM ratings_reviews WHERE user_id = $1 AND rating IN (4, 5)", [id])
+       const goodReview = goodReviewResult.rows
+
+       const userResult = await db.query("SELECT created_at FROM userprofile WHERE id = $1", [id])
+       const registrationDate = userResult.rows[0].created_at
+
+       const daysSinceRegistration = getDaysSinceRegistration(registrationDate);
+
+       goodReview.forEach(review => {
+        review.formattedDate = moment(review.created_at).format('D MMM h:mmA');
+    });
+
+    badReview.forEach(review => {
+      review.badReviewformattedDate = moment(review.created_at).format('D MMM h:mmA');
+  });
+
+    const othersResult = await db.query("SELECT email_verified, firstname, lastname FROM userprofile WHERE id = $1", [id])
+    const other = othersResult.rows[0]
+
+    res.render('admin/reviewProfile', {
+      daysSinceRegistration, 
+      soldProductCount, other, user,
+      timeSince,
+      badReview, goodReview
+    })
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 

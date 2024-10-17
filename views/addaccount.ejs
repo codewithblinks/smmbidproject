@@ -3,10 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Dashboard Template</title>
+  <title>
+    SMMBIMEDIA | Build a better customer experience
+  </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-  <link rel="icon" type="image/x-icon" href="favicon.png" />
+  <link
+  rel="shortcut icon"
+  href="assets/images/favicon.png"
+  type="image/x-icon"
+/>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link rel="stylesheet"
@@ -916,8 +922,8 @@
                       <div
                         class="bg-[#eee] flex justify-center items-center ltr:rounded-l-md rtl:rounded-r-md px-3 font-semibold border ltr:border-r-0 rtl:border-l-0 border-[#e0e6ed] dark:border-[#17263c] dark:bg-[#1b2e4b] whitespace-nowrap">
                         Auth / Cookies details</div>
-                      <textarea rows="4" class="form-textarea ltr:rounded-l-none rtl:rounded-r-none"
-                        placeholder="e.g Authentication codes and Recovery emails" name="logindetails"></textarea>
+                      <textarea rows="4" class="form-textarea ltr:rounded-l-none rtl:rounded-r-none" rows="3" maxlength="250"
+                        placeholder="e.g Authentication codes, Cookies and Recovery emails (max 150 characters)" name="logindetails"></textarea>
                     </div>
                   </div>
                 </div>
@@ -937,8 +943,8 @@
                 <div class="mt-8 px-4">
                   <div>
                     <label for="notes">Notes</label>
-                    <textarea id="notes" class="form-textarea min-h-[130px]" name="description"
-                      placeholder="Write more details about the account(posting contact details is prohibited)"
+                    <textarea id="notes" class="form-textarea min-h-[130px] resize-none" name="description" rows="3" maxlength="150"
+                      placeholder="Write more details about the account(posting contact details is prohibited (max 150 characters))"
                       required></textarea>
                   </div>
                 </div>

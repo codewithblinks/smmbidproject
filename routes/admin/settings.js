@@ -49,8 +49,9 @@ router.get("/admin/forgot", (req, res) => {
   
         req.flash('success', 'An email has been sent to ' + user.email + ' with further instructions.');
         res.redirect('/login/admin');
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
         req.flash('error', 'An error occurred. Please try again.');
         res.redirect('/admin/forgot');
     }
@@ -83,8 +84,9 @@ router.get("/admin/forgot", (req, res) => {
         }
 
         res.render('admin/resetPW', { token, message: req.flash('error') });
-    } catch (err) {
-        console.log(err)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
         req.flash('error', 'Invalid or expired token');
         res.redirect('/admin/forgot');
     }
@@ -139,8 +141,9 @@ router.get("/admin/forgot", (req, res) => {
 
         req.flash('success', 'Success! Your password has been changed.');
         res.redirect('/login/admin');
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
         req.flash('error', 'An error occurred. Please try again.');
         res.redirect('/forgot');
     }
