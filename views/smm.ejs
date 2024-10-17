@@ -21,6 +21,12 @@
   <link rel="stylesheet" type="text/css" medifa="screen" href="assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
+  <style>
+    html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+  </style>
   <script src="assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="assets/js/popper.min.js"></script>
   <script defer="" src="assets/js/tippy-bundle.umd.min.js"></script>
@@ -1031,43 +1037,6 @@
               toastr.success(successMessage);
           }
       });
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-    const description = document.getElementById('description');
-    const notes = document.getElementById('notes');
-    const servicesSelect = document.getElementById('servicesMore');
-
-
-
-// Function to handle the selection
-function getSelectedService() {
-    // Get the selected value
-    const selectedValue = servicesSelect.value;
-
-    if (selectedValue === '800' || selectedValue === '801' || selectedValue === '803') {
-      description.style.display = 'block';
-      notes.value = `
-       - Real Instagram Followers (Mostly Turkey ) From ADS
-       - You Get Followers in 24-48 Hours.
-       - Followers are 100% Real and Active.
-       - Service Does NOT Offer Refills since the accounts are 100% Real.`
-    } else {
-      description.style.display = 'none';
-    }
-
-    // Use the selected value (e.g., log it to the console)
-    console.log('Selected service ID:', selectedValue);
-
-    // You can also use it in other logic here
-    // For example, send it in a fetch request or use it in a calculation
-}
-
-// Add an event listener to capture changes
-servicesSelect.addEventListener('change', getSelectedService);
-
-})
   </script>
 
 <script>

@@ -802,7 +802,7 @@
                             <td><%= purchases.formattedDate %></td>
                             <td><span class="<%= purchases.purchase_status === 'confirmed' ? "bg-success" : (purchases.purchase_status === "rejected" ? "bg-danger" : "bg-warning") %> badge shadow-md dark:group-hover:bg-transparent"><%= purchases.purchase_status %></span></td>
                             <td>
-                                <a href="<%='/purchase/' + purchases.purchase_id %>">
+                                <a href="<%='/purchase/account/' + purchases.purchase_id %>">
                                     <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 shrink-0 ltr:mr-3 rtl:ml-3">
                                         <path opacity="0.5" d="M3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C4.97196 6.49956 7.81811 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957Z" stroke="currentColor" stroke-width="1.5"></path>
                                         <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5"></path>
@@ -816,15 +816,15 @@
             <div class="flex">
               <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
                   <% if (currentPage > 1) { %>
-                  <a href="/p2porderhistory?page=<%= currentPage - 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button></li></a>
+                  <a href="/admin/product/orderhistory?page=<%= currentPage - 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button></li></a>
                   <% } %>
               
                   <% for (let i = 1; i <= totalPages; i++) { %>
-                  <a href="/p2porderhistory?page=<%= i %>"><li><button type="button" class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light"><%= i %></button></li></a>
+                  <a href="/admin/product/orderhistory?page=<%= i %>"><li><button type="button" class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light"><%= i %></button></li></a>
                   <% } %>
               
                   <% if (currentPage < totalPages) { %>
-                  <a href="/p2porderhistory?page=<%= currentPage + 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button></li></a>
+                  <a href="/admin/product/orderhistory?page=<%= currentPage + 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button></li></a>
                   <% } %>
               </ul>
               </div>

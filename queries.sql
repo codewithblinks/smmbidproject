@@ -64,7 +64,17 @@ CREATE TABLE IF NOT EXISTS purchases (
     seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     status TEXT DEFAULT 'pending',
     date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    owner TEXT
+    purchase_id VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS purchases_admin_product (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    admin_id INT REFERENCES admins(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'pending',
+    date_purchased TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    purchase_id VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS purchase_history (

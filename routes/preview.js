@@ -1,5 +1,4 @@
 import express from "express";
-const router = express.Router();
 import db from "../db/index.js";
 import formatDate from "../controller/formatDate.js";
 import { io } from "../script.js";
@@ -8,6 +7,17 @@ import moment from "moment";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
 import { sendRejectEmailToBuyer } from "../config/sendEmail.js";
+import { v4 as uuidv4 } from 'uuid';
+
+const router = express.Router();
+
+function generateTransferId() {
+  const prefix = "pur_ref";
+  const uniqueId = uuidv4(); // Generate a unique UUID
+  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
+  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
+  return `${prefix}_${base64Id}`;
+}
 
 router.get("/product/:id", ensureAuthenticated, userRole, async (req, res) => {
   const { id } = req.params;
@@ -61,6 +71,8 @@ router.post("/buyaccount", ensureAuthenticated, async (req, res) => {
   const productAmount = Number(req.body.productAmount);
 
   try {
+    const purchaseNumber = generateTransferId();
+
     const result = await db.query(
       "SELECT balance FROM userprofile WHERE id = $1",
       [userId]
@@ -85,8 +97,8 @@ router.post("/buyaccount", ensureAuthenticated, async (req, res) => {
 
     if (user.balance >= productAmount) {
       const purchaseRows = await db.query(
-        "INSERT INTO purchases (product_id, buyer_id, seller_id, status) VALUES ($1, $2, $3, $4) RETURNING *",
-        [productId, userId, sellerId, "pending"]
+        "INSERT INTO purchases (product_id, buyer_id, seller_id, status, purchase_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+        [productId, userId, sellerId, "pending", purchaseNumber]
       );
       const purchase = purchaseRows.rows[0];
 
@@ -136,6 +148,7 @@ router.get("/purchase/:purchaseId", ensureAuthenticated, userRole, async (req, r
     const userId = req.user.id;
 
     try {
+
       const usersResult = await db.query(
         "SELECT * FROM userprofile WHERE id = $1",
         [userId]

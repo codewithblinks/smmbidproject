@@ -1,9 +1,20 @@
 import express from "express";
-const router = express.Router();
 import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
+import { v4 as uuidv4 } from 'uuid';
+
+
+const router = express.Router();
+
+function generateTransferId() {
+  const prefix = "pur_ref";
+  const uniqueId = uuidv4(); // Generate a unique UUID
+  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
+  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
+  return `${prefix}_${base64Id}`;
+}
 
 router.get("/p2p", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
@@ -107,13 +118,10 @@ router.get("/p2porderhistory", ensureAuthenticated, userRole, async (req, res) =
     purchases.id AS purchase_id, 
     purchases.status AS purchase_status,
     purchases.date,
-    purchases.owner,
     product_list.id AS product_id, 
     product_list.status AS product_status,
     product_list.account_type AS product_account_type, 
-    product_list.amount AS product_amount,
-    NULL AS admin_product_account_type,  -- No data from admin_products for these rows
-    NULL AS admin_product_amount
+    product_list.amount AS product_amount
 FROM 
     purchases 
 JOIN 
@@ -122,29 +130,6 @@ ON
     purchases.product_id = product_list.id 
 WHERE 
     purchases.buyer_id = $1
-
-UNION ALL
-
-SELECT 
-    purchases.id AS purchase_id, 
-    purchases.status AS purchase_status,
-    purchases.date,
-    purchases.owner,
-    admin_products.id AS product_id, 
-    NULL AS product_status,  -- No data from product_list for these rows
-    NULL AS product_account_type, 
-    NULL AS product_amount,
-    admin_products.account_type AS admin_product_account_type, 
-    admin_products.amount AS admin_product_amount
-FROM 
-    purchases 
-JOIN 
-    admin_products 
-ON 
-    purchases.product_id = admin_products.id 
-WHERE 
-    purchases.buyer_id = $1
-
 ORDER BY 
     date DESC
 LIMIT $2 
@@ -174,7 +159,6 @@ OFFSET $3;
           purchases.id AS purchase_id, 
           purchases.status AS purchase_status,
           purchases.date,
-          purchases.owner,
           product_list.id AS product_id, 
           product_list.status AS product_status,
           product_list.account_type AS product_account_type, 
@@ -189,28 +173,6 @@ OFFSET $3;
           purchases.product_id = product_list.id 
       WHERE 
           purchases.buyer_id = $1
-
-      UNION ALL
-
-      SELECT 
-          purchases.id AS purchase_id, 
-          purchases.status AS purchase_status,
-          purchases.date,
-          purchases.owner,
-          admin_products.id AS product_id, 
-          NULL AS product_status,
-          NULL AS product_account_type, 
-          NULL AS product_amount,
-          admin_products.account_type AS admin_product_account_type, 
-          admin_products.amount AS admin_product_amount
-      FROM 
-          purchases 
-      JOIN 
-          admin_products 
-      ON 
-          purchases.product_id = admin_products.id 
-      WHERE 
-          purchases.buyer_id = $1
   ) AS combined_results;
 `;
 const countResult = await db.query(countQuery, [buyer_id]);
@@ -218,6 +180,93 @@ const totalOrders = parseInt(countResult.rows[0].total_count, 10);
 
 
     res.render("p2porderhistory", { 
+      purchase, user, 
+      notifications, timeSince,
+      currentPage: page, 
+      totalPages: Math.ceil(totalOrders / limit),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/product/adminorderhistory", ensureAuthenticated, userRole, async (req, res) => {
+  const buyer_id = req.user.id;
+
+  try {
+    const limit = 15;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
+
+   const usersResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [buyer_id]);
+   const user = usersResult.rows[0]
+
+    const purchasesResult = await db.query(
+      `
+SELECT 
+    purchases_admin_product.id AS purchase_id, 
+    purchases_admin_product.status AS purchase_status,
+    purchases_admin_product.date_purchased,
+    admin_products.id AS product_id,
+    admin_products.account_type AS admin_product_account_type, 
+    admin_products.amount AS admin_product_amount
+FROM 
+    purchases_admin_product
+JOIN 
+    admin_products 
+ON 
+    purchases_admin_product.product_id = admin_products.id 
+WHERE 
+    purchases_admin_product.buyer_id = $1
+ORDER BY 
+    date_purchased DESC
+LIMIT $2 
+OFFSET $3;
+
+`,
+      [buyer_id, limit, offset]
+    );
+
+    const purchase = purchasesResult.rows;
+
+    purchase.forEach((purchase) => {
+      purchase.formattedDate = moment(purchase.date_purchased).format("D MMM h:mmA");
+    });
+
+    const notificationsResult = await db.query(
+      'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
+      [buyer_id, false]
+  );
+
+  const notifications = notificationsResult.rows;
+
+  const countQuery = `
+  SELECT COUNT(*) AS total_count
+  FROM (
+
+      SELECT 
+          purchases_admin_product.id AS purchase_id, 
+          purchases_admin_product.status AS purchase_status,
+          purchases_admin_product.date_purchased,
+          admin_products.id AS product_id,
+          admin_products.account_type AS admin_product_account_type, 
+          admin_products.amount AS admin_product_amount
+      FROM 
+          purchases_admin_product 
+      JOIN 
+          admin_products 
+      ON 
+          purchases_admin_product.product_id = admin_products.id 
+      WHERE 
+          purchases_admin_product.buyer_id = $1
+  ) AS combined_results;
+`;
+const countResult = await db.query(countQuery, [buyer_id]);
+const totalOrders = parseInt(countResult.rows[0].total_count, 10);
+
+
+    res.render("adminproductorderhistory", { 
       purchase, user, 
       notifications, timeSince,
       currentPage: page, 
@@ -381,6 +430,8 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
 
   try {
 
+    const purchaseNumber = generateTransferId();
+
     const result = await db.query(
       "SELECT balance FROM userprofile WHERE id = $1",
       [userId]
@@ -395,7 +446,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
 
     if (product.payment_status === "sold") {
       req.flash("success", "Product already sold.");
-      return res.redirect("/all/account/buy");
+      return res.redirect("/all/accounts");
     }
 
     const amount = Number(product.amount)
@@ -405,8 +456,8 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       const adminId = product.admin_id;
 
       const purchaseRows = await db.query(
-        "INSERT INTO purchases (product_id, buyer_id, seller_id, status) VALUES ($1, $2, $3, $4) RETURNING *",
-        [productId, userId, adminId, "confirmed"]
+        "INSERT INTO purchases_admin_product (product_id, buyer_id, admin_id, status, purchase_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+        [productId, userId, adminId, "confirmed", purchaseNumber]
       );
       const purchase = purchaseRows.rows[0];
 
@@ -443,11 +494,10 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
     const user = usersResult.rows[0];
 
     const { rows: purchaseRows } = await db.query(
-      "SELECT * FROM purchases WHERE id = $1 AND buyer_id = $2",
+      "SELECT * FROM purchases_admin_product WHERE id = $1 AND buyer_id = $2",
       [purchaseId, userId]
     );
     
-
     const notificationsResult = await db.query(
       "SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5",
       [userId, false]
@@ -461,9 +511,9 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
     } else {
       const purchase = purchaseRows[0];
 
-      const purchaseTime = purchase.date;
+      const purchaseTime = purchase.date_purchased;
 
-      purchase.formattedDate = moment(purchase.date).format("D MMM h:mmA");
+      purchase.formattedDate = moment(purchase.date_purchased).format("D MMM h:mmA");
 
       const { rows: adminProductRows } = await db.query(
         "SELECT * FROM admin_products WHERE id = $1",
@@ -473,7 +523,7 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
       const product = adminProductRows[0];
 
         if (purchase.status === "confirmed") {
-          res.render("purchase", {
+          res.render("adminPurchases.ejs", {
             purchase,
             product,
             user,
