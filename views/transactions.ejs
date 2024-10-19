@@ -824,7 +824,7 @@
                                     </td>
                                     <td><%= transactions.reference %></a></td>
                                     <td><span class="<%= (transactions.status === 'success' || transactions.status === 'completed') ? 'text-success' : (transactions.status === 'pending' ? 'text-warning' : 'text-danger') %>"><%= transactions.status %></span></td>
-                                    <td> <span class="<%= (transactions.type === "deposit" || transactions.type === "transfer") ? 'text-success' : 'text-danger' %>"> <%= transactions.type === "deposit" ? "+₦" : "-₦"%><%= transactions.amount %></span></td>
+                                    <td> <span class="<%= (transactions.type === "deposit" || transactions.type === "transfer") ? 'text-success' : 'text-danger' %>"> <%= transactions.type === "deposit" ? "₦" : "₦"%><%= transactions.amount %></span></td>
                                     
                                 </tr>
                                 <% }); %>

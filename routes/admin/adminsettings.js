@@ -38,8 +38,11 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
     const email = req.body.email;
     const pass = req.body.pass;
 
+    console.log(email)
+    console.log(typeof email)
+
     try {
-        await db.query("UPDATE miscellaneous SET smtp_email = $1 AND smtp_pass = $2 WHERE id = 1", [email, pass])
+        await db.query("UPDATE miscellaneous SET smtp_email = $1, smtp_pass = $2 WHERE id = $3", [email, pass, 1])
 
         res.redirect('/admin/settings');
     } catch (error) {
@@ -167,6 +170,35 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
       res.json({ message: 'Withdrawal status updated successfully' });
     } catch (error) {
       console.log(error)
+      console.error('Error updating withdrawal status:', error);
+      res.status(500).json({ error: 'Failed to update withdrawal status' });
+    }
+  });
+
+  router.get('/api/p2pmarket-enabled-status', adminEnsureAuthenticated, adminRole, async (req, res) => {
+    try {
+      const result = await db.query(
+        `SELECT p2pmarket_enabled FROM miscellaneous WHERE id = $1`,
+        [1]
+      );
+      res.json({ isEnabled: result.rows[0].p2pmarket_enabled });
+    } catch (error) {
+      console.error('Error fetching withdrawal status:', error);
+      res.status(500).json({ error: 'Failed to fetch withdrawal status' });
+    }
+  });
+
+  router.post('/api/toggle-p2pmarket', adminEnsureAuthenticated, adminRole, async (req, res) => {
+    try {
+      const { isEnabled } = req.body;
+      await db.query(
+        `UPDATE miscellaneous  
+         SET p2pmarket_enabled  = $1 
+         WHERE id = $2`,
+        [isEnabled, 1]
+      );
+      res.json({ message: 'Withdrawal status updated successfully' });
+    } catch (error) {
       console.error('Error updating withdrawal status:', error);
       res.status(500).json({ error: 'Failed to update withdrawal status' });
     }

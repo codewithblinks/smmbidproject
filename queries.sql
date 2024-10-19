@@ -256,22 +256,60 @@ CREATE TABLE user_archives (
   UNIQUE(user_id, product_id)
 );
 
--- remember to add
-
 CREATE TABLE payment_gateways (
   id SERIAL PRIMARY KEY,
   gateway_name VARCHAR(50) UNIQUE NOT NULL,
   is_enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-
 INSERT INTO payment_gateways (gateway_name, is_enabled) 
 VALUES ('paystack', true), ('flutterwave', true);
 
+-- remember to add
+
+
 ALTER TABLE miscellaneous ADD COLUMN withdrawal_enabled BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE miscellaneous ADD COLUMN p2pmarket_enabled BOOLEAN NOT NULL DEFAULT TRUE;
+
+CREATE TABLE ticket_statuses (
+    id SERIAL PRIMARY KEY,
+    status_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO ticket_statuses (status_name)
+VALUES 
+('Open'),
+('Closed'),
+('Pending'),
+('Resolved');
+
+CREATE TABLE ticket_priorities (
+    id SERIAL PRIMARY KEY,
+    priority_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO ticket_priorities (priority_name)
+VALUES 
+('Low'),
+('Medium'),
+('High'),
+('Urgent');
 
 
-
+CREATE TABLE support_tickets (
+    id SERIAL PRIMARY KEY,
+    ticket_id VARCHAR(255) NOT NULL,
+    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+	service VARCHAR(255) NOT NULL,
+    order_id VARCHAR(255),
+    description TEXT NOT NULL,
+    status_id INTEGER DEFAULT 1 REFERENCES ticket_statuses(id) ON DELETE CASCADE,
+    priority_id INTEGER DEFAULT 2 REFERENCES ticket_priorities(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP, 
+    resolved_at TIMESTAMP 
+);
 
 
 

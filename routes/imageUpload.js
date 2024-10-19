@@ -46,8 +46,9 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
       req.flash('error', 'File too large or invalid file type');
       return res.redirect('/settings');
     } else if (err) {
-      req.flash('error', 'Error uploading profile picture');
-      return res.redirect('/profile');
+      req.flash('error', 'Only PNG files are allowed!');
+      console.log(err)
+      return res.redirect('/settings');
     }
     next();
   });
@@ -97,7 +98,7 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
     ]);
 
     req.flash('success', 'Profile picture updated successfully!');
-    res.redirect('/profile');
+    res.redirect('/settings');
   } catch (error) {
     console.log(error);
     console.error('Error uploading profile picture:', error);

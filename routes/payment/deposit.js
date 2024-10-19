@@ -163,7 +163,7 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
       const transactionResult = await db.query("SELECT amount from transactions WHERE reference = $1", [reference]);
       const transactionAmount = transactionResult.rows[0];
   
-      await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ${transactionAmount.amount} was successfull and the amount credited into your balance` ])
+      await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ₦${transactionAmount.amount} was successfull and the amount credited into your balance` ])
 
       const depositCount = await db.query(
         'SELECT COUNT(*) FROM deposits WHERE user_id = $1',

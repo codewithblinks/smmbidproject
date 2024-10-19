@@ -19,6 +19,19 @@ router.get("/add", ensureAuthenticated, userRole,  async(req, res) => {
   const userId = req.user.id;
   const data = generateRandomData();
   try {
+
+    const p2pmarketEnabledReslt = await db.query(`
+      SELECT p2pmarket_enabled 
+      FROM miscellaneous WHERE id = $1
+      `, [1])
+
+      const p2pmarketEnabled = p2pmarketEnabledReslt.rows[0].p2pmarket_enabled;
+
+      if(!p2pmarketEnabled) {
+        req.flash("error", "Listing of accounts disabled at the moment");
+        return res.redirect("/dashboard");
+      }
+
       const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
       const userDetails = userResult.rows[0];
 
@@ -31,10 +44,6 @@ router.get("/add", ensureAuthenticated, userRole,  async(req, res) => {
 
       const userBalanceResult = await db.query("SELECT balance FROM userprofile WHERE id = $1", [userId]);
       const userBalance = Number(userBalanceResult.rows[0].balance);
-  
-      console.log('b', userBalance)
-      console.log(typeof userBalance)
-      console.log(typeof 5000)
   
       if (userBalance >= 5) {
         if (!userDetails) {

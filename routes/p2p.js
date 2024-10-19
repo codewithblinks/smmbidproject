@@ -21,6 +21,7 @@ router.get("/p2p", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
 
   try {
+
     const usersResult = await db.query(
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]
