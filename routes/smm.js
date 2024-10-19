@@ -220,6 +220,14 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
         const updateBalanceQuery =
           "UPDATE userprofile SET balance = balance - $1 WHERE id = $2";
         await db.query(updateBalanceQuery, [amount, userId]);
+
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', 
+            `You have successfully purchase an SMM Service with the order id ${order}` 
+          ])
+
         req.flash("success", "Service purchase successful, processing now.");
         return res.redirect("/dashboard");
       } else if (data.error == "Not enough funds on balance") {

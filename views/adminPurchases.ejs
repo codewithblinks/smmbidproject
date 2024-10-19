@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <base href="">
+    <base href="/">
     <title>
       SMMBIMEDIA | Build a better customer experience
     </title>
@@ -261,6 +261,9 @@
                     <ul x-cloak="" x-show="activeDropdown === 'invoice2'" x-collapse="" class="sub-menu text-gray-500">
                       <li>
                         <a href="/all/accounts">Buy Accounts</a>
+                      </li>
+                      <li>
+                        <a href="/product/adminorderhistory">Purchase History</a>
                       </li>
                     </ul>
                   </li>
@@ -852,12 +855,7 @@
           <div class="panel">
             <div class="flex flex-wrap justify-between gap-4 px-4">
                 <div class="text-1xl font-semibold uppercase">Invoice</div>
-                <% if (locals.purchaseTime) { %>
-                  <div id="countdown"></div>
-                  <% } else { %>
-                   
-                <% } %>
-                
+                  <div id="countdown">Completed</div>
             </div>
             <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
             <div class="flex-1 mb-4">
@@ -868,7 +866,7 @@
           </div>
                         <div class="mb-2 flex w-full items-center justify-between">
                             <div class="text-white-dark">Purchase No :</div>
-                            <div><%= purchase.purchases_admin_product%></div>
+                            <div><%= purchase.purchase_id%></div>
                         </div>
                         <div class="mb-2 flex w-full items-center justify-between">
                             <div class="text-white-dark">Order Date :</div>
@@ -880,39 +878,14 @@
                         </div>
                         <div class="flex w-full items-center justify-between">
                             <div class="text-white-dark">Account Country :</div>
-                            <div><%= product.account_country%> </div>
+                            <div><%= product.country%> </div>
                         </div>
             <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            <% if (purchase.status === 'rejected') { %>
-              <div class="mb-2 flex w-full items-center justify-between">
-                <div class="text-white-dark">Amount Refunded:</div>
-                <div><big>₦<%= product.amount %></big></div>
-            </div>
-            <% } else { %>
               <div class="mb-2 flex w-full items-center justify-between">
                 <div class="text-white-dark">Amount Paid:</div>
                 <div><big>₦<%= product.amount %></big></div>
             </div>
-            <% } %>
-
             <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            <% if (locals.loading) { %>
-            <div class="mb-2 flex w-full items-center justify-between">
-              <div class="text-white-dark">Your Order is being processed:</div>
-              <div class="w-3 h-3 mb-5">
-                <span >
-                  <span class="animate-ping inline-flex h-full w-full rounded-full bg-warning">
-                </span>
-              </span>
-            </div>
-          </div>
-          <% } else if (purchase.status === 'rejected') { %>
-            <div class="mb-2 flex w-full items-center justify-between">
-              <div class="text-white-dark">Your Order has been rejected:</div>
-              <div>❌</div>
-          </div>
-          
-          <% } else { %>
             <div class="mb-2 flex w-full items-center justify-between">
               <div class="text-white-dark">Your Order is completed:</div>
               <div>✔️</div>
@@ -935,18 +908,6 @@
                 <div style="word-wrap: break-word;"><%= product.logindetails%></div>
             </div>
         </div>
-        <% } %>
-        <div id="confirm" class="pricing mt-4" style="<%= purchase.status === 'confirmed' || purchase.status === 'rejected' ? "display: none;" : "display: block;" %>">
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark" >click to complete the trade</div>
-            <div>
-              <form id="okForm" :action="'/product/complete/order/' + <%= product.id %>" method="POST" style="display:inline;" >
-                <input type="number" value="<%= purchase.id %>" style="display: none;" name="purchaseId">
-                <span class="badge badge-outline-warning rounded-full" onclick="confirmComplete()" style="cursor: pointer;">Complete</span>
-            </form>
-            </div>
-        </div>
-        </div>
         <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
         <div class="mb-2 flex w-full items-center justify-between">
           <div class="text-white-dark">Want any help? Contact Support &nbsp;
@@ -957,6 +918,9 @@
                 </svg>
               </a>
             </span>
+          </div>
+          <div>
+            <button>Back</button>
           </div>
       </div>
 
@@ -984,103 +948,6 @@
     <script defer="" src="../assets/js/apexcharts.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script src="../assets/js/notification.js"></script>
-
-  <script>
-    const purchaseId = Number('<%= purchase.id %>'); // Convert purchase ID to number
-
-    const socket = io();
-
-    socket.on('productUpdated', async (data) => {
-        if (data.productId === purchaseId) {
-            // Fetch updated product details via AJAX or API
-            const response = await fetch(`/purchase/:purchaseId`);
-            const product = await response.json();
-
-            // Update the DOM
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('product-details').style.display = 'block';
-            document.getElementById('private-email').textContent = product.private_email;
-            document.getElementById('private-password').textContent = product.private_password;
-        }
-    });
-  </script>
-
-<script>
-      const productId = '<%= product.id %>';
-
-  let purchaseApproved = false;
-  // Set the end time for the countdown (30 minutes from purchase time)
-  const purchaseTime = new Date('<%= locals.purchaseTime %>'); // Passed from the backend
-  const countdownEndTime = new Date(purchaseTime.getTime() + 60 * 60 * 1000);
-
-  let approvalCheckInterval;
-
-  function fetchApprovalStatus() {
-    return fetch(`/api/check-approval-status/${productId}`) 
-        .then(response => response.json())
-        .then(data => {
-            purchaseApproved = data.approved; 
-            if (purchaseApproved[0].statustype === "updated") {
-                document.getElementById('confirm').style.display = 'block'; // Show the confirm button
-                clearInterval(approvalCheckInterval);
-            }
-        })
-        .catch(error => {
-                console.error('Error fetching approval status:', error);
-                // Optionally, display an error message to the user
-                document.getElementById('countdown').innerText = 'Error fetching approval status';
-            });
-    }
-
-
-  function updateCountdown() {
-    const now = new Date();
-    const timeRemaining = countdownEndTime - now;
-
-    if (purchaseApproved[0].statustype === "updated") {
-        if (timeRemaining > 0) {
-            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-            document.getElementById('countdown').innerText = `${minutes}m ${seconds}s`;
-        } else {
-            document.getElementById('countdown').innerText = 'Expired';
-            document.getElementById('confirm').style.display = 'none'; // Hide confirm button if expired
-        }
-    } else {
-        // Optionally hide the countdown or display a message indicating approval is needed
-        document.getElementById('countdown').innerText = 'Waiting for approval...';
-    }
-}
-
-function checkApprovalAndLog() {
-    console.log(`Checking approval for product ID: ${productId}`);
-    fetchApprovalStatus(); // Call the original function
-}
-
-  // Update the countdown every second
-  fetchApprovalStatus(); // Check approval status immediately
-    approvalCheckInterval = setInterval(fetchApprovalStatus, 5000); // Poll every 5 seconds
-
-    // Update the countdown every second
-    setInterval(updateCountdown, 1000);
-</script>
-
-<script>
-  async function confirmComplete() {
-      new window.Swal({
-          icon: 'warning',
-          title: 'Are you sure?',
-          text: "Do you comfirm that you have login and secured the account, You won't be able to revert this!",
-          showCancelButton: true,
-          confirmButtonText: 'Yes',
-          padding: '2em',
-      }).then((result) => {
-          if (result.value) {
-              document.getElementById('okForm').submit();
-          }
-      });
-  }
-</script>
 
     <script>
       // main section

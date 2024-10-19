@@ -172,7 +172,8 @@ CREATE TABLE IF NOT EXISTS miscellaneous (
 	rate numeric(10,2) DEFAULT 1500,
 	smtp_email VARCHAR(255) NOT NULL,
     smtp_pass VARCHAR(255) NOT NULL,
-    sms_price numeric(10,2) DEFAULT 2500
+    sms_price numeric(10,2) DEFAULT 2500,
+    withdrawal_enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
@@ -255,7 +256,20 @@ CREATE TABLE user_archives (
   UNIQUE(user_id, product_id)
 );
 
--- hd
+-- remember to add
+
+CREATE TABLE payment_gateways (
+  id SERIAL PRIMARY KEY,
+  gateway_name VARCHAR(50) UNIQUE NOT NULL,
+  is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+
+INSERT INTO payment_gateways (gateway_name, is_enabled) 
+VALUES ('paystack', true), ('flutterwave', true);
+
+ALTER TABLE miscellaneous ADD COLUMN withdrawal_enabled BOOLEAN NOT NULL DEFAULT TRUE;
+
 
 
 

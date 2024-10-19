@@ -15,7 +15,7 @@ function generateTransferId() {
   const prefix = "pur_ref";
   const uniqueId = uuidv4(); // Generate a unique UUID
   const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
-  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
+  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 6);
   return `${prefix}_${base64Id}`;
 }
 
@@ -115,6 +115,13 @@ router.post("/buyaccount", ensureAuthenticated, async (req, res) => {
           "UPDATE product_list SET payment_status = 'sold', sold_at = NOW() WHERE id = $1",
           [productId]
         );
+
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', 
+            `You have successfully purchase a ${product.account_type} account with the purchase id ${purchaseNumber}` 
+          ])
       } else {
         const updateBalanceQuery =
           "UPDATE userprofile SET balance = balance - $1 WHERE id = $2";

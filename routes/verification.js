@@ -230,7 +230,15 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
     await db.query(updateBalanceQuery, [order.amount, userId]);
 
+    await db.query(`
+      INSERT INTO notifications (user_id, type, message) 
+      VALUES ($1, $2, $3)`, 
+      [userId, 'purchase', 
+        `The order ${orderId} has been cancelled, and you have been refunded ${order.amount}` 
+      ])
+
     return res.json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
+    
 
   } catch (error) {
     console.log(error);
@@ -325,6 +333,13 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [userId, data.phonenumber, data.order_id, data.country, data.service, charge, displaycharge1])
 
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', 
+            `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id}` 
+          ])
+
       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
       await db.query(updateBalanceQuery, [displaycharge1, userId]);
 
@@ -361,7 +376,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
 
     } else if (error.request) {
       console.error('No response received from API:', error.request);
-      // res.status(500).json({ error: 'No response received from API' });
+      console.log(error);
       req.flash('error', "error from the network, try later")
       res.redirect('/verification')
     } else {

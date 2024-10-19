@@ -3,7 +3,7 @@ import db from "../db/index.js";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
-import ensureAuthenticated, {checkAuthenticated} from "../authMiddleware/authMiddleware.js";
+import ensureAuthenticated, {checkAuthenticated, checkAdminAuthenticated} from "../authMiddleware/authMiddleware.js";
 import geoip from "geoip-lite";
 import { sendEmail } from "../config/transporter.js";
 
@@ -89,7 +89,7 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-router.get('/login/admin', (req, res) => {
+router.get('/login/admin', checkAdminAuthenticated, (req, res) => {
     res.render('loginAdmin', { message: req.flash('error'), successMessage: req.flash('success') });
 });
 

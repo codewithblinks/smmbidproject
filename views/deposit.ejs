@@ -342,6 +342,9 @@
                     <li>
                       <a href="/all/accounts">Buy Accounts</a>
                     </li>
+                    <li>
+                      <a href="/product/adminorderhistory">Purchase History</a>
+                    </li>
                   </ul>
                 </li>
                 <li class="menu nav-item">
@@ -944,21 +947,21 @@
                   <div class="overflow-hidden">
                       <div class="rounded-lg bg-white dark:bg-black">
  
-                <label class="payment-option mt-8" style="height: 50px;">
+                <label class="payment-option mt-8" id="paystack-gateway" style="height: 50px; display: none;">
                   <input type="radio" name="payment" value="paystack">
                   <span class="radio-custom"></span>
                   <span class="payment-text">Paystack</span>
                   <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
                 </label>
 
-                <label class="payment-option" style="height: 50px;">
+                <label class="payment-option" id="flutterwave-gateway" style="height: 50px; display: none;">
                   <input type="radio" name="payment" value="flutterWave">
                   <span class="radio-custom"></span>
                   <span class="payment-text">Flutterwave</span>
                   <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
                 </label>
 
-                <button class="btn btn-primary" onclick="showDepositForm()">Deposit Now</button>
+                <button class="btn btn-primary" onclick="showDepositForm()" id="depositBTN">Deposit Now</button>
                       </div>
                   </div>
               </div>
@@ -973,7 +976,7 @@
                 <p class="subtext">Add funds direct to main balance.</p>
                 <form action="/deposit" method="post" class="mt-8">
                   <label for="amount">Amount to Deposit:</label>
-                  <input type="number" id="paystack-amount" placeholder="0.00" name="paystack_amount" style="height: 50px; width: 300px;" min="0" step="0.01" required class="form-input">
+                  <input type="number" id="paystack-amount" placeholder="0.00" name="paystack_amount" style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
                   <div class="flex justify-between" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
                     <button class="btn btn-primary" type="submit">Pay</button>
@@ -986,7 +989,7 @@
                 <p class="subtext">Add funds direct to main balance.</p>
                 <form action="/deposit/flutterwave" method="post" class="mt-8">
                   <label for="amount">Amount to Deposit:</label>
-                  <input type="number" id="flutterWave-amount" name="amount" placeholder="0.00" style="height: 50px; width: 300px;" min="0" step="0.01" required class="form-input">
+                  <input type="number" id="flutterWave-amount" name="amount" placeholder="0.00" style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
                   <div class="flex justify-between" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
                     <button type="submit" class="btn btn-primary">Pay</button>
@@ -1076,6 +1079,50 @@
     });
 
   </script>
+
+  <script>
+    async function loadPaymentGateways() {
+  const response = await fetch('/api/payment-gateways');
+  const gateways = await response.json();
+  const depositBTN = document.getElementById('depositBTN')
+
+  console.log(gateways.length)
+  console.log(gateways.length)
+
+  if(gateways.length < 0 ) {
+    depositBTN.disabled = true;
+  }
+
+
+  gateways.forEach(gateway => {
+    const gatewayDiv = document.getElementById(`${gateway.gateway_name}-gateway`);
+    if (gateway.is_enabled) {
+      gatewayDiv.style.display = 'flex';
+    } else {
+      gatewayDiv.style.display = 'none';
+    }
+  });
+}
+
+loadPaymentGateways();
+
+  </script>
+
+<script>
+  async function loadPaymentGatewaysCheck() {
+const response = await fetch('/api/payment-gateways/check');
+const gatewaysCheck = await response.json();
+const depositBTN = document.getElementById('depositBTN')
+
+if(gatewaysCheck.length === 0 ) {
+  depositBTN.disabled = true;
+}
+
+}
+
+loadPaymentGatewaysCheck();
+
+</script>
 
   <script>
     // main section

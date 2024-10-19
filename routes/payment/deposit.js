@@ -125,7 +125,7 @@ router.get('/cancel-deposit', ensureAuthenticated, async (req, res) => {
 
     console.log(transactionAmount)
 
-    await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ${transactionAmount.amount} was canceled by you` ])
+    await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ₦${transactionAmount.amount} was canceled by you` ])
 
     req.flash("success", "Your deposit has been canceled.");
     res.redirect('/dashboard');

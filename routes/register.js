@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import bodyParser from "body-parser";
 import { Strategy } from "passport-local";
-import ensureAuthenticated, {checkAuthenticated} from "../authMiddleware/authMiddleware.js"
+import ensureAuthenticated, {checkAuthenticated, checkAdminAuthenticated} from "../authMiddleware/authMiddleware.js"
 import {sendEmail} from "../config/transporter.js";
 import crypto from "crypto";
 import { body, validationResult } from "express-validator";
@@ -47,22 +47,21 @@ router.get("/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs", { message: req.flash('error') });
 });
 
-router.get("/register-admin", (req, res) => {
-  res.render("registerAdmin.ejs", { message: req.flash('error') });
-});
-
-// router.get("/register-admin", async (req, res) => {
-//   const checkResult = await db.query("SELECT * FROM admins");
-
-//   const admin = checkResult.rows;
-
-//   if (admin.length > 0) {
-//     console.log("jsksj")
-//     res.send("sjsjjk")
-//   } else {
-//      res.render("registerAdmin.ejs", { message: req.flash('error') });
-//   }
+// router.get("/register-admin", (req, res) => {
+//   res.render("registerAdmin.ejs", { message: req.flash('error') });
 // });
+
+router.get("/register-admin", checkAdminAuthenticated, async (req, res) => {
+  const checkResult = await db.query("SELECT * FROM admins");
+
+  const admin = checkResult.rows;
+
+  if (admin.length > 0) {
+   res.render("admin/404")
+  } else {
+     res.render("registerAdmin.ejs", { message: req.flash('error') });
+  }
+});
 
 router.post("/register", upload, registrationValidationRules, async (req, res) => {
   const { username, firstname, lastname, password } = req.body;

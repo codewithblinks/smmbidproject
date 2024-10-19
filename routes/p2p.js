@@ -4,6 +4,7 @@ import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
 import { v4 as uuidv4 } from 'uuid';
+import { sendEmail } from "../config/transporter.js";
 
 
 const router = express.Router();
@@ -12,7 +13,7 @@ function generateTransferId() {
   const prefix = "pur_ref";
   const uniqueId = uuidv4(); // Generate a unique UUID
   const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
-  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
+  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 6);
   return `${prefix}_${base64Id}`;
 }
 
@@ -433,7 +434,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
     const purchaseNumber = generateTransferId();
 
     const result = await db.query(
-      "SELECT balance FROM userprofile WHERE id = $1",
+      "SELECT balance, username FROM userprofile WHERE id = $1",
       [userId]
     );
     const user = result.rows[0];
@@ -443,6 +444,14 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       [productId]
     );
     const product = productRows.rows[0];
+
+    const adminResult = await db.query(`
+      SELECT email from admins WHERE id = $1
+      `, [product.admin_id]);
+
+      const adminEmail = adminResult.rows[0];
+
+      console.log("amin ema", adminEmail)
 
     if (product.payment_status === "sold") {
       req.flash("success", "Product already sold.");
@@ -461,6 +470,14 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       );
       const purchase = purchaseRows.rows[0];
 
+      await db.query(`
+        INSERT INTO notifications (user_id, type, message) 
+        VALUES ($1, $2, $3)`, 
+        [userId, 'purchase', 
+          `You have successfully purchase a ${product.account_type} account with the purchase id ${purchaseNumber}` 
+        ])
+
+
       const updateBalanceQuery =
       "UPDATE userprofile SET balance = balance - $1 WHERE id = $2";
     await db.query(updateBalanceQuery, [product.amount, userId])
@@ -469,7 +486,16 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       "UPDATE admin_products SET payment_status = 'sold', sold_at = NOW() WHERE id = $1",
       [productId]
     );
-      console.log("successful");
+      
+    const mailOptions = {
+      to: adminEmail.email,
+      subject: 'Purchase Alert',
+      text: `${user.username} just purchase ${product.account_type} account for ₦${product.amount} with the purchase id: ${purchaseNumber}
+      `
+    };
+
+    await sendEmail(mailOptions);
+
       res.redirect(`/purchase/account/${purchase.id}`);
     } else {
       req.flash("error", "Insufficient balance, please topup your balance");

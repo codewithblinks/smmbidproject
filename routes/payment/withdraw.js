@@ -15,6 +15,18 @@ const router = express.Router();
 router.get("/withdraw", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
   try {
+    const withdrawal_enabledResult = await db.query(`
+      SELECT withdrawal_enabled FROM miscellaneous
+      WHERE id = $1
+      `, [1])
+
+      const withdrawal_enabled = withdrawal_enabledResult.rows[0].withdrawal_enabled;
+
+      if(!withdrawal_enabled){
+        req.flash("error", "Withdraw disabled at the moment");
+        return res.redirect("/dashboard");
+      }
+
     const usersResult = await db.query(
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]

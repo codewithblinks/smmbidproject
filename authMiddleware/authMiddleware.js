@@ -38,5 +38,13 @@ export function checkAuthenticated(req, res, next) {
   next();
 }
 
+export function checkAdminAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+      return res.redirect('/admin/dashboard'); 
+  }
+  next();
+}
+
+
  
 export default ensureAuthenticated;
