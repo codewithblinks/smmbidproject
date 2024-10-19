@@ -174,6 +174,7 @@ CREATE TABLE IF NOT EXISTS miscellaneous (
     smtp_pass VARCHAR(255) NOT NULL,
     sms_price numeric(10,2) DEFAULT 2500,
     withdrawal_enabled BOOLEAN NOT NULL DEFAULT TRUE
+    p2pmarket_enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
@@ -267,9 +268,6 @@ VALUES ('paystack', true), ('flutterwave', true);
 
 -- remember to add
 
-
-ALTER TABLE miscellaneous ADD COLUMN withdrawal_enabled BOOLEAN NOT NULL DEFAULT TRUE;
-ALTER TABLE miscellaneous ADD COLUMN p2pmarket_enabled BOOLEAN NOT NULL DEFAULT TRUE;
 
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
