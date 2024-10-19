@@ -148,15 +148,7 @@ const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
 
 
 app.get("/", (req, res) => {
-  res.render("index2");
-});
-
-app.get("/in", (req, res) => {
   res.render("index");
-});
-
-app.get("/faq", (req, res) => {
-  res.render("faq");
 });
 
 // Real-time communication
