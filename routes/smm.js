@@ -199,8 +199,8 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
         );
         const orderData = orderResponse.data;
 
-        const orderStatus = orderData.status === '' ? 'Pending' : orderData.status;
-
+        const orderStatus = !orderData.status ? 'Pending' : orderData.status;
+        
         const addTransferQuery = `
         INSERT INTO purchase_history (user_id, charge, order_id, status, start_count, remain, quantity, link, service)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
