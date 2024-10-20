@@ -43,6 +43,27 @@ const registrationValidationRules = [
     .escape()
 ];
 
+async function validateRecaptcha(token) {
+  const secretKey = process.env.reCAPTCHA_SecretKey_login;
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+
+  try {
+    const response = await axios.post(url);
+    const data = response.data;
+
+    if (data.success && data.score >= 0.5) {
+      console.log('reCAPTCHA passed with score:', data.score);
+      return true;
+    } else {
+      console.log('reCAPTCHA failed with score:', data.score);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error validating reCAPTCHA:', error);
+    return false;
+  }
+}
+
 router.get("/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs", { message: req.flash('error') });
 });
@@ -69,33 +90,24 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
   const verificationCode = crypto.randomBytes(3).toString('hex');
   const verificationCodeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
   const referralCode = generateReferralCode(username);
-  const recaptchaResponse = req.body['g-recaptcha-response'];
-  const secretKey = process.env.reCAPTCHA_SecretKey_login; 
-
+  const token = req.body.g_recaptcha_response; 
   const ref = req.query.ref || req.body.ref;
 
   // Handle validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map(error => ({
-      param: error.param, 
-      msg: error.msg  
+      param: error.param, // Get the specific field (username, email, etc.)
+      msg: error.msg      // Get the error message
     }));
     return res.status(400).json({ success: false, errors: errorMessages });
   }
 
+
   try {
-
-    if (!recaptchaResponse) {
-      return res.status(400).json({ success: false, errors: ['Please complete the reCAPTCHA challenge'] });
-    }
-
-    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
-    const recaptchaVerificationResponse = await axios.post(verificationUrl);
-
-
-    if (!recaptchaVerificationResponse.data.success || recaptchaVerificationResponse.data.score < 0.5) {
-      return res.status(400).json({ success: false, errors: ['reCAPTCHA verification failed. Please try again.'] });
+    const isHuman = await validateRecaptcha(token);
+    if (!isHuman) {
+        return res.status(400).json({ success: false, errors: ['reCAPTCHA failed. Are you a robot?'] });
     }
 
     const [checkResult, checkUsername] = await Promise.all([
@@ -304,7 +316,6 @@ router.get("/verifyemail", (req, res) => {
 router.get("/resend-verification-code", (req, res) => {
   res.render('resendemailcode',  { messages: req.flash() });
 })
-
 
 
 
