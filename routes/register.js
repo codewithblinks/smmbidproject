@@ -70,7 +70,7 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
   const verificationCodeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
   const referralCode = generateReferralCode(username);
   const recaptchaResponse = req.body['g-recaptcha-response'];
-  const secretKey = process.env.reCAPTCHA_SecretKey_login;
+  const secretKey = process.env.reCAPTCHA_SecretKey_login; 
 
   const ref = req.query.ref || req.body.ref;
 
