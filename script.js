@@ -31,13 +31,14 @@ env.config();
 
 app.use(session({
   store: new PgStore({
-      pool: db, // Connection pool
-      tableName: 'session' // Use another table-name than the default "session" table
+      pool: db,
+      tableName: 'session' 
   }),
-  secret: process.env.SESSION_SECRET, // Replace with your secret key
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, maxAge: 1000 * 60 * 30 } // Set to true if using HTTPS
+  rolling: true,
+  cookie: { secure: false, maxAge: 1000 * 60 * 30 } 
 }));
 
 app.use(expressCspHeader({
