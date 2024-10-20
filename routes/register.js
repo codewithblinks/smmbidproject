@@ -94,7 +94,7 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
     const recaptchaVerificationResponse = await axios.post(verificationUrl);
 
 
-    if (!recaptchaVerificationResponse.data.success) {
+    if (!recaptchaVerificationResponse.data.success || recaptchaVerificationResponse.data.score < 0.5) {
       return res.status(400).json({ success: false, errors: ['reCAPTCHA verification failed. Please try again.'] });
     }
 

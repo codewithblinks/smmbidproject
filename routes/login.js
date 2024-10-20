@@ -26,7 +26,7 @@ router.post('/login', (req, res, next) => {
   const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
 
   axios.post(verificationUrl).then(async (recaptchaVerificationResponse) => {
-    if (!recaptchaVerificationResponse.data.success) {
+    if (!recaptchaVerificationResponse.data.success || recaptchaVerificationResponse.data.score < 0.5) {
       req.flash('error', 'reCAPTCHA verification failed. Please try again.');
       return res.redirect('/login');
     }
