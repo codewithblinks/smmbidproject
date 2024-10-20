@@ -11,7 +11,7 @@ import { body, validationResult } from "express-validator";
 import multer from "multer";
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { error } from "console";
+import axios from "axios";
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 const router = express.Router();
@@ -69,6 +69,8 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
   const verificationCode = crypto.randomBytes(3).toString('hex');
   const verificationCodeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
   const referralCode = generateReferralCode(username);
+  const recaptchaResponse = req.body['g-recaptcha-response'];
+  const secretKey = process.env.reCAPTCHA_SecretKey_login;
 
   const ref = req.query.ref || req.body.ref;
 
@@ -76,14 +78,26 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map(error => ({
-      param: error.param, // Get the specific field (username, email, etc.)
-      msg: error.msg      // Get the error message
+      param: error.param, 
+      msg: error.msg  
     }));
     return res.status(400).json({ success: false, errors: errorMessages });
   }
 
-
   try {
+
+    if (!recaptchaResponse) {
+      return res.status(400).json({ success: false, errors: ['Please complete the reCAPTCHA challenge'] });
+    }
+
+    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
+    const recaptchaVerificationResponse = await axios.post(verificationUrl);
+
+
+    if (!recaptchaVerificationResponse.data.success) {
+      return res.status(400).json({ success: false, errors: ['reCAPTCHA verification failed. Please try again.'] });
+    }
+
     const [checkResult, checkUsername] = await Promise.all([
       db.query("SELECT * FROM userprofile WHERE email = $1", [email]),
       db.query("SELECT * FROM userprofile WHERE username = $1", [username])
@@ -290,6 +304,7 @@ router.get("/verifyemail", (req, res) => {
 router.get("/resend-verification-code", (req, res) => {
   res.render('resendemailcode',  { messages: req.flash() });
 })
+
 
 
 

@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const qantityLimitSelect = document.getElementById('qantityLimit');
   const displayAmountSelect = document.getElementById('displayAmount');
   
-  displayAmountSelect.value = '₦ 0';
-  let exchangeRate = 1500;
+displayAmountSelect.value = '₦ 0';
+let exchangeRate = 1500;
 
-  // Cache the fetched data globally to avoid repeated fetch requests
+
   let allOptions = [];
 
   const fetchExchangeRate = async () => {
@@ -56,9 +56,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const fragment1 = document.createDocumentFragment();
 
     options.forEach(option => {
+      const priceRate = (exchangeRate * option.rate) * 20 / 100;
+      const rates = Math.floor(exchangeRate * option.rate + priceRate)
       const optionElement = document.createElement('option');
       optionElement.value = option.service;
-      optionElement.textContent = option.name;
+      optionElement.textContent = `${option.name} - NGN ${rates} per 1000`;
       optionElement.dataset.rate = option.rate;
       optionElement.dataset.min = option.min;
       optionElement.dataset.max = option.max;
