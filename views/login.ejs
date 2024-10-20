@@ -78,7 +78,7 @@
                   Enter your email and password to login
                 </p>
               </div>
-              <form action="/login" method="post" class="space-y-5 dark:text-white">
+              <form action="/login" method="post" class="space-y-5 dark:text-white" id="loginForm">
                 <div>
                   <label for="Email">Email</label>
                   <div class="relative text-white-dark">
@@ -122,6 +122,7 @@
                     </span>
                     <i class="fa-duotone fa-solid fa-eye-slash showHidePw"></i>
                 </div>
+                <input type="hidden" name="g-recaptcha-response" id="recaptchaResponse">
                 <div class="fg mt-5">
                   <label class="flex cursor-pointer items-center">
                   </label>
@@ -172,6 +173,18 @@
         toastr.success(successMessage);
       }
     });
+  </script>
+
+  <script>
+    grecaptcha.ready(function() {
+  grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'submit' }).then(function(token) {
+    // Add the token to your form
+    document.getElementById('recaptchaResponse').value = token;
+    // Submit the form
+    document.getElementById('loginForm').submit();
+  });
+});
+
   </script>
 
   <script>
