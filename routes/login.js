@@ -40,7 +40,7 @@ router.post('/login', async (req, res, next) => {
 
     const isHuman = await validateRecaptcha(token);
     if (!isHuman) {
-        req.flash('error', 'reCAPTCHA failed. Are you a robot?');
+        req.flash('error', 'n');
         return res.redirect('/login');
     }
 

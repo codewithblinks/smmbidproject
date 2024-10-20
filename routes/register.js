@@ -85,7 +85,7 @@ router.get("/register-admin", checkAdminAuthenticated, async (req, res) => {
 });
 
 router.post("/register", upload, registrationValidationRules, async (req, res) => {
-  const { username, firstname, lastname, password } = req.body;
+  const { username, firstname, lastname, newPassword, password, terms } = req.body;
   const email = req.body.email.toLowerCase();
   const verificationCode = crypto.randomBytes(3).toString('hex');
   const verificationCodeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
@@ -105,10 +105,10 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
 
 
   try {
-    const isHuman = await validateRecaptcha(token);
-    if (!isHuman) {
-        return res.status(400).json({ success: false, errors: ['reCAPTCHA failed. Are you a robot?'] });
-    }
+    // const isHuman = await validateRecaptcha(token);
+    // if (!isHuman) {
+    //     return res.status(400).json({ success: false, errors: ['reCAPTCHA failed. Are you a robot?'] });
+    // }
 
     const [checkResult, checkUsername] = await Promise.all([
       db.query("SELECT * FROM userprofile WHERE email = $1", [email]),
@@ -121,6 +121,14 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
 
     if (checkUsername.rows.length > 0) {
       return res.status(400).json({ success: false, errors: ['Username already exists'] });
+    }
+
+    if (!terms) {
+      return res.status(400).json({ success: false, errors: ['You must accept the Terms and Conditions before registering.'] });
+    }
+
+    if (newPassword !== password) {
+      return res.status(400).json({ success: false, errors: ['Password does not match, check and try again.'] });
     }
 
     let referredByUserId = null;

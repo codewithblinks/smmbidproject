@@ -16,11 +16,10 @@ let exchangeRate = 1500;
 
   const fetchExchangeRate = async () => {
     try {
-      const response = await fetch('/api/exchange-rate'); // Fetch from your backend
+      const response = await fetch('/api/exchange-rate');
       const data = await response.json();
       if (data.rate) {
-        exchangeRate = data.rate; // Set exchange rate from the database
-        console.log(`Exchange Rate: ₦ ${exchangeRate}`);
+        exchangeRate = data.rate; 
       }
     } catch (error) {
       console.error('Error fetching exchange rate:', error);
