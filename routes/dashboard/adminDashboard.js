@@ -325,6 +325,8 @@ router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, 
 
 const totalSmmAmount = smmPanelResult.rows[0];
 
+console.log(totalSmmAmount)
+
 const smsResult = await db.query(`
   SELECT SUM(amount) AS total_successful_sms_purchases
   FROM sms_order
@@ -339,7 +341,10 @@ const totalSmsAmount = smsResult.rows[0];
   totalSmmAmount.total_not_refunded = numeral(totalSmmAmount.total_not_refunded).format('0,0.00');
   totalSmsAmount.total_successful_sms_purchases = numeral(totalSmsAmount.total_successful_sms_purchases).format('0,0.00');
 
-  const totalSmmAmount1 = Number(totalSmmAmount.total_completed) + Number(totalSmmAmount.total_not_refunded);
+  const totalCompleted = Number(totalSmmAmount.total_completed) || 0; 
+  const totalNotRefunded = Number(totalSmmAmount.total_not_refunded) || 0;
+
+  const totalSmmAmount1 = totalCompleted + totalNotRefunded;
 
   const weekTotalDeposit = totalsThisWeek.find(row => row.type === 'deposit')?.total_amount || 0;
   const weekTotalWithdawal = totalsThisWeek.find(row => row.type === 'withdrawal')?.total_amount || 0;

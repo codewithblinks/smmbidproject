@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS userprofile (
     last_verification_code_sent_at timestamp without time zone,
     profile_picture VARCHAR(255),
     referral_code VARCHAR(50) UNIQUE,
+    business_balance numeric(15,2) DEFAULT 0.00,
     notify_unusual_activity BOOLEAN DEFAULT FALSE,
     last_login_ip VARCHAR(255)
 );
