@@ -335,19 +335,16 @@ const smsResult = await db.query(`
 
 const totalSmsAmount = smsResult.rows[0];
 
+const totalCompleted = Number(totalSmmAmount.total_completed) || 0; 
+const totalNotRefunded = Number(totalSmmAmount.total_not_refunded) || 0;
+
+let totalSmmAmount1 = totalCompleted + totalNotRefunded;
+
   totals.total_deposit = numeral(totals.total_deposit).format('0,0.00');
   totals.total_withdrawal = numeral(totals.total_withdrawal).format('0,0.00');
-  totalSmmAmount.total_completed = numeral(totalSmmAmount.total_completed).format('0,0.00');
-  totalSmmAmount.total_not_refunded = numeral(totalSmmAmount.total_not_refunded).format('0,0.00');
+  totalSmmAmount1 = numeral(totalSmmAmount1).format('0,0.00');
   totalSmsAmount.total_successful_sms_purchases = numeral(totalSmsAmount.total_successful_sms_purchases).format('0,0.00');
-
-  const totalCompleted = parseFloat(totalSmmAmount.total_completed) || 0;
-  const totalNotRefunded = parseFloat(totalSmmAmount.total_not_refunded) || 0; 
-
-  console.log(typeof totalCompleted)
-  console.log(typeof totalNotRefunded)
-
-  const totalSmmAmount1 = totalCompleted + totalNotRefunded;
+  
 
   console.log(totalSmmAmount1)
 
