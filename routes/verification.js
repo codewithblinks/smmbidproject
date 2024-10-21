@@ -133,13 +133,69 @@ const notifyOrderStatusChange = (order) => {
   io.emit('orderStatusUpdated', order);
 };
 
+const fetchAndFilterExpiredOrders = async (orderCodes) => {
+  try {
+    const form = new FormData();
+    form.append('key', '');
+
+    const headers = {
+      ...form.getHeaders(),
+      'Authorization': `Bearer ${BEARER_TOKEN}`,
+    };
+
+    const response = await axios.post('https://api.smspool.net/request/history', form, { headers });
+    const orders = response.data;
+
+    for (const order of orders) {
+      if (orderCodes.includes(order.order_code)) {
+
+        const orderResult = await db.query('SELECT status, amount, user_id FROM sms_order WHERE order_id = $1', [order.order_code]);
+        
+        if (orderResult.rows.length > 0) {
+
+          const { status, user_id } = orderResult.rows[0];
+
+          const refundAmount = Number(orderResult.rows[0].amount);
+
+          if (status === 'refunded') {
+            continue;
+          }
+
+          if (order.status === 'refunded') {
+
+            await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', order.order_code]);
+            
+            // Refund the user
+            const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
+            await db.query(updateBalanceQuery, [refundAmount, user_id]);
+
+            // Optionally, send notification
+            await db.query(`
+              INSERT INTO notifications (user_id, type, message) 
+              VALUES ($1, $2, $3)`,
+              [user_id, 'refund', `Your order ${order.order_code} has been refunded. Amount: ₦${refundAmount}`]
+            );
+
+            console.log(`Refund issued for order ${order.order_code}`);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching and filtering data:', error);
+    return [];
+  }
+};
+
+
 cron.schedule('*/30 * * * * *', async () => {
 
   try {
     const userIds = await fetchAllUserIds();
     for (const userId of userIds) {
       const orderCodes = await fetchOrderCodesForUser(userId);
-      const filteredOrders = await fetchAndFilterActiveOrders(orderCodes);
+      await fetchAndFilterActiveOrders(orderCodes);
+      await fetchAndFilterExpiredOrders(orderCodes);
     }
   } catch (error) {
     console.log(error);
@@ -337,7 +393,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
           INSERT INTO notifications (user_id, type, message) 
           VALUES ($1, $2, $3)`, 
           [userId, 'purchase', 
-            `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id}` 
+            `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id} Amount: ₦${displaycharge1}` 
           ])
 
       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
