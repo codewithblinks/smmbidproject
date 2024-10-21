@@ -346,6 +346,8 @@ const totalSmsAmount = smsResult.rows[0];
 
   const totalSmmAmount1 = totalCompleted + totalNotRefunded;
 
+  console.log(totalSmmAmount1)
+
   const weekTotalDeposit = totalsThisWeek.find(row => row.type === 'deposit')?.total_amount || 0;
   const weekTotalWithdawal = totalsThisWeek.find(row => row.type === 'withdrawal')?.total_amount || 0;
 
