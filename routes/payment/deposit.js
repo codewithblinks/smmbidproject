@@ -239,7 +239,7 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/webhook', express.json(), ensureAuthenticated, async (req, res) => {
+router.post('/webhook', express.json(), async (req, res) => {
     const { event, data } = req.body;
     
     try {
