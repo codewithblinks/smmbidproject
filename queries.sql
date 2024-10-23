@@ -310,6 +310,16 @@ CREATE TABLE support_tickets (
     resolved_at TIMESTAMP 
 );
 
+CREATE TABLE ticket_responses (
+    id SERIAL PRIMARY KEY,
+    ticket_id VARCHAR(255) NOT NULL,
+    support_tickets_id INTEGER REFERENCES support_tickets(id) ON DELETE CASCADE,       
+    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
 
 
 

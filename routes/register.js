@@ -105,10 +105,10 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
 
 
   try {
-    // const isHuman = await validateRecaptcha(token);
-    // if (!isHuman) {
-    //     return res.status(400).json({ success: false, errors: ['reCAPTCHA failed. Are you a robot?'] });
-    // }
+    const isHuman = await validateRecaptcha(token);
+    if (!isHuman) {
+        return res.status(400).json({ success: false, errors: ['reCAPTCHA failed. Are you a robot?'] });
+    }
 
     const [checkResult, checkUsername] = await Promise.all([
       db.query("SELECT * FROM userprofile WHERE email = $1", [email]),

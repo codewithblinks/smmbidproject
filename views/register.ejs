@@ -265,7 +265,7 @@
 <script>
   grecaptcha.ready(function() {
 grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'register' }).then(function(token) {
-  // Add the token to your form
+
   document.getElementById('recaptchaResponse').value = token;
 });
 });
@@ -277,16 +277,15 @@ grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'regist
       const ref = urlParams.get('ref');
 
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault(); // Prevent default form submission
+      e.preventDefault();
     
       const form = e.target;
-      const formData = new FormData(form); // Collect form data
+      const formData = new FormData(form); 
 
       if (ref) {
       formData.append('ref', ref);
     }
     
-      // Make an AJAX request
       const response = await fetch('/register', {
         method: 'POST',
         body: formData,
