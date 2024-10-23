@@ -40,6 +40,14 @@ router.get("/admin/users/list", adminEnsureAuthenticated, adminRole, async (req,
       [false, true, limit, offset]);
     const userDetails = userResult.rows;
 
+    const TotalUsersResult = await db.query(`
+      SELECT * FROM userprofile 
+      WHERE is_suspended = $1 
+      AND email_verified = $2`
+      , 
+      [false, true]);
+    const TotalUsers = TotalUsersResult.rows;
+
     userDetails.forEach(userDetails => {
       userDetails.balance = numeral(userDetails.balance).format('0,0.00');
   });
@@ -51,7 +59,7 @@ router.get("/admin/users/list", adminEnsureAuthenticated, adminRole, async (req,
       res.render('admin/users', { 
         messages: req.flash(), user, userDetails,
         currentPage: page, 
-        totalPages: Math.ceil(totalOrders / limit)
+        totalPages: Math.ceil(totalOrders / limit), TotalUsers
       });
   
   } catch (error) {
