@@ -79,7 +79,6 @@ async function calculateUserProgress(userId) {
   }
 }
 
-
 router.get('/weekly-progress', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
 try {

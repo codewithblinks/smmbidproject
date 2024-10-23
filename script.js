@@ -102,7 +102,7 @@ import adminListProductsRoute from './routes/admin/adminlistproducts.js'
 import weeklyChaRoute from './routes/weekly_challenges.js'
 import imageUploadRoute from './routes/imageUpload.js'
 import adminsettingsRoute from './routes/admin/adminsettings.js'
-// import knowledgebaseRoute from './routes/knowledgebase.js'
+import knowledgebaseRoute from './routes/knowledgebase.js'
 import settingsAdminRoute from './routes/admin/settings.js'
 // import adminTickets from './routes/admin/admintickets.js'
 
@@ -141,7 +141,7 @@ app.use(adminListProductsRoute)
 app.use(weeklyChaRoute)
 app.use(imageUploadRoute)
 app.use(adminsettingsRoute)
-// app.use(knowledgebaseRoute)
+app.use(knowledgebaseRoute)
 app.use(settingsAdminRoute)
 // app.use(adminTickets)
 

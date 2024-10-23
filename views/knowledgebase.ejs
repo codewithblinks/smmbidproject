@@ -4,7 +4,14 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Dashboard Template</title>
+  <title>
+    SMMBIMEDIA | Build a better customer experience
+  </title>
+  <link
+  rel="shortcut icon"
+  href="assets/images/favicon.png"
+  type="image/x-icon"
+/>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
@@ -336,33 +343,19 @@
               </li>
             </ul>
           </li>
-          <li class="menu nav-item">
-            <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'authentication'}"
-              @click="activeDropdown === 'authentication' ? activeDropdown = null : activeDropdown = 'authentication'">
+          <li class="nav-item">
+            <a href="/knowledgebase" class="group">
               <div class="flex items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M9.25 16C9.25 14.4812 10.4812 13.25 12 13.25C13.5188 13.25 14.75 14.4812 14.75 16C14.75 17.5188 13.5188 18.75 12 18.75C10.4812 18.75 9.25 17.5188 9.25 16ZM12 14.75C11.3096 14.75 10.75 15.3096 10.75 16C10.75 16.6904 11.3096 17.25 12 17.25C12.6904 17.25 13.25 16.6904 13.25 16C13.25 15.3096 12.6904 14.75 12 14.75Z"
-                    fill="currentColor" />
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M5.25 9.30277V8C5.25 4.27208 8.27208 1.25 12 1.25C15.7279 1.25 18.75 4.27208 18.75 8V9.30277C18.9768 9.31872 19.1906 9.33948 19.3918 9.36652C20.2919 9.48754 21.0497 9.74643 21.6517 10.3483C22.2536 10.9503 22.5125 11.7081 22.6335 12.6082C22.75 13.4752 22.75 14.5775 22.75 15.9451V16.0549C22.75 17.4225 22.75 18.5248 22.6335 19.3918C22.5125 20.2919 22.2536 21.0497 21.6517 21.6516C21.0497 22.2536 20.2919 22.5125 19.3918 22.6335C18.5248 22.75 17.4225 22.75 16.0549 22.75H7.94513C6.57754 22.75 5.47522 22.75 4.60825 22.6335C3.70814 22.5125 2.95027 22.2536 2.34835 21.6516C1.74643 21.0497 1.48754 20.2919 1.36652 19.3918C1.24996 18.5248 1.24998 17.4225 1.25 16.0549V15.9451C1.24998 14.5775 1.24996 13.4752 1.36652 12.6082C1.48754 11.7081 1.74643 10.9503 2.34835 10.3483C2.95027 9.74643 3.70814 9.48754 4.60825 9.36652C4.80938 9.33948 5.02317 9.31872 5.25 9.30277ZM6.75 8C6.75 5.10051 9.10051 2.75 12 2.75C14.8995 2.75 17.25 5.10051 17.25 8V9.25344C16.8765 9.24999 16.4784 9.24999 16.0549 9.25H7.94513C7.52161 9.24999 7.12353 9.24999 6.75 9.25344V8ZM4.80812 10.8531C4.07435 10.9518 3.68577 11.1322 3.40901 11.409C3.13225 11.6858 2.9518 12.0743 2.85315 12.8081C2.75159 13.5635 2.75 14.5646 2.75 16C2.75 17.4354 2.75159 18.4365 2.85315 19.1919C2.9518 19.9257 3.13225 20.3142 3.40901 20.591C3.68577 20.8678 4.07435 21.0482 4.80812 21.1469C5.56347 21.2484 6.56459 21.25 8 21.25H16C17.4354 21.25 18.4365 21.2484 19.1919 21.1469C19.9257 21.0482 20.3142 20.8678 20.591 20.591C20.8678 20.3142 21.0482 19.9257 21.1469 19.1919C21.2484 18.4365 21.25 17.4354 21.25 16C21.25 14.5646 21.2484 13.5635 21.1469 12.8081C21.0482 12.0743 20.8678 11.6858 20.591 11.409C20.3142 11.1322 19.9257 10.9518 19.1919 10.8531C18.4365 10.7516 17.4354 10.75 16 10.75H8C6.56459 10.75 5.56347 10.7516 4.80812 10.8531Z"
-                    fill="currentColor" />
-                </svg>
+                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
+                  <path opacity="0.5" d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
                 <span
-                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Authentication</span>
+                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Knowledgebase</span>
               </div>
-              <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'authentication'}">
-                <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </div>
-            </button>
-            <ul x-cloak="" x-show="activeDropdown === 'authentication'" x-collapse="" class="sub-menu text-gray-500">
-              <li>
-                <a href="" target="_blank">Identity Verification</a>
-              </li>
-            </ul>
+            </a>
           </li>
           </ul>
         </div>
@@ -1075,6 +1068,94 @@
                           </div>
                       </div>
                   </div>
+                  <div>
+                    <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 7}" x-on:click="active === 7 ? active = null : active = 7">
+                        <span>Can i withdraw money i deposited into my account?</span>
+                        <template x-if="active !== 7">
+                            <span class="shrink-0">
+                                <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
+                                </svg>
+                            </span>
+                        </template>
+                        <template x-if="active === 7">
+                            <span class="shrink-0">
+                                <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
+                                    <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
+                                </svg>
+                            </span>
+                        </template>
+                    </div>
+                    <div x-cloak="" x-show="active === 7" x-collapse="">
+                        <div class="px-1 py-3 font-semibold text-white-dark">
+                            <p>
+                              No, Withdrawals are only permitted from your business account, not from your main balance account. 
+                              Any deposits made are credited to your main account. 
+                              Only referral commissions and payments made or gain from your business account can be withdrawn.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                  <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 7}" x-on:click="active === 7 ? active = null : active = 7">
+                      <span>What is main account balance?</span>
+                      <template x-if="active !== 7">
+                          <span class="shrink-0">
+                              <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
+                                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
+                              </svg>
+                          </span>
+                      </template>
+                      <template x-if="active === 7">
+                          <span class="shrink-0">
+                              <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
+                                  <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
+                              </svg>
+                          </span>
+                      </template>
+                  </div>
+                  <div x-cloak="" x-show="active === 7" x-collapse="">
+                      <div class="px-1 py-3 font-semibold text-white-dark">
+                          <p>
+                            All deposit made into your account is credited into your main balance, and can not withdrawn.
+                            This balanceare used for your service purchase
+                          </p>
+                      </div>
+                  </div>
+              </div>
+              <div>
+                <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 7}" x-on:click="active === 7 ? active = null : active = 7">
+                    <span>What is business balance?</span>
+                    <template x-if="active !== 7">
+                        <span class="shrink-0">
+                            <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
+                            </svg>
+                        </span>
+                    </template>
+                    <template x-if="active === 7">
+                        <span class="shrink-0">
+                            <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
+                                <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
+                            </svg>
+                        </span>
+                    </template>
+                </div>
+                <div x-cloak="" x-show="active === 7" x-collapse="">
+                    <div class="px-1 py-3 font-semibold text-white-dark">
+                        <p>
+                          This is where are the money you earned from referals and products you sell on our website are credited into, 
+                          The money in your business account can be withdrawal.
+                        </p>
+                    </div>
+                </div>
+            </div>
                   </div>
               </div>
               <div class="rounded-md bg-white dark:bg-black" x-data="{ active: 1 }">
@@ -1465,11 +1546,11 @@
           <!-- SECOND -->
           <div class="mb-10 grid grid-cols-1 gap-10 md:grid-cols-2">
             <div class="rounded-md bg-white dark:bg-black" x-data="{ active: 1 }">
-                <div class="border-b border-white-light p-6 text-[22px] font-bold dark:border-dark dark:text-white">General topics?</div>
+                <div class="border-b border-white-light p-6 text-[22px] font-bold dark:border-dark dark:text-white">How to?</div>
                 <div class="divide-y divide-white-light px-6 py-4.5 dark:divide-dark">
                     <div>
                         <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 1}" x-on:click="active === 1 ? active = null : active = 1">
-                            <span>What is SMMBIDMEDIA?</span>
+                            <span>How do i buy numbers?</span>
                             <template x-if="active !== 1">
                                 <span class="shrink-0">
                                     <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1490,118 +1571,24 @@
                         <div x-cloak="" x-show="active === 1" x-collapse="">
                             <div class="px-1 py-3 font-semibold text-white-dark">
                                 <p>
-                                  SMMBIDMEDIA is a platform that serves as an intermediary for phone verifications, SMM panels, and a marketplace. 
-                                  It allows you to purchase phone verifications for apps like WhatsApp, Facebook, and more, 
-                                  ensuring that your phone number remains private by using our secure numbers. 
-                                  We use non-VoIP numbers to guarantee compatibility with all services. Additionally, we offer social media growth services, 
-                                  including followers, views, likes, and comments. 
-                                  Our marketplace features a secure escrow system, enabling users to buy and sell social media accounts at the most competitive prices.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 2}" x-on:click="active === 2 ? active = null : active = 2">
-                            <span> Where can I subscribe to your newsletter?</span>
-                            <template x-if="active !== 2">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                            <template x-if="active === 2">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
-                                        <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                        </div>
-                        <div x-cloak="" x-show="active === 2" x-collapse="">
-                            <div class="px-1 py-3 font-semibold text-white-dark">
-                                <p>
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon
-                                    officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3
-                                    wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
-                                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan
-                                    excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt
-                                    you probably haven't heard of them accusamus labore sustainable VHS.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 3}" x-on:click="active === 3 ? active = null : active = 3">
-                            <span>How to install StarCode Kh Admin</span>
-                            <template x-if="active !== 3">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                            <template x-if="active === 3">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
-                                        <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                        </div>
-                        <div x-cloak="" x-show="active === 3" x-collapse="">
-                            <div class="px-1 py-3 font-semibold text-white-dark">
-                                <p>
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon
-                                    officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3
-                                    wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
-                                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan
-                                    excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt
-                                    you probably haven't heard of them accusamus labore sustainable VHS.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary" :class="{'bg-primary-light dark:bg-[#1B2E4B] !text-primary' : active === 5}" x-on:click="active === 5 ? active = null : active = 5">
-                            <span>How to install StarCode Kh Admin</span>
-                            <template x-if="active !== 5">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="currentColor"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75C17.1086 2.75 21.25 6.89137 21.25 12C21.25 17.1086 17.1086 21.25 12 21.25C6.89137 21.25 2.75 17.1086 2.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                            <template x-if="active === 5">
-                                <span class="shrink-0">
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"></path>
-                                        <path d="M15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z" fill="currentColor"></path>
-                                    </svg>
-                                </span>
-                            </template>
-                        </div>
-                        <div x-cloak="" x-show="active === 5" x-collapse="">
-                            <div class="px-1 py-3 font-semibold text-white-dark">
-                                <p>
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon
-                                    officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3
-                                    wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
-                                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan
-                                    excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt
-                                    you probably haven't heard of them accusamus labore sustainable VHS.
+                                 <ul style="list-style: decimal; padding-left: 15px;">
+                                  <li>Login to our <a href="/login" style="color: #2c519c;">account</a> </li>
+                                  <li>On you dashboard click on Verification dropdown</li>
+                                  <li>Select Buy Numbers from the list</li>
+                                  <li>Select a country (United State)</li>
+                                  <li>Select a service (WhatsApp)</li>
+                                  <li>Proceed to clcik on the purchase buttton</li>
+                                  <small> <span style="color: red;">important requirement </span>: Please us the normal WhatsApp app and not WhatsApp Business App 
+                                    this will ensure you recieve the verification code
+                                  </small>
+                                 </ul>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- <div class="rounded-md bg-white dark:bg-black" x-data="{ active: 1 }">
+            <div class="rounded-md bg-white dark:bg-black" x-data="{ active: 1 }">
                 <div class="border-b border-white-light p-6 text-[22px] font-bold dark:border-dark dark:text-white">
                     SMM Panel
                 </div>
@@ -1825,7 +1812,7 @@
               <div>
                 </div>
             </div>
-        </div> -->
+        </div>
         </div>
         
         
@@ -1835,15 +1822,15 @@
                   Our specialists are always happy to help. Contact us during standard business hours or email us24/7 and we'll get back to you.
               </div>
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <button type="button" class="btn btn-primary">Contact Us</button>
-                  <button type="button" class="btn btn-primary">Visit our community</button>
+                  <a href="https://wa.me/2347056754762"><button type="button" class="btn btn-primary">Contact Us On WhatsApp</button></a>
+                  <a href="https://t.me/smmbidmedia"><button type="button" class="btn btn-primary">Visit our community</button></a>
               </div>
           </div>
           <div class="mt-10 flex flex-col-reverse items-center justify-between gap-5 rounded-md bg-gradient-to-tl from-[rgba(234,241,255,0.44)] to-[rgba(234,241,255,0.96)] px-6 py-2.5 dark:from-[rgba(14,23,38,0.44)] dark:to-[#0E1726] md:flex-row lg:mt-20 xl:px-16">
               <div class="flex-1 py-3.5 text-center md:text-start">
                   <h3 class="mb-2 text-xl font-bold dark:text-white md:text-2xl">Didn’t find any solutions?</h3>
                   <div class="text-lg font-medium text-white-dark">
-                      Loaded with awesome features like documentation, knowledge base forum, domain transfer, affiliates etc.
+                      Create a support ticket, and we will get back to you soon.
                   </div>
                   <div class="mt-8 flex justify-center md:justify-start lg:mt-16">
                       <button type="button" class="btn btn-primary">Raise support tickets</button>

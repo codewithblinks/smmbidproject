@@ -171,7 +171,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         (user_id, type, message) 
         VALUES ($1, $2, $3)`,
          [userId, 'transfer', 
-          `Your transfer of ${transferAmount} was successfull and the amount credited into your business balance` ]);
+          `Your transfer of ₦${transferAmount} was successfull and the amount credited into your business balance` ]);
 
           const addTransactionQuery = `
           INSERT INTO transactions (user_id, type, amount, reference, status)
