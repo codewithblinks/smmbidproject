@@ -15,6 +15,9 @@ const router = express.Router();
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 const FLW_WEBHOOK_SECRET = process.env.FLW_WEBHOOK_SECRET
 
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
+
 
 router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
   const userId = req.user.id;
@@ -165,40 +168,27 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
   
       await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ₦${transactionAmount.amount} was successfull and the amount credited into your balance` ])
 
-      const depositCount = await db.query(
-        'SELECT COUNT(*) FROM deposits WHERE user_id = $1',
-        [userId]
-      );
+      const depositCount = await db.query('SELECT COUNT(*) FROM deposits WHERE user_id = $1', [userId]);
       const depositNumber = Number(depositCount.rows[0].count) + 1;
 
-      if (depositNumber <= 3) {
-        // Save the deposit
-        await db.query(
-          'INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)',
-          [userId, transactionAmount.amount, depositNumber]
-        );
 
-        const referral = await db.query(
-          'SELECT referred_by, commission_earned FROM referrals WHERE referred_user = $1',
-          [userId]
-        );
+      if (depositNumber <= 3) {
+        await db.query('INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)', [userId, transactionAmount, depositNumber]);
+
+        const referral = await db.query('SELECT referred_by, commission_earned FROM referrals WHERE referred_user = $1', [userId]);
 
         if (referral.rows.length > 0 && !referral.rows[0].commission_earned) {
           const referredBy = referral.rows[0].referred_by;
-    
-          // Calculate commission (e.g., 5% of deposit)
-          if (depositNumber === 1) {
-            const commissionAmount = transactionAmount.amount * 0.1;
+          let commissionPercentage = 0;
 
-            await db.query(
-              'INSERT INTO commissions (user_id, referred_user_id, deposit_number, commission_amount) VALUES ($1, $2, $3, $4)',
-              [referredBy, userId, depositNumber, commissionAmount]
-            );
+          switch (depositNumber) {
+            case 1: commissionPercentage = 0.10; break;
+            case 2: commissionPercentage = 0.06; break;
+            case 3: commissionPercentage = 0.03; break;
           }
 
-          if (depositNumber === 2) {
-            const commissionAmount = transactionAmount.amount * 0.06;
-
+          if (commissionPercentage > 0) {
+            const commissionAmount = transactionAmount * commissionPercentage;
             await db.query(
               'INSERT INTO commissions (user_id, referred_user_id, deposit_number, commission_amount) VALUES ($1, $2, $3, $4)',
               [referredBy, userId, depositNumber, commissionAmount]
@@ -206,22 +196,7 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
           }
 
           if (depositNumber === 3) {
-            const commissionAmount = transactionAmount.amount * 0.03;
-
-            await db.query(
-              'INSERT INTO commissions (user_id, referred_user_id, deposit_number, commission_amount) VALUES ($1, $2, $3, $4)',
-              [referredBy, userId, depositNumber, commissionAmount]
-            );
-          }
-          
-    
-          // Insert into the commission table
-
-          if (depositNumber === 3) {
-            await db.query(
-              'UPDATE referrals SET commission_earned = TRUE WHERE referred_user = $1',
-              [userId]
-            );
+            await db.query('UPDATE referrals SET commission_earned = TRUE WHERE referred_user = $1', [userId]);
           }
         }
       }
@@ -229,18 +204,41 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
       req.flash("success", "Deposit successful");
       res.redirect('/dashboard');
   } else {
-    return res.status(400).json({ error: 'Deposit verification failed' });
+    let newStatus;
+    if (transactionData.status === 'abandoned') {
+      newStatus = 'abandoned';
+      req.flash("error", "Deposit abandoned");
+    } else if (transactionData.status === 'processing') {
+      newStatus = 'processing';
+      req.flash("error", "Deposit is still processing");
+    } else {
+      newStatus = transactionData.status || 'failed';
+      req.flash("error", "Deposit verification failed");
+    }
+
+    // Update transaction status accordingly
+    const updateTransactionQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2';
+    await db.query(updateTransactionQuery, [newStatus, reference]);
+
+    res.redirect('/dashboard');
   }
-    
-  } catch (error) {
-    console.error('Error verifying deposit:', error.message);
-    console.log(error);
-    return res.status(500).json({ error: 'Server error' });
-  }
+} catch (error) {
+  console.error('Error verifying deposit:', error.message);
+  return res.status(500).json({ error: 'Server error' });
+}
 });
 
 router.post('/webhook', express.json(), async (req, res) => {
-    const { event, data } = req.body;
+
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+
+    if (hash !== req.headers['x-paystack-signature']) {
+      return res.status(401).send('Unauthorized');
+  }
+
+  const { event, data } = req.body;
+  console.log('Webhook event received:', req.body);
     
     try {
       if (event === 'charge.success') {

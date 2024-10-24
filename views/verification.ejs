@@ -17,11 +17,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-  <link
-  rel="shortcut icon"
-  href="assets/images/favicon.png"
-  type="image/x-icon"
-/>
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
   <script src="assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="assets/js/popper.min.js"></script>
   <script defer="" src="assets/js/tippy-bundle.umd.min.js"></script>
@@ -349,11 +345,15 @@
             <a href="/knowledgebase" class="group">
               <div class="flex items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-                  <path opacity="0.5" d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
+                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                  <path opacity="0.5"
+                    d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z"
+                    stroke="currentColor" stroke-width="1.5" />
+                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                </svg>
                 <span
                   class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Knowledgebase</span>
               </div>
@@ -604,13 +604,6 @@
                   <% notifications.forEach(function(notification) { %>
                     <li class="dark:text-white-light/90" data-id="<%= notification.id %>">
                       <div class="group flex items-center px-4 py-2" @click.self="toggle">
-                        <div class="grid place-content-center rounded">
-                          <div class="relative h-12 w-12">
-                            <img class="h-12 w-12 rounded-full object-cover" src="../assets/images/notifybell.png"
-                              alt="image" />
-                            <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
-                          </div>
-                        </div>
                         <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
                           <div class="ltr:pr-3 rtl:pl-3">
                             <h6>
@@ -774,11 +767,24 @@
               <div class="panel mb-5">
                 <h5 class="text-lg font-semibold dark:text-white-light">Order SMS</h5>
                 <hr>
-                <h5 class="mt-1 pt-3">Order your SMS here, then have a look at your pending SMS to see your current
+                <h5 class="mt-1 mb-5 pt-3">Order your SMS here, then have a look at your pending SMS to see your current
                   order. If the service is not listed, feel free to contact support or use the "Not Listed" service.
                   Looking to buy in bulk and think the price is a bit too steep? Feel free to open a ticket for possible
                   bulk discounts! Keep in mind that these are temporary SMS and are usually used for one-time
                   verifications.</h5>
+                <small> <span style="color: red;">Important Requirement </span>:
+                  <ul style="list-style: circle; padding-left: 15px;">
+                    <li>
+                      Please use the regular WhatsApp app instead of WhatsApp Business to ensure you receive the
+                      verification code.
+                    </li>
+                    <li>
+                      We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased
+                      from us.
+                    </li>
+                  </ul>
+
+                </small>
                 <form action="/ordersms" method="post">
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <div class="mt-4">
@@ -808,13 +814,13 @@
                     <div class="mt-4">
                       <div>
                         <label for="shipping-charge">Quantity </label>
-                        <input id="quantity" type="number" disabled  class="form-input" value="1" >
+                        <input id="displayquantity" disabled type="number"  class="form-input" value="1">
                       </div>
                     </div>
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="text" name="quantity" class="form-input" value="1"
+                        <input id="quantity" type="number" name="quantity" class="form-input" value="1"
                           required>
                       </div>
                     </div>
@@ -830,8 +836,7 @@
                     <div class="mt-4">
                       <div>
                         <label for="charge">Success Rate</label>
-                        <input id="successrate" disabled type="text" name="successrate" class="form-input" value=""
-                          >
+                        <input id="successrate" disabled type="text" name="successrate" class="form-input" value="">
                       </div>
                     </div>
                     <div class="mt-4">
@@ -852,12 +857,14 @@
                     <input id="charge" type="hidden" name="charge" class="form-input" value="">
                     <p>This is the price range, for a guaranteed price feel free to use the advanced view to select a
                       pool to get a more specific price.</p>
-                    <div class="mb-3 mt-2 sm:mb-0">
+                    <div class="mb-3 mt-2 sm:mb-0 flex justify-between">
                       <button type="submit" id="purchaseBTN" class="btn btn-primary">Purchase</button>
                     </div>
                   </div>
                 </form>
               </div>
+            </div>
+            <div>
             </div>
           </div>
           <div id="alertBox"
@@ -872,8 +879,8 @@
               </svg>
             </button>
           </div>
-          <h5 class="text-lg font-semibold dark:text-white-light mb-4">Pending SMS</h5>
           <div class="panel table-responsive">
+            <h5 class="text-lg font-semibold dark:text-white-light mb-4">Pending SMS</h5>
             <table id="phoneNumbersTable">
               <thead>
                 <tr>
@@ -1135,12 +1142,13 @@
                 const successrate = document.getElementById('successrate');
 
                 // Suppress console logs temporarily
-                const originalConsoleLog = console.log;
-                console.log = function () { };
-         
+
+                // const originalConsoleLog = console.log;
+                // console.log = function () { };
+
 
                 NiceSelect.bind((select1), { searchable: true });
-                NiceSelect.bind((select2), { searchable: true });         
+                NiceSelect.bind((select2), { searchable: true });
 
                 const updatePrice = async () => {
                   const value1 = select1.value;
@@ -1159,37 +1167,37 @@
                     });
 
                     if (!response.ok) {
-                    throw new Error('Failed to fetch options');
-                     }
+                      throw new Error('Failed to fetch options');
+                    }
 
                     const data = await response.json();
 
                     let exchangeRate = 1500;
                     let smsprice = 2
 
-                    const rateResponse = await fetch('/api/exchange-rate'); 
-                    const smsPriceResponse = await fetch('/api/sms-price'); 
+                    const rateResponse = await fetch('/api/exchange-rate');
+                    const smsPriceResponse = await fetch('/api/sms-price');
 
                     if (rateResponse.ok) {
                       const rateData = await rateResponse.json();
-                      if (rateData.rate ) {
-                      exchangeRate = rateData.rate;
-                        }
+                      if (rateData.rate) {
+                        exchangeRate = rateData.rate;
+                      }
                     } else {
                       console.warn('Failed to fetch exchange rate, using default rate');
                     }
 
-                    
+
                     if (smsPriceResponse.ok) {
                       const rateData = await smsPriceResponse.json();
                       if (rateData.smsprice) {
-                      smsprice = Number(rateData.smsprice);
-                        }
+                        smsprice = Number(rateData.smsprice);
+                      }
                     } else {
                       console.warn('Failed to fetch exchange rate, using default rate');
                     }
 
-                      if (data.price) {
+                    if (data.price) {
                       const fetchPrice = data.price * exchangeRate;
                       const high_price = data.high_price * exchangeRate;
                       const price1 = fetchPrice + smsprice
@@ -1201,17 +1209,21 @@
                       displaycharge1.value = price;
                       priceInput.value = data.price;
                       purchaseBTN.disabled = false;
-                      } else {
-                        displaycharge.value = 'Invalid';
-                        purchaseBTN.disabled = false;
-                      }
+                    } else {
+                      displaycharge.value = 'Invalid';
+                      purchaseBTN.disabled = false;
+                    }
                   } catch (error) {
                     console.error('Error updating price:', error);
                   }
                 };
 
-                select1.addEventListener('change', updatePrice);
-                select2.addEventListener('change', updatePrice);
+                const handleSelectChange = () => {
+                  updatePrice();
+                };
+
+                select1.addEventListener('change', handleSelectChange);
+                select2.addEventListener('change', handleSelectChange);
 
                 updatePrice();
               });
