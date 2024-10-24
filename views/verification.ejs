@@ -604,6 +604,13 @@
                   <% notifications.forEach(function(notification) { %>
                     <li class="dark:text-white-light/90" data-id="<%= notification.id %>">
                       <div class="group flex items-center px-4 py-2" @click.self="toggle">
+                        <div class="grid place-content-center rounded">
+                          <div class="relative h-12 w-12">
+                            <img class="h-12 w-12 rounded-full object-cover" src="../assets/images/notifybell.png"
+                              alt="image" />
+                            <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
+                          </div>
+                        </div>
                         <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
                           <div class="ltr:pr-3 rtl:pl-3">
                             <h6>
@@ -767,22 +774,11 @@
               <div class="panel mb-5">
                 <h5 class="text-lg font-semibold dark:text-white-light">Order SMS</h5>
                 <hr>
-                <h5 class="mt-1 mb-5 pt-3">Order your SMS here, then have a look at your pending SMS to see your current
+                <h5 class="mt-1 pt-3">Order your SMS here, then have a look at your pending SMS to see your current
                   order. If the service is not listed, feel free to contact support or use the "Not Listed" service.
                   Looking to buy in bulk and think the price is a bit too steep? Feel free to open a ticket for possible
                   bulk discounts! Keep in mind that these are temporary SMS and are usually used for one-time
                   verifications.</h5>
-                  <small> <span style="color: red;">Important Requirement </span>: 
-                    <ul style="list-style: circle; padding-left: 15px;">
-                      <li>
-                        Please use the regular WhatsApp app instead of WhatsApp Business to ensure you receive the verification code.
-                      </li>
-                      <li>
-                        We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased from us.
-                      </li>
-                    </ul>
-
-                  </small>
                 <form action="/ordersms" method="post">
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <div class="mt-4">
@@ -812,7 +808,14 @@
                     <div class="mt-4">
                       <div>
                         <label for="shipping-charge">Quantity </label>
-                        <input id="quantity" type="number" name="quantity" class="form-input" value="1" >
+                        <input id="quantity" type="number" disabled  class="form-input" value="1" >
+                      </div>
+                    </div>
+                    <div class="mt-4" hidden>
+                      <div>
+                        <label for="charge">Price range</label>
+                        <input id="displaycharge1" type="text" name="quantity" class="form-input" value="1"
+                          required>
                       </div>
                     </div>
                     <div class="mt-4">

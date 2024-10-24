@@ -76,6 +76,36 @@ router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res) => {
+
+  const { country, service} = req.body;
+  const web = 1;
+
+  try {
+    const form = new FormData();
+    form.append('country', country);
+    form.append('service', service);
+    form.append('web', web);
+
+    const headers = {
+      ...form.getHeaders(),  // Include form data headers
+      'Authorization': `Bearer ${BEARER_TOKEN}`
+
+    };
+
+    const response = await axios.post('https://api.smspool.net/pool/retrieve_valid', form, { headers });
+
+    const data = response.data;
+
+    res.json(data)
+
+  } catch (err) {
+    console.error(err.message);
+    console.log(err.message);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
+
 // fetch orderid
 const fetchOrderCodesForUser = async (userId) => {
   const result = await db.query('SELECT order_id FROM sms_order WHERE user_id = $1', [userId]);
