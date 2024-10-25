@@ -73,28 +73,23 @@ import forgotRoute from "./routes/sendEmailAuth/forgotAuth.js"
 import resetRoute from "./routes/sendEmailAuth/reset.js"
 import p2pRoute from "./routes/p2p.js"
 import loginOutRoute from "./routes/logout.js"
-import productsRoute from "./routes/products.js"
-import addaccountRoute from "./routes/addaccount.js"
 import userDashboardRoute from "./routes/dashboard/userDashboard.js"
 import adminDashboardRoute from "./routes/dashboard/adminDashboard.js"
 import profileRoute from "./routes/profile.js"
 import previewRoute from "./routes/preview.js"
 import accountsettingsRoute from "./routes/accountsettings.js"
 import depositRoute from "./routes/payment/deposit.js"
-import withdrawRoute from "./routes/payment/withdraw.js"
 import smmRoute from "./routes/smm.js"
 import orderhistoryRoute from "./routes/orderhistory.js"
 import verificationRoute from "./routes/verification.js"
 import messagesRoute from "./routes/message.js"
 import chatsRoute from "./routes/chats.js"
-import productListRoute from "./routes/admin/productlist.js"
 import usersRoute from "./routes/admin/users.js"
 import checkRoute from "./routes/admin/check.js"
 import set2faRoute from "./routes/admin/2fa.js"
 import smsorderhistoryRoute from './routes/smsorderhistory.js'
 import ratingRoute from './routes/ratings_reviews.js'
 import transactionsRoute from './routes/payment/transactions.js'
-import p2pOrdersRoute from './routes/admin/p2porders.js'
 import smmOrdersRoute from './routes/admin/smmorders.js'
 import smsOrdersRoute from './routes/admin/smsorders.js'
 import adminTransactionsRoutes from './routes/admin/admintransactions.js'
@@ -114,26 +109,21 @@ app.use("/", loginOutRoute)
 app.use("/", userDashboardRoute)
 app.use("/", adminDashboardRoute)
 app.use("/", p2pRoute)
-app.use(productsRoute)
-app.use("/", addaccountRoute)
 app.use("/", profileRoute)
 app.use('/', previewRoute)
 app.use('/', accountsettingsRoute)
 app.use("/", depositRoute)
-app.use("/", withdrawRoute)
 app.use('/', smmRoute)
 app.use('/', orderhistoryRoute)
 app.use('/', verificationRoute)
 app.use('/', messagesRoute)
 app.use(chatsRoute)
-app.use(productListRoute)
 app.use(usersRoute)
 app.use(checkRoute)
 app.use(set2faRoute)
 app.use(smsorderhistoryRoute)
 app.use(ratingRoute)
 app.use(transactionsRoute)
-app.use(p2pOrdersRoute)
 app.use(smmOrdersRoute)
 app.use(smsOrdersRoute)
 app.use(adminTransactionsRoutes)

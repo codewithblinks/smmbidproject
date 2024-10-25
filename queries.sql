@@ -34,40 +34,6 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS product_list (
-    id SERIAL PRIMARY KEY,
-    account_username VARCHAR(50) NOT NULL,
-    account_type TEXT NOT NULL,
-    years integer NOT NULL,
-    profile_link TEXT NOT NULL,
-    account_country TEXT NOT NULL,
-    amount numeric(10,2) NOT NULL,
-    total_followers TEXT NOT NULL,
-    description TEXT NOT NULL,
-    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    payment_recieved numeric(10,2) NOT NULL,
-    status TEXT DEFAULT 'pending',
-    payment_status TEXT DEFAULT 'not sold',
-    loginusername character varying(20),
-    loginemail character varying(100),
-    loginpassword TEXT,
-    logindetails TEXT,
-    verifycode TEXT,
-    statustype character varying(50) DEFAULT 'manual',
-    sold_at TIMESTAMPTZ
-);
-
-CREATE TABLE IF NOT EXISTS purchases (
-    id SERIAL PRIMARY KEY,
-    product_id INTEGER NOT NULL,
-    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    status TEXT DEFAULT 'pending',
-    date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    purchase_id VARCHAR(100) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS purchases_admin_product (
     id SERIAL PRIMARY KEY,
     product_id INTEGER NOT NULL,
@@ -317,6 +283,43 @@ CREATE TABLE ticket_responses (
     user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- delete
+
+CREATE TABLE IF NOT EXISTS product_list (
+    id SERIAL PRIMARY KEY,
+    account_username VARCHAR(50) NOT NULL,
+    account_type TEXT NOT NULL,
+    years integer NOT NULL,
+    profile_link TEXT NOT NULL,
+    account_country TEXT NOT NULL,
+    amount numeric(10,2) NOT NULL,
+    total_followers TEXT NOT NULL,
+    description TEXT NOT NULL,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    payment_recieved numeric(10,2) NOT NULL,
+    status TEXT DEFAULT 'pending',
+    payment_status TEXT DEFAULT 'not sold',
+    loginusername character varying(20),
+    loginemail character varying(100),
+    loginpassword TEXT,
+    logindetails TEXT,
+    verifycode TEXT,
+    statustype character varying(50) DEFAULT 'manual',
+    sold_at TIMESTAMPTZ
+);
+
+
+CREATE TABLE IF NOT EXISTS purchases (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    buyer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    seller_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'pending',
+    date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    purchase_id VARCHAR(100) NOT NULL
 );
 
 

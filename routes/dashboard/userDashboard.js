@@ -16,23 +16,26 @@ router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
     const userDetails = userResult.rows[0];
 
     const userRecentOrders = await db.query(`
-      SELECT purchases.status AS purchases_status, purchases.date AS p_date,
-      purchases.id AS purchases_id,
-		  product_id, buyer_id, seller_id, account_type,
-		  product_list.amount, product_list.account_type,
-		  userprofile.firstname, userprofile.lastname
-		  FROM purchases
-      JOIN product_list
-      ON purchases.product_id = product_list.id
-		  JOIN userprofile
-		  ON purchases.seller_id = userprofile.id
-      WHERE buyer_id = $1 ORDER BY purchases.date DESC LIMIT 5`, [userId]);
+      SELECT purchases_admin_product.status AS purchases_status, 
+      purchases_admin_product.date_purchased AS p_date,
+		  product_id, buyer_id, account_type,
+		  admin_products.amount, admin_products.account_type
+		  FROM purchases_admin_product
+      JOIN admin_products
+      ON purchases_admin_product.product_id = admin_products.id
+      WHERE buyer_id = $1 ORDER BY purchases_admin_product.date_purchased DESC LIMIT 5`, [userId]);
+
     const recentOrders = userRecentOrders.rows;
 
     const transactionsResult = await db.query('SELECT * FROM transactions WHERE user_id = $1 ORDER BY created_at DESC', [userId]);
     const transaction = transactionsResult.rows;
 
-    const productResult = await db.query('SELECT * FROM product_list WHERE status = $1 AND product_list.user_id != $2 AND payment_status = $3 ORDER BY created_at DESC', ['approved', userId, 'not sold']);
+    const productResult = await db.query(`
+      SELECT * FROM admin_products 
+      WHERE payment_status = $1 
+      ORDER BY created_at DESC`, 
+      ['not sold']);
+
     const product =productResult.rows;
 
     const notificationsResult = await db.query(

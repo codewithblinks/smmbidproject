@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    }
+    .btn {
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Change Email - Verification Code</h2>
+    <p>Hi <%= name %>,</p>
+    <p>You are receiving this because you (or someone else) have requested to change and update your account email address.</p>
+
+    <p>Your new verification code is:</p>
+
+    <h3><%= verificationCode %></h3>
+
+    <p>If you did not request this, please ignore this email and your email address will remain unchanged.</p>
+
+    <p>Thanks, <br>The <%= appName %> Team</p>
+  </div>
+</body>
+</html>

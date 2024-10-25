@@ -26,20 +26,11 @@ async function calculateUserProgress(userId) {
 
         UNION ALL
 
-        SELECT purchases.buyer_id AS user_id, product_list.amount AS amount, purchases.date AS date
-        FROM purchases
-        JOIN product_list ON purchases.product_id = product_list.id
-        WHERE purchases.status = 'confirmed' 
-        AND purchases.buyer_id = $1
-        AND product_list.payment_status = 'sold'
-
-        UNION ALL
-
-        SELECT purchases.buyer_id AS user_id, admin_products.amount AS amount, purchases.date AS date
-        FROM purchases
-        JOIN admin_products ON purchases.product_id = admin_products.id
-        WHERE purchases.status = 'confirmed' 
-        AND purchases.buyer_id = $1
+        SELECT purchases_admin_product.buyer_id AS user_id, admin_products.amount AS amount, purchases_admin_product.date_purchased AS date
+        FROM purchases_admin_product
+        JOIN admin_products ON purchases_admin_product.product_id = admin_products.id
+        WHERE purchases_admin_product.status = 'confirmed' 
+        AND purchases_admin_product.buyer_id = $1
         AND admin_products.payment_status = 'sold'
 
         UNION ALL

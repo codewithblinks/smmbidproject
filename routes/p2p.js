@@ -5,6 +5,7 @@ import moment from "moment";
 import timeSince from "../controller/timeSince.js";
 import { v4 as uuidv4 } from 'uuid';
 import { sendEmail } from "../config/transporter.js";
+import { sendOrderCompleteEmail } from "../config/emailMessages.js";
 
 
 const router = express.Router();
@@ -17,181 +18,7 @@ function generateTransferId() {
   return `${prefix}_${base64Id}`;
 }
 
-router.get("/p2p", ensureAuthenticated, userRole, async (req, res) => {
-  const userId = req.user.id;
 
-  try {
-
-    const usersResult = await db.query(
-      "SELECT * FROM userprofile WHERE id = $1",
-      [userId]
-    );
-    const user = usersResult.rows[0];
-
-    const userResult = await db.query(
-      "SELECT * FROM userprofile WHERE id = $1",
-      [userId]
-    );
-    const result = await db.query(
-      `SELECT product_list.*, 
-      userprofile.firstname, 
-      userprofile.lastname, 
-      userprofile.username
-      FROM product_list 
-      JOIN userprofile ON 
-      product_list.user_id = userprofile.id
-      WHERE product_list.user_id != $1 
-      AND status != 'pending' 
-      AND status != 'rejected'
-      AND status != 'deleted'  
-      AND payment_status != 'sold'
-      AND payment_status != 'awaiting'
-      AND product_list.id NOT IN (
-      SELECT product_id 
-      FROM user_archives 
-      WHERE user_id = $1
-      )
-      ORDER BY 
-      CASE 
-      WHEN status LIKE '%instant%' THEN 1
-      WHEN status LIKE '%manual%' THEN 2
-      ELSE 3
-      END,
-      random();
-  `,
-      [userId]
-    );
-
-    const userDetails = userResult.rows[0];
-    const products = result.rows;
-
-    const notificationsResult = await db.query(
-      'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
-      [userId, false]
-  );
-
-  const notifications = notificationsResult.rows;
-
-    const getIconClass = (type) => {
-      switch (type.toLowerCase()) {
-        case "facebook":
-          return "bi bi-facebook";
-        case "twitter":
-          return "bi bi-twitter";
-        case "snapchat":
-          return "bi bi-snapchat";
-        case "instagram":
-          return "bi bi-instagram";
-        case "tiktok":
-          return "bi bi-tiktok";
-        default:
-          return "bi bi-question-circle"; // Default icon if type is unknown
-      }
-    };
-
-    res.render("p2pmarket", {
-      products,
-      userDetails,
-      getIconClass,
-      messages: req.flash(),
-      user,
-      notifications, timeSince
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.get("/p2porderhistory", ensureAuthenticated, userRole, async (req, res) => {
-  const buyer_id = req.user.id;
-
-  try {
-    const limit = 20;
-    const page = parseInt(req.query.page) || 1;
-    const offset = (page - 1) * limit;
-
-   const usersResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [buyer_id]);
-   const user = usersResult.rows[0]
-
-    const purchasesResult = await db.query(
-      `
-    SELECT 
-    purchases.id AS purchase_id, 
-    purchases.status AS purchase_status,
-    purchases.date,
-    product_list.id AS product_id, 
-    product_list.status AS product_status,
-    product_list.account_type AS product_account_type, 
-    product_list.amount AS product_amount
-FROM 
-    purchases 
-JOIN 
-    product_list 
-ON 
-    purchases.product_id = product_list.id 
-WHERE 
-    purchases.buyer_id = $1
-ORDER BY 
-    date DESC
-LIMIT $2 
-OFFSET $3;
-
-`,
-      [buyer_id, limit, offset]
-    );
-
-    const purchase = purchasesResult.rows;
-
-    purchase.forEach((purchase) => {
-      purchase.formattedDate = moment(purchase.date).format("D MMM h:mmA");
-    });
-
-    const notificationsResult = await db.query(
-      'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
-      [buyer_id, false]
-  );
-
-  const notifications = notificationsResult.rows;
-
-  const countQuery = `
-  SELECT COUNT(*) AS total_count
-  FROM (
-      SELECT 
-          purchases.id AS purchase_id, 
-          purchases.status AS purchase_status,
-          purchases.date,
-          product_list.id AS product_id, 
-          product_list.status AS product_status,
-          product_list.account_type AS product_account_type, 
-          product_list.amount AS product_amount,
-          NULL AS admin_product_account_type,
-          NULL AS admin_product_amount
-      FROM 
-          purchases 
-      JOIN 
-          product_list 
-      ON 
-          purchases.product_id = product_list.id 
-      WHERE 
-          purchases.buyer_id = $1
-  ) AS combined_results;
-`;
-const countResult = await db.query(countQuery, [buyer_id]);
-const totalOrders = parseInt(countResult.rows[0].total_count, 10);
-
-
-    res.render("p2porderhistory", { 
-      purchase, user, 
-      notifications, timeSince,
-      currentPage: page, 
-      totalPages: Math.ceil(totalOrders / limit),
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 router.get("/product/adminorderhistory", ensureAuthenticated, userRole, async (req, res) => {
   const buyer_id = req.user.id;
@@ -277,52 +104,6 @@ const totalOrders = parseInt(countResult.rows[0].total_count, 10);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.get('/searchProducts', ensureAuthenticated, async (req, res) => {
-  const query = req.query.query || '';
-  const userId = req.user.id;
-  
-  try {
-      const result = await db.query(
-        `SELECT product_list.*, userprofile.firstname, userprofile.lastname, userprofile.username
-         FROM product_list 
-         JOIN userprofile ON product_list.user_id = userprofile.id
-         WHERE product_list.user_id != $1 AND status != 'pending' 
-         AND status != 'rejected' AND payment_status != 'sold' 
-         AND payment_status != 'awaiting'
-         AND (account_type ILIKE $2 OR CAST(amount AS TEXT) ILIKE $2)
-         `,
-        [userId, `%${query}%`]
-      );
-
-      const getIconClass = (type) => {
-        switch (type.toLowerCase()) {
-          case "facebook":
-            return "bi bi-facebook";
-          case "twitter":
-            return "bi bi-twitter";
-          case "snapchat":
-            return "bi bi-snapchat";
-          case "instagram":
-            return "bi bi-instagram";
-          case "tiktok":
-            return "bi bi-tiktok";
-          default:
-            return "bi bi-question-circle";
-        }
-      };
-
-      const processedProducts = result.rows.map(product => ({
-        ...product,
-        iconClass: getIconClass(product.account_type) 
-      }));
-
-      res.json(processedProducts);
-  } catch (error) {
-     console.log(error);
-      res.status(500).json({ error: 'An error occurred while searching for products' });
   }
 });
 
@@ -435,7 +216,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
     const purchaseNumber = generateTransferId();
 
     const result = await db.query(
-      "SELECT balance, username FROM userprofile WHERE id = $1",
+      "SELECT balance, username, email FROM userprofile WHERE id = $1",
       [userId]
     );
     const user = result.rows[0];
@@ -452,7 +233,6 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
 
       const adminEmail = adminResult.rows[0];
 
-      console.log("amin ema", adminEmail)
 
     if (product.payment_status === "sold") {
       req.flash("success", "Product already sold.");
@@ -475,7 +255,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
         INSERT INTO notifications (user_id, type, message) 
         VALUES ($1, $2, $3)`, 
         [userId, 'purchase', 
-          `You have successfully purchase a ${product.account_type} account with the purchase id ${purchaseNumber}` 
+          `You have successfully purchase a ${product.account_type} account with the purchase id : ${purchaseNumber}` 
         ])
 
 
@@ -487,20 +267,18 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       "UPDATE admin_products SET payment_status = 'sold', sold_at = NOW() WHERE id = $1",
       [productId]
     );
-      
-    const mailOptions = {
-      to: adminEmail.email,
-      subject: 'Purchase Alert',
-      text: `${user.username} just purchase ${product.account_type} account for ₦${product.amount} with the purchase id: ${purchaseNumber}
-      `
-    };
 
-    await sendEmail(mailOptions);
+    const email = user.email;
+    const username = user.username;
+    const purchaseId = purchaseNumber;
+
+    await sendOrderCompleteEmail(email, username, purchaseId);
+
+    req.flash("success", `You have successfully purchase a ${product.account_type} account with the purchase id : ${purchaseNumber}`);
 
       res.redirect(`/purchase/account/${purchase.id}`);
     } else {
       req.flash("error", "Insufficient balance, please topup your balance");
-      console.log("Insufficient balance, please topup your balance");
       return res.redirect("/all/accounts");
     }
   } catch (error) {
@@ -556,7 +334,7 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
             user,
             notifications,
             timeSince,
-            purchaseTime
+            purchaseTime, messages: req.flash()
           });
         } 
     }

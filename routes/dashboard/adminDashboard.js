@@ -295,8 +295,6 @@ async function getTotalSmsProfit(period) {
 
 router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const userId = req.user.id;
-  console.log(userId)
-  console.log(req.user.role)
 
   try {
     const totalsThisWeek = await getWeeklyTotals();
@@ -325,8 +323,6 @@ router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, 
 
 const totalSmmAmount = smmPanelResult.rows[0];
 
-console.log(totalSmmAmount)
-
 const smsResult = await db.query(`
   SELECT SUM(amount) AS total_successful_sms_purchases
   FROM sms_order
@@ -344,27 +340,12 @@ let totalSmmAmount1 = totalCompleted + totalNotRefunded;
   totals.total_withdrawal = numeral(totals.total_withdrawal).format('0,0.00');
   totalSmmAmount1 = numeral(totalSmmAmount1).format('0,0.00');
   totalSmsAmount.total_successful_sms_purchases = numeral(totalSmsAmount.total_successful_sms_purchases).format('0,0.00');
-  
-
-  console.log(totalSmmAmount1)
 
   const weekTotalDeposit = totalsThisWeek.find(row => row.type === 'deposit')?.total_amount || 0;
   const weekTotalWithdawal = totalsThisWeek.find(row => row.type === 'withdrawal')?.total_amount || 0;
 
-  const totalP2pSold = await db.query("SELECT * FROM product_list WHERE payment_status = 'sold'");
-  const p2pSold = totalP2pSold.rows;
-
   const totalAdminSold = await db.query("SELECT * FROM admin_products WHERE payment_status = 'sold'");
   const adminSold = totalAdminSold.rows;
-
-  const resultSold = await db.query(`
-    SELECT
-         SUM(amount) AS total_sold
-    FROM
-        product_list
-    WHERE
-        payment_status = $1;
-`, ['sold']);
 
 const resultAdminSold = await db.query(`
   SELECT
@@ -373,11 +354,7 @@ const resultAdminSold = await db.query(`
       admin_products
   WHERE
       payment_status = $1;
-`, ['sold']);
-
-const totalSoldp2p = numeral(resultSold.rows[0]?.total_sold || 0).format('0,0.00'); ; // return 0 if no result found
-const dd = resultSold.rows[0]?.total_sold || 0
-const totalProfit1 = numeral(dd * 0.2).format('0,0.00') ;
+`, ['sold']);;
 
 const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0).format('0,0.00'); 
 
@@ -387,10 +364,7 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
         totalDeposit: totals.total_deposit,
         totalWithdrawal: totals.total_withdrawal,
         weekTotalDeposit,
-        weekTotalWithdawal,
-        p2pSold,
-        totalSoldp2p,
-        totalProfit1, totalSmmAmount1, 
+        weekTotalWithdawal, totalSmmAmount1, 
         totalSmsAmount, adminSold, totalAdminSoldp2p
        });
     

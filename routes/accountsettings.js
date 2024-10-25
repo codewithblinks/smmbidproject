@@ -10,6 +10,10 @@ import session from "express-session";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
 import { error } from "console";
+import { sendChangeEmail, sendChangeEmailConfirmation } from "../config/emailMessages.js";
+
+
+
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 
@@ -212,22 +216,10 @@ router.post("/changeEmail", ensureAuthenticated, async (req, res) => {
           [verificationCode, userId]
         );
 
-        const mailOptions = {
-          to: newEmail,
-          subject: "Verification Code",
-          text: `Your new verification code is: ${verificationCode}`,
-        };
-        
+        const username = userPassword.username;
 
-        sendEmail(mailOptions, (error, info) => {
-          if (error) {
-              console.log(error);
-              req.flash('error', 'Error resending verification email.');
-              return res.redirect('/resend-verification-code');
-          } else {
-              console.log('Verification email resent: ' + info.response);
-          }
-      });
+        await sendChangeEmail(newEmail, username, verificationCode);
+        
 
         req.session.newEmail = newEmail;
         res.json({ success: true });
@@ -260,6 +252,11 @@ router.post('/change-email-verify-code', ensureAuthenticated, async(req, res) =>
           ($1, $2)`,
           [userId, 'Email Address was changed']
       );
+
+      const username = user.username;
+
+      await sendChangeEmailConfirmation(newEmail, username);
+
         req.flash('success', 'Email updated successfully.');
         res.redirect('/settings');
       }

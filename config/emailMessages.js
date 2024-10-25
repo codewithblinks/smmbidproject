@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 import db from "../db/index.js";
 import { sendEmail } from "./transporter.js";
 import path from 'path';
-import ejs from "ejs";
+import ejs, { name } from "ejs";
 import { fileURLToPath } from 'url';
 
 
@@ -134,6 +134,87 @@ export const sendWelcomeEmail = async (email, username) => {
       const mailOptions = {
         to: email,
         subject: 'Password Reset',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendChangeEmail = async (newEmail, username, verificationCode) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'changeEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        verificationCode: verificationCode,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: newEmail,
+        subject: 'Email Address Change - Verification Code',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendChangeEmailConfirmation = async (newEmail, username) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'changeEmailConfirmation.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: newEmail,
+        subject: 'Primary Email Address Changed',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendOrderCompleteEmail = async (email, username, purchaseId) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'orderCompleteEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        name: username,
+        purchaseId: purchaseId,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Purchase Alert',
         html: html
       };
   
