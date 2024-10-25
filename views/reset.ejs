@@ -40,6 +40,19 @@
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastr@latest/build/toastr.min.js"></script>
+    <script src="https://kit.fontawesome.com/9499a831e8.js" crossorigin="anonymous"></script>
+    <style>
+      .showHidePw{
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      left: 90%;
+      transform: translateY(-50%);
+      color: #999;
+      transition: all 0.2s ease;
+  }
+  
+    </style>
 </head>
 
 <body x-data="main" class="relative overflow-x-hidden font-nunito text-sm font-normal antialiased"
@@ -95,7 +108,7 @@
                                     <div class="relative text-white-dark mb-3">
                                         <input type="password" id="password" placeholder="New Password" value=""
                                             autocomplete="new-password" required
-                                            class="form-input ps-10 placeholder:text-white-dark" />
+                                            class="form-input ps-10 placeholder:text-white-dark password"/>
                                             <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                                                   <path opacity="0.5"
@@ -120,7 +133,7 @@
                                     <div class="relative text-white-dark">
                                         <input type="password" id="confirmPassword" placeholder="Confirm Password"
                                             value="" name="password" autocomplete="new-password" required
-                                            class="form-input ps-10 placeholder:text-white-dark" />
+                                            class="form-input ps-10 placeholder:text-white-dark password"/>
                                             <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                                                   <path opacity="0.5"
@@ -140,6 +153,7 @@
                                                     fill="currentColor"></path>
                                                 </svg>
                                               </span>
+                                              <i class="fa-duotone fa-solid fa-eye-slash showHidePw"></i>
                                     </div>
                                 </div>
                                 <div class="alert">
@@ -186,6 +200,32 @@
             }
         });
     </script>
+
+<script>
+    pwShowHide = document.querySelectorAll(".showHidePw"),
+    pwFields = document.querySelectorAll(".password"),
+
+  //   js code to show/hide password and change icon
+  pwShowHide.forEach(eyeIcon =>{
+      eyeIcon.addEventListener("click", ()=>{
+          pwFields.forEach(pwField =>{
+              if(pwField.type === "password"){
+                  pwField.type = "text";
+
+                  pwShowHide.forEach(icon =>{
+                      icon.classList.replace("fa-eye-slash", "fa-eye");
+                  })
+              }else{
+                  pwField.type = "password";
+
+                  pwShowHide.forEach(icon =>{
+                      icon.classList.replace("fa-eye", "fa-eye-slash");
+                  })
+              }
+          }) 
+      })
+  })
+</script>
 
     <script>
         $(document).ready(function () {

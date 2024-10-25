@@ -35,16 +35,16 @@ async function createTransporter() {
 }
 
 
-  export async function sendEmail({to, subject, text}) {
+  export async function sendEmail({to, subject, html}) {
     try {
 
       const transporter = await createTransporter();
   
       const mailOptions = {
-        from: 'SMMBIDMEDIA <' + (await getEmailConfig()).email + '>',
+        from: 'Smmbidmedia <' + (await getEmailConfig()).email + '>',
         to,
         subject,
-        text
+        html
       };
       await transporter.sendMail(mailOptions);
       console.log(`Email sent to ${to}`);

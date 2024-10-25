@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    }
+    .btn {
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Verify Your Email </h2>
+    <p>Hi <%= name %>,</p>
+    <p>Thank you for registering with us. Your verification code is:</p>
+    <h3><%= verificationCode %></h3>
+    <p>This code expires in 30 minutes. Please verify your email as soon as possible.</p>
+    <p>If you did not create an account, you can safely ignore this email.</p>
+    <p>Thanks, <br>The <%= appName %> Team</p>
+  </div>
+</body>
+</html>

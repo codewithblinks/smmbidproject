@@ -242,15 +242,23 @@ router.post('/webhook', express.json(), async (req, res) => {
     
     try {
       if (event === 'charge.success') {
-        // Update transfer status in database
-        const updateTransferQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2';
-        await db.query(updateTransferQuery, [data.status, data.reference]);
+
+        const updateTransferQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2 RETURNING user_id, amount';
+        const result = await db.query(updateTransferQuery, [data.status, data.reference]);
+
+        if (result.rows.length > 0) {
+          const { user_id, amount } = result.rows[0];
+          
+          // Credit the user account
+          const creditUserQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
+          await db.query(creditUserQuery, [amount, user_id]);
+      }  else {
+        console.error('Transaction not found or failed to update');
+    }
       } else  {
-        // Update transfer status in database
         const updateTransferQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2';
         await db.query(updateTransferQuery, [data.status, data.reference]);
       }
-  
       res.status(200).send('Webhook received');
     } catch (error) {
       console.error('Error handling Paystack webhook:', error.message);

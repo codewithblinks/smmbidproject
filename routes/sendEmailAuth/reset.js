@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {sendEmail} from "../../config/transporter.js";
 import dotenv from 'dotenv';
+import { sendResetEmailConfirmation } from "../../config/emailMessages.js";
 
 dotenv.config();
 const saltRounds = Number(process.env.SALT_ROUNDS);
@@ -90,13 +91,10 @@ router.post('/reset/:token', async (req, res) => {
             [userId, 'Password was changed']
         );
 
-        const mailOptions = {
-            to: user.email,
-            subject: 'Your password has been changed',
-            text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
-        };
+        const username = user.username;
+        const email = user.email;
 
-        await sendEmail(mailOptions);
+        await sendResetEmailConfirmation(email, username);
 
         req.flash('success', 'Success! Your password has been changed.');
         res.redirect('/login');

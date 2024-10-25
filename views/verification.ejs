@@ -775,8 +775,7 @@
                 <small> <span style="color: red;">Important Requirement </span>:
                   <ul style="list-style: circle; padding-left: 15px;">
                     <li>
-                      Please use the regular WhatsApp app instead of WhatsApp Business to ensure you receive the
-                      verification code.
+                      Please use the regular WhatsApp if you are having issues reciving the verification code on Business WhatsApp.
                     </li>
                     <li>
                       We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased
@@ -1142,9 +1141,8 @@
                 const successrate = document.getElementById('successrate');
 
                 // Suppress console logs temporarily
-
-                // const originalConsoleLog = console.log;
-                // console.log = function () { };
+                const originalConsoleLog = console.log;
+                console.log = function () { };
 
 
                 NiceSelect.bind((select1), { searchable: true });

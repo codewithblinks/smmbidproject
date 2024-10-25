@@ -6,12 +6,14 @@ import bodyParser from "body-parser";
 import { Strategy } from "passport-local";
 import ensureAuthenticated, {checkAuthenticated, checkAdminAuthenticated} from "../authMiddleware/authMiddleware.js"
 import {sendEmail} from "../config/transporter.js";
+import { sendWelcomeEmail, resendVericationEmail } from "../config/emailMessages.js";
 import crypto from "crypto";
 import { body, validationResult } from "express-validator";
 import multer from "multer";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from "axios";
+import ejs from "ejs";
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 const router = express.Router();
@@ -68,10 +70,6 @@ router.get("/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs", { message: req.flash('error') });
 });
 
-// router.get("/register-admin", (req, res) => {
-//   res.render("registerAdmin.ejs", { message: req.flash('error') });
-// });
-
 router.get("/register-admin", checkAdminAuthenticated, async (req, res) => {
   const checkResult = await db.query("SELECT * FROM admins");
 
@@ -84,6 +82,35 @@ router.get("/register-admin", checkAdminAuthenticated, async (req, res) => {
   }
 });
 
+const sendVerificationEmail = async (email, username, verificationCode) => {
+  const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'verifyEmail.ejs');
+
+  const appName = 'SMMBIDMEDIA';
+  
+  try {
+    const html = await ejs.renderFile(templatePath, {
+      name: username,
+      verificationCode: verificationCode,
+      appName: appName
+    });
+
+    console.log(html);
+
+    const mailOptions = {
+      to: email,
+      subject: 'Email Verification',
+      html: html
+    };
+
+    await sendEmail(mailOptions);
+
+    console.log('Verification email sent');
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+};
+
 router.post("/register", upload, registrationValidationRules, async (req, res) => {
   const { username, firstname, lastname, newPassword, password, terms } = req.body;
   const email = req.body.email.toLowerCase();
@@ -93,12 +120,11 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
   const token = req.body.g_recaptcha_response; 
   const ref = req.query.ref || req.body.ref;
 
-  // Handle validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map(error => ({
-      param: error.param, // Get the specific field (username, email, etc.)
-      msg: error.msg      // Get the error message
+      param: error.param, 
+      msg: error.msg  
     }));
     return res.status(400).json({ success: false, errors: errorMessages });
   }
@@ -156,13 +182,9 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
 
     const referralLink = `${req.protocol}://${req.get('host')}/register?ref=${referralCode}`;
 
-    const mailOptions = {
-      to: email,
-      subject: 'Email Verification',
-      text: `Your verification code is: ${verificationCode} this code expires in 30 minutes`
-    };
+    await sendVerificationEmail(email, username, verificationCode);
 
-    await sendEmail(mailOptions);
+
     return res.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' });
 
   } catch (error) {
@@ -233,7 +255,7 @@ router.post('/verify-email', async (req, res) => {
 
   try {
       const result = await db.query(
-          "SELECT id, email_verified, verification_code_expires_at FROM userprofile WHERE email = $1 AND verification_code = $2",
+          "SELECT id, email_verified, verification_code_expires_at, username FROM userprofile WHERE email = $1 AND verification_code = $2",
           [email, verificationCode]
       );
 
@@ -253,6 +275,10 @@ router.post('/verify-email', async (req, res) => {
           [result.rows[0].id]
       );
 
+      const username = result.rows[0].username;
+
+      await sendWelcomeEmail(email, username);
+
       req.flash('success', 'Email verified successfully! You can now log in.');
       res.redirect('/login');
 
@@ -268,7 +294,7 @@ router.post('/resend-verification-code', async (req, res) => {
 
   try {
       const result = await db.query(
-          "SELECT id, email_verified, last_verification_code_sent_at FROM userprofile WHERE email = $1",
+          "SELECT id, email_verified, last_verification_code_sent_at, username FROM userprofile WHERE email = $1",
           [email]
       );
 
@@ -286,7 +312,7 @@ router.post('/resend-verification-code', async (req, res) => {
       const lastSent = new Date(result.rows[0].last_verification_code_sent_at);
       const now = new Date();
 
-      if (now - lastSent < 1 * 60 * 1000) { // 5-minute cooldown
+      if (now - lastSent < 1 * 60 * 1000) { 
           req.flash('error', 'You can only resend the code every 1 minutes.');
           return res.redirect('/resend-verification-code');
       }
@@ -300,13 +326,10 @@ router.post('/resend-verification-code', async (req, res) => {
           [result.rows[0].id, verificationCode, verificationCodeExpiresAt]
       );
 
-      const mailOptions = {
-          to: email,
-          subject: 'Resend Email Verification',
-          text: `Your new verification code is: ${verificationCode}`
-      };
+      const username = result.rows[0].username;
 
-      await sendEmail(mailOptions);
+      await resendVericationEmail(email, username, verificationCode);
+
       req.flash('success', 'Verification code resent successfully. Please check your email.');
       return res.redirect('/verifyemail');
 
