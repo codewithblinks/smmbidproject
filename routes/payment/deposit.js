@@ -283,9 +283,6 @@ router.post('/webhook', express.json(), async (req, res) => {
 });
 
   
-
-// flutterWave
-
 router.post('/deposit/bank', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const { bank_amount, transaction_reference } = req.body;
@@ -314,7 +311,5 @@ router.post('/deposit/bank', ensureAuthenticated, async (req, res) => {
         res.status(500).send('Error processing deposit');
     }
   });
-
-
 
 export default router;
