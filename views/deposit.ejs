@@ -8,11 +8,7 @@
     SMMBIMEDIA | Build a better customer experience
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link
-  rel="shortcut icon"
-  href="assets/images/favicon.png"
-  type="image/x-icon"
-/>
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link rel="stylesheet"
@@ -29,7 +25,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0;height: 50vh;
+      margin: 0;
+      height: 50vh;
     }
 
     .container1 {
@@ -135,7 +132,7 @@
       background: url("") no-repeat center center;
     }
 
- 
+
     form {
       display: flex;
       flex-direction: column;
@@ -163,7 +160,7 @@
       gap: 50px;
     }
 
-    
+
 
     .toastr-custom {
       top: 100px !important;
@@ -444,11 +441,15 @@
             <a href="/knowledgebase" class="group">
               <div class="flex items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-                  <path opacity="0.5" d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
+                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                  <path opacity="0.5"
+                    d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z"
+                    stroke="currentColor" stroke-width="1.5" />
+                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                </svg>
                 <span
                   class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Knowledgebase</span>
               </div>
@@ -863,46 +864,79 @@
             <div class="container1" >
               <div id="step1">
 
-                  <div class="mb-8 items-center">
-                    <h4 class="text-xl font-semibold dark:text-white-light mb-4">Deposit Funds</h4>
-                    <p class="media-text">Select from payment options below</p>
-                    <p class="media-text">Secure and safely deposit money into your account.</p>
-                    <small style="color: red;">Please note that deposits made to your main balance are non-refundable.</small>
-                  </div>
+                <div class="mb-8 items-center">
+                  <h4 class="text-xl font-semibold dark:text-white-light mb-4">Deposit Funds</h4>
+                  <p class="media-text">Select from payment options below</p>
+                  <p class="media-text">Secure and safely deposit money into your account.</p>
+                  <small style="color: red;">Please note that deposits made to your main balance are
+                    non-refundable.</small>
+                </div>
                 <div class="panel h-full">
                   <div class="overflow-hidden">
-                      <div class="rounded-lg bg-white dark:bg-black">
- 
-                <label class="payment-option mt-8" id="paystack-gateway" style="height: 50px; display: none;">
-                  <input type="radio" name="payment" value="paystack">
-                  <span class="radio-custom"></span>
-                  <span class="payment-text">Paystack</span>
-                  <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
-                </label>
+                    <div class="rounded-lg bg-white dark:bg-black">
 
-                <label class="payment-option" id="flutterwave-gateway" style="height: 50px; display: none;">
-                  <input type="radio" name="payment" value="flutterWave">
-                  <span class="radio-custom"></span>
-                  <span class="payment-text">Flutterwave</span>
-                  <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
-                </label>
+                      <label class="payment-option mt-8" id="bankaccount-gateway" style="height: 50px; display: none;">
+                        <input type="radio" name="payment" value="bankaccount">
+                        <span class="radio-custom"></span>
+                        <span class="payment-text">Our Account</span>
+                        <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
+                      </label>
 
-                <button class="btn btn-primary" onclick="showDepositForm()" id="depositBTN">Deposit Now</button>
-                      </div>
+                      <label class="payment-option" id="paystack-gateway" style="height: 50px; display: none;">
+                        <input type="radio" name="payment" value="paystack">
+                        <span class="radio-custom"></span>
+                        <span class="payment-text">Paystack</span>
+                        <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
+                      </label>
+
+                      <label class="payment-option" id="flutterwave-gateway" style="height: 50px; display: none;">
+                        <input type="radio" name="payment" value="flutterWave">
+                        <span class="radio-custom"></span>
+                        <span class="payment-text">Flutterwave</span>
+                        <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
+                      </label>
+
+                      <button class="btn btn-primary" onclick="showDepositForm()" id="depositBTN">Deposit Now</button>
+                    </div>
                   </div>
-              </div>
+                </div>
 
                 <!-- kkkkk -->
 
-               
+
               </div>
+              <div id="bankaccount-form" class="payment-form" style="display: none;">
+                <h4 class="text-xl font-semibold dark:text-white-light mb-4">Enter Deposit Amount</h4>
+                <p class="font-semibold dark:text-white-light">via Our Bank</p>
+                <p class="subtext">Add funds direct to main balance.</p>
+                <small class="text-danger">make the payment to the below bank details</small>
+                <h4>Bank : Moniepoint MFB</h4>
+                <h4>Account Number : 6705924819</h4>
+                <h4>Account Name : SMMBID MEDIA SERVICES</h4>
+                <form action="/deposit/bank" method="post" class="mt-8">
+                  <label for="amount">Amount to Deposit:</label>
+                  <input type="number" id="bank-amount" placeholder="0.00" name="bank_amount"
+                    style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
+
+                    <label for="amount">Transaction Reference:</label>
+                    <input type="text" id="transaction_reference"  name="transaction_reference"
+                      style="height: 50px; width: 300px;" required class="form-input">
+
+                  <div class="mt-6">
+                    <button class="btn btn-primary mb-4" type="submit">I've sent the money</button>
+                    <button type="button" class="btn btn-dark " onclick="goBack()">Return to depsoit</button>
+                  </div>
+                </form>
+              </div>
+
               <div id="paystack-form" class="payment-form" style="display: none;">
                 <h4 class="text-xl font-semibold dark:text-white-light mb-4">Enter Deposit Amount</h4>
                 <p>via Paystack</p>
                 <p class="subtext">Add funds direct to main balance.</p>
                 <form action="/deposit" method="post" class="mt-8">
                   <label for="amount">Amount to Deposit:</label>
-                  <input type="number" id="paystack-amount" placeholder="0.00" name="paystack_amount" style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
+                  <input type="number" id="paystack-amount" placeholder="0.00" name="paystack_amount"
+                    style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
                   <div class="flex justify-between" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
                     <button class="btn btn-primary" type="submit">Pay</button>
@@ -915,7 +949,8 @@
                 <p class="subtext">Add funds direct to main balance.</p>
                 <form action="/deposit/flutterwave" method="post" class="mt-8">
                   <label for="amount">Amount to Deposit:</label>
-                  <input type="number" id="flutterWave-amount" name="amount" placeholder="0.00" style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
+                  <input type="number" id="flutterWave-amount" name="amount" placeholder="0.00"
+                    style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
                   <div class="flex justify-between" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
                     <button type="submit" class="btn btn-primary">Pay</button>
@@ -980,13 +1015,20 @@
         document.getElementById('paystack-form').style.display = 'block';
       } else if (selectedPayment.value === 'flutterWave') {
         document.getElementById('flutterWave-form').style.display = 'block';
+      } else if (selectedPayment.value === 'bankaccount') {
+        document.getElementById('bankaccount-form').style.display = 'block';
       }
     }
 
     function goBack() {
       document.getElementById('paystack-form').style.display = 'none';
       document.getElementById('flutterWave-form').style.display = 'none';
+      document.getElementById('bankaccount-form').style.display = 'none';
       document.getElementById('step1').style.display = 'block';
+      document.getElementById('bank-amount').value = "";
+      document.getElementById('paystack-amount').value = "";
+      document.getElementById('flutterWave-amount').value = "";
+      document.getElementById('transaction_reference').value = "";
     }
 
     document.querySelectorAll('.payment-option').forEach(option => {
@@ -1008,47 +1050,46 @@
 
   <script>
     async function loadPaymentGateways() {
-  const response = await fetch('/api/payment-gateways');
-  const gateways = await response.json();
-  const depositBTN = document.getElementById('depositBTN')
+      const response = await fetch('/api/payment-gateways');
+      const gateways = await response.json();
+      const depositBTN = document.getElementById('depositBTN')
 
-  console.log(gateways.length)
-  console.log(gateways.length)
+      console.log(gateways.length)
 
-  if(gateways.length < 0 ) {
-    depositBTN.disabled = true;
-  }
+      if (gateways.length < 0) {
+        depositBTN.disabled = true;
+      }
 
 
-  gateways.forEach(gateway => {
-    const gatewayDiv = document.getElementById(`${gateway.gateway_name}-gateway`);
-    if (gateway.is_enabled) {
-      gatewayDiv.style.display = 'flex';
-    } else {
-      gatewayDiv.style.display = 'none';
+      gateways.forEach(gateway => {
+        const gatewayDiv = document.getElementById(`${gateway.gateway_name}-gateway`);
+        if (gateway.is_enabled) {
+          gatewayDiv.style.display = 'flex';
+        } else {
+          gatewayDiv.style.display = 'none';
+        }
+      });
     }
-  });
-}
 
-loadPaymentGateways();
+    loadPaymentGateways();
 
   </script>
 
-<script>
-  async function loadPaymentGatewaysCheck() {
-const response = await fetch('/api/payment-gateways/check');
-const gatewaysCheck = await response.json();
-const depositBTN = document.getElementById('depositBTN')
+  <script>
+    async function loadPaymentGatewaysCheck() {
+      const response = await fetch('/api/payment-gateways/check');
+      const gatewaysCheck = await response.json();
+      const depositBTN = document.getElementById('depositBTN')
 
-if(gatewaysCheck.length === 0 ) {
-  depositBTN.disabled = true;
-}
+      if (gatewaysCheck.length === 0) {
+        depositBTN.disabled = true;
+      }
 
-}
+    }
 
-loadPaymentGatewaysCheck();
+    loadPaymentGatewaysCheck();
 
-</script>
+  </script>
 
   <script>
     // main section
