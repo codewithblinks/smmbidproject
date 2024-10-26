@@ -786,6 +786,17 @@
     </div>
   </div>
 
+  <% if (messages.error) { %>
+    <div id="error-message">
+      <%= messages.error %>
+    </div>
+    <% } %>
+      <% if (messages.success) { %>
+        <div id="success-message">
+          <%= messages.success %>
+        </div>
+        <% } %>
+
           <script src="../assets/js/alpine-collaspe.min.js"></script>
           <script src="../assets/js/alpine-persist.min.js"></script>
           <script defer="" src="../assets/js/alpine-ui.min.js"></script>
@@ -798,6 +809,22 @@
           <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
           <script src="../assets/js/notification.js"></script>
+
+          
+          <script>
+            $(function () {
+              var errorMessage = $('#error-message').text();
+              var successMessage = $('#success-message').text();
+
+              if (errorMessage) {
+                toastr.error(errorMessage);
+              }
+
+              if (successMessage) {
+                toastr.success(successMessage);
+              }
+            });
+          </script>
 
           <script>
             // main section

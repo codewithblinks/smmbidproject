@@ -83,7 +83,6 @@ import smmRoute from "./routes/smm.js"
 import orderhistoryRoute from "./routes/orderhistory.js"
 import verificationRoute from "./routes/verification.js"
 import messagesRoute from "./routes/message.js"
-import chatsRoute from "./routes/chats.js"
 import usersRoute from "./routes/admin/users.js"
 import checkRoute from "./routes/admin/check.js"
 import set2faRoute from "./routes/admin/2fa.js"
@@ -117,7 +116,6 @@ app.use('/', smmRoute)
 app.use('/', orderhistoryRoute)
 app.use('/', verificationRoute)
 app.use('/', messagesRoute)
-app.use(chatsRoute)
 app.use(usersRoute)
 app.use(checkRoute)
 app.use(set2faRoute)

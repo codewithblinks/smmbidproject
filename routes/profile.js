@@ -117,7 +117,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         referrals, referralBalance, user : userDetails, 
         timeSince, notifications,
         currentPage: page, 
-        totalPages: Math.ceil(totalcommissions / limit)
+        totalPages: Math.ceil(totalcommissions / limit), messages: req.flash()
       })
     } catch (error) {
         console.log(error);
@@ -163,7 +163,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
       await db.query(updateReferralBalanceQuery, [userId, transferAmount]);
 
       const updateBusinessBalanceQuery =
-        "UPDATE userprofile SET business_balance = business_balance + $1 WHERE id = $2";
+        "UPDATE userprofile SET balance = balance + $1 WHERE id = $2";
       await db.query(updateBusinessBalanceQuery, [transferAmount, userId]);
 
       await db.query(`
@@ -171,7 +171,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         (user_id, type, message) 
         VALUES ($1, $2, $3)`,
          [userId, 'transfer', 
-          `Your transfer of ₦${transferAmount} was successfull and the amount credited into your business balance` ]);
+          `Your transfer of ₦${transferAmount} was successfull and the amount credited into your total balance` ]);
 
           const addTransactionQuery = `
           INSERT INTO transactions (user_id, type, amount, reference, status)
@@ -179,9 +179,11 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         `;
         await db.query(addTransactionQuery, [userId, 'transfer', transferAmount, transferId, 'completed']);
 
+        req.flash("success", `Your transfer of ₦${transferAmount} was successfull and the amount credited into your total balance`)
+
       res.redirect("/referrals")
       } else {
-        console.log('insufficient balance')
+        req.flash("error", `insufficient referral balance`)
         res.redirect("/referrals")
       }
     } catch (error) {

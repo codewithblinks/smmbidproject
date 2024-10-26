@@ -50,7 +50,7 @@ router.get("/transactions", ensureAuthenticated, userRole, async (req, res) => {
       transaction,
       currentPage: page,
       totalPages: Math.ceil(totalTransactions / limit),
-      user, notifications, timeSince
+      user, notifications, timeSince, messages: req.flash(),
     });
   } catch (error) {
     console.log(error);
