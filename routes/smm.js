@@ -127,8 +127,9 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       userId,
     ]);
     const details = result.rows[0];
+
     const userResult = await db.query(
-      "SELECT * FROM userprofile JOIN product_list ON userprofile.id = product_list.user_id WHERE userprofile.id = $1",
+      "SELECT * FROM userprofile WHERE id = $1",
       [userId]
     );
     const userDetails = userResult.rows;
