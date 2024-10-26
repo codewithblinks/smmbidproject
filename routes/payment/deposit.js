@@ -126,8 +126,6 @@ router.get('/cancel-deposit', ensureAuthenticated, async (req, res) => {
     const transactionResult = await db.query("SELECT amount from transactions WHERE reference = $1", [reference]);
     const transactionAmount = transactionResult.rows[0];
 
-    console.log(transactionAmount)
-
     await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", [userId, 'deposit', `Your deposit of ₦${transactionAmount.amount} was canceled by you` ])
 
     req.flash("success", "Your deposit has been canceled.");
@@ -156,6 +154,16 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
 
     if (transactionData.status === 'success') {
 
+      const existingTransaction = await db.query('SELECT status FROM transactions WHERE reference = $1', [reference]);
+
+      if (existingTransaction.rows[0]?.status === 'success') {
+        console.log("Transaction already processed:", reference);
+        req.flash("info", "This transaction has already been processed.");
+        return res.redirect('/dashboard');
+      }
+
+      await db.query('BEGIN');
+
       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
       await db.query(updateBalanceQuery, [transactionData.amount / 100, transactionData.metadata.id]);
 
@@ -173,22 +181,17 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
 
 
       if (depositNumber <= 3) {
-        await db.query('INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)', [userId, transactionAmount, depositNumber]);
+        await db.query('INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)', [userId, transactionAmount.amount, depositNumber]);
 
         const referral = await db.query('SELECT referred_by, commission_earned FROM referrals WHERE referred_user = $1', [userId]);
 
         if (referral.rows.length > 0 && !referral.rows[0].commission_earned) {
           const referredBy = referral.rows[0].referred_by;
-          let commissionPercentage = 0;
 
-          switch (depositNumber) {
-            case 1: commissionPercentage = 0.10; break;
-            case 2: commissionPercentage = 0.06; break;
-            case 3: commissionPercentage = 0.03; break;
-          }
+          let commissionPercentage = depositNumber === 1 ? 0.10 : depositNumber === 2 ? 0.06 : depositNumber === 3 ? 0.03 : 0;
 
           if (commissionPercentage > 0) {
-            const commissionAmount = transactionAmount * commissionPercentage;
+            const commissionAmount = transactionAmount.amount * commissionPercentage;
             await db.query(
               'INSERT INTO commissions (user_id, referred_user_id, deposit_number, commission_amount) VALUES ($1, $2, $3, $4)',
               [referredBy, userId, depositNumber, commissionAmount]
@@ -200,6 +203,8 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
           }
         }
       }
+
+      await db.query('COMMIT');
   
       req.flash("success", "Deposit successful");
       res.redirect('/dashboard');
@@ -223,164 +228,93 @@ router.get('/verify-deposit', ensureAuthenticated, async (req, res) => {
     res.redirect('/dashboard');
   }
 } catch (error) {
+  await db.query('ROLLBACK');
   console.error('Error verifying deposit:', error.message);
   return res.status(500).json({ error: 'Server error' });
 }
 });
 
 router.post('/webhook', express.json(), async (req, res) => {
+  res.status(200).send('Webhook received');
 
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
 
-    if (hash !== req.headers['x-paystack-signature']) {
-      return res.status(401).send('Unauthorized');
+  if (hash !== req.headers['x-paystack-signature']) {
+    console.log("Unauthorized webhook access detected.");
+    return; 
   }
 
   const { event, data } = req.body;
-  console.log('Webhook event received:', req.body);
-    
-    try {
-      if (event === 'charge.success') {
+  console.log('Webhook event received:', event, data);
 
+  try {
+    if (event === 'charge.success') {
+      const existingTransaction = await db.query('SELECT status FROM transactions WHERE reference = $1', [data.reference]);
+
+      if (existingTransaction.rows[0]?.status !== 'success') {
         const updateTransferQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2 RETURNING user_id, amount';
         const result = await db.query(updateTransferQuery, [data.status, data.reference]);
 
         if (result.rows.length > 0) {
-          const { user_id, amount } = result.rows[0];
-          
-          // Credit the user account
+          const { user_id } = result.rows[0];
+          const amount = parseFloat(result.rows[0].amount); 
+
+          // Credit the user's balance
           const creditUserQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
           await db.query(creditUserQuery, [amount, user_id]);
-      }  else {
-        console.error('Transaction not found or failed to update');
-    }
-      } else  {
-        const updateTransferQuery = 'UPDATE transactions SET status = $1 WHERE reference = $2';
-        await db.query(updateTransferQuery, [data.status, data.reference]);
+
+          console.log(`Successfully credited user ${user_id} with amount ₦${amount}`);
+        } else {
+          console.error('Transaction not found or failed to update');
+        }
+      } else {
+        console.log("Duplicate webhook event ignored for transaction:", data.reference);
       }
-      res.status(200).send('Webhook received');
-    } catch (error) {
-      console.error('Error handling Paystack webhook:', error.message);
-      console.log(error);
-      res.status(500).send('Server error');
+    } else {
+      // Handle non-charge.success events by updating transaction status only
+      await db.query('UPDATE transactions SET status = $1 WHERE reference = $2', [data.status, data.reference]);
+      console.log(`Updated transaction ${data.reference} status to: ${data.status}`);
     }
-  });
+  } catch (error) {
+    console.error('Error handling Paystack webhook:', error.message);
+    console.log(error);
+  }
+});
+
   
 
 // flutterWave
 
-router.post('/deposit/flutterwave', ensureAuthenticated, async (req, res) => {
-    const { amount } = req.body;
-    const userId = req.user.id; 
-    const fname = req.user.firstname; 
-    const lname = req.user.lastname; 
-    const email = req.user.email; 
+router.post('/deposit/bank', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const { bank_amount, transaction_reference } = req.body;
   
     try {
-      const response = await axios.post('https://api.flutterwave.com/v3/payments', {
-        tx_ref: `tx-${Date.now()}`,
-        amount: amount,
-        currency: 'NGN',
-        redirect_url: 'http://localhost:3000/deposit-success',
-        customer: {
-          email: `${email}`,
-          phonenumber: '08012345678',
-          name: `${fname} ${lname}`,
-        },
-        customizations: {
-          title: 'Deposit',
-          description: 'Make a deposit',
-          logo: 'http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png',
-        },
-      }, {
-        headers: {
-          Authorization: `Bearer ${FLW_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      const paymentLink = response.data.data.link;
-      res.redirect(paymentLink);
+
+      const transactionReference = generateTransactionReference();
+
+      const result = await db.query(
+        'INSERT INTO pending_deposits (user_id, amount, reference, transaction_reference, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [userId, bank_amount, transactionReference, transaction_reference, 'Pending']
+    );
+
+    const addTransactionQuery = `
+    INSERT INTO transactions (user_id, type, amount, reference, status)
+    VALUES ($1, $2, $3, $4, $5) RETURNING *
+  `;
+  await db.query(addTransactionQuery, [userId, 'deposit', bank_amount, transactionReference, 'pending']);
+
+
+    req.flash("success", "Your deposit has been sent successfully, waiting for confirmation");
+    res.redirect('/transactions');
+
     } catch (error) {
-      console.error('Error initiating deposit:', error.response ? error.response.data : error.message);
-      res.status(500).send('Error initiating deposit');
+        console.error('Error saving deposit:', error);
+        res.status(500).send('Error processing deposit');
     }
   });
 
-  // Endpoint for handling the deposit success redirect
-router.get('/deposit-success', ensureAuthenticated, async (req, res) => {
-    const { transaction_id, tx_ref } = req.query;
-  
-    try {
-      const response = await axios.get(`https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`, {
-        headers: {
-          Authorization: `Bearer ${FLW_SECRET_KEY}`,
-        },
-      });
-  
-      const transaction = response.data.data;
-      const userId = req.user.id;
-  
-      if (transaction.status === 'successful' && transaction.tx_ref === tx_ref) {
-        // Update the user's balance
-        await db.query('UPDATE userprofile SET balance = balance + $1 WHERE id = $2', [transaction.amount, userId]);
-  
-        // Log the transaction
-        await db.query('INSERT INTO transactions (user_id, type, amount, status) VALUES ($1, $2, $3, $4)', [userId, 'deposit', transaction.amount, 'success']);
-        
-        res.send('Deposit successful!');
-      } else {
-        res.status(400).send('Deposit verification failed');
-      }
-    } catch (error) {
-      console.error('Error verifying deposit:', error.response ? error.response.data : error.message);
-      res.status(500).send('Error verifying deposit');
-    }
-  });
-
-  router.post('/flutterwave-webhook', ensureAuthenticated, async (req, res) => {
-    const hash = crypto.createHmac('sha256', FLW_WEBHOOK_SECRET).update(JSON.stringify(req.body)).digest('hex');
-  
-    if (hash === req.headers['verif-hash']) {
-      const event = req.body.event;
-      const transactionId = req.body.data.id;
-      const txRef = req.body.data.tx_ref;
-      const amount = req.body.data.amount;
-      const status = req.body.data.status;
-      const type = req.body.data.narration === 'Withdrawal' ? 'withdraw' : 'deposit';
-  
-      if (event === 'charge.completed' && type === 'deposit') {
-        if (status === 'successful') {
-          // Update the user's balance
-          await db.query('UPDATE userprofile SET balance = balance + $1 WHERE id = $2', [amount, userId]); // Assume user ID is 1 for simplicity
-  
-          // Log the transaction
-          await db.query('INSERT INTO transactions (user_id, type, amount, status) VALUES ($1, $2, $3, $4)', [userId, 'deposit', amount, 'success']); // Assume user ID is 1 for simplicity
-        } else {
-          await db.query('INSERT INTO transactions (user_id, type, amount, status) VALUES ($1, $2, $3, $4)', [userId, 'deposit', amount, 'failed']); // Assume user ID is 1 for simplicity
-        }
-      } else if (event === 'transfer.completed' && type === 'withdraw') {
-        const transaction = await db.query('SELECT * FROM transactions WHERE transfer_reference = $1', [txRef]);
-  
-        if (transaction.rows.length) {
-          if (status === 'successful') {
-            await db.query('UPDATE transactions SET status = $1 WHERE transfer_reference = $2', ['success', txRef]);
-          } else {
-            await db.query('UPDATE transactions SET status = $1 WHERE transfer_reference = $2', ['failed', txRef]);
-  
-            // Refund the amount to the user's balance
-            await db.query('UPDATE userprofile SET balance = balance + $1 WHERE id = $2', [transaction.rows[0].amount, transaction.rows[0].user_id]);
-          }
-        }
-      }
-    } else {
-      return res.status(400).send('Invalid hash');
-    }
-
-  res.sendStatus(200);
-});
-  
 
 
 export default router;
