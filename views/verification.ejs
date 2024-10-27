@@ -721,7 +721,7 @@
                 <small> <span style="color: red;">Important Requirement </span>:
                   <ul style="list-style: circle; padding-left: 15px;">
                     <li>
-                      Please use the regular WhatsApp if you are having issues reciving the verification code on Business WhatsApp.
+                      Please use the regular WhatsApp if you are having issues receiving the verification code on Business WhatsApp.
                     </li>
                     <li>
                       We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased
@@ -915,8 +915,8 @@
 
 
                 socket.on('orderStatusUpdated', (data) => {
-                  const { order_code, phonenumber, code, short_name, service, status } = data;
-                  updateTable(order_code, phonenumber, code, short_name, service, status);
+                  const { order_code, cc, number, code, short_name, service, status, time_left } = data;
+                  updateTable(order_code, cc, number, code, short_name, service, status, time_left);
                 });
 
                 const fetchOrders = () => {
@@ -936,14 +936,14 @@
                     const row = document.createElement('tr');
                     row.dataset.orderCode = item.order_code;
                     row.innerHTML = `
-                       <td>${item.phonenumber}</td>
+                       <td>+${item.cc} ${item.number}</td>
                        <td class="code" style="cursor: pointer;">
                            ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : '')}
                         </td>
                        <td>${item.short_name}</td>
                        <td>${item.service}</td>
-                       <td class="status"><span class="${item.status === 'pending' ? "badge badge-outline-warning" : "badge badge-outline-success"}">
-                        ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : "Completed"}</span></td>
+                       <td class="status"><span class="${item.status === 'pending' ? "badge badge-outline-warning" : (item.status === 'expired' ?  "badge badge-outline-danger" :  "badge badge-outline-success")}">
+                        ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
                        <td class="action">${item.status === 'pending' ? getRefundButton(item.order_code) : getResendButton(item.order_code)}</td>
                        
                   `;
@@ -959,12 +959,12 @@
                 }
 
 
-                const updateTable = (order_code, phonenumber, code, short_name, service, status) => {
+                const updateTable = (order_code, cc, number, code, short_name, service, status, time_left) => {
                   const row = document.querySelector(`[data-order-code="${order_code}"]`);
                   if (row) {
                     row.querySelector('.code').innerHTML = status === 'pending' ? getSvgLoader() : code;
-                    row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : "badge badge-outline-success"}">
-          ${status === 'pending' ? `Awaiting code(${item.time_left})` : "completed"}</span>`;
+                    row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : (status === 'expired' ?  "badge badge-outline-danger" :  "badge badge-outline-success")}">
+          ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     row.querySelector('.action').innerHTML = status === 'pending' ? getRefundButton(order_code) : getResendButton(order_code);
                   }
                 };

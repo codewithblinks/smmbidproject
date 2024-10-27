@@ -17,7 +17,9 @@ import moment from "moment";
       const offset = (page - 1) * limit;
 
         const orderResult = await db.query("SELECT * FROM sms_order WHERE user_id = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3", [userId, limit, offset]);
-        const order = orderResult.rows
+        const order = orderResult.rows;
+
+        console.log(order)
 
         const notificationsResult = await db.query(
           'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
@@ -26,9 +28,8 @@ import moment from "moment";
     
       const notifications = notificationsResult.rows;
 
-
-      const countQuery = "SELECT COUNT(*) FROM sms_order";
-      const countResult = await db.query(countQuery);
+      const countQuery = "SELECT COUNT(*) FROM sms_order WHERE id = $1";
+      const countResult = await db.query(countQuery, [userId]);
       const totalSms = parseInt(countResult.rows[0].count);
 
       order.forEach(order => {

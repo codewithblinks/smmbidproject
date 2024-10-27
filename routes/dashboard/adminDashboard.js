@@ -82,62 +82,6 @@ async function getTotalsByPeriodAndType(period, type) {
   return result.rows[0]?.total_amount || 0; // return 0 if no result found
 }
 
-// Helper function to get total sold and profit by period
-async function getTotalSoldAndProfit(period) {
-  let query;
-
-  switch (period) {
-    case 'today':
-      query = `
-        SELECT 
-            COUNT(*) AS total_products_sold,
-            SUM(amount) AS total_sold_amount
-        FROM 
-            product_list
-        WHERE 
-            payment_status = 'sold'
-            AND DATE(sold_at) = CURRENT_DATE;
-      `;
-      break;
-
-    case 'week':
-      query = `
-        SELECT 
-            COUNT(*) AS total_products_sold,
-            SUM(amount) AS total_sold_amount
-        FROM 
-            product_list
-        WHERE 
-            payment_status = 'sold'
-            AND EXTRACT(WEEK FROM sold_at) = EXTRACT(WEEK FROM CURRENT_DATE);
-      `;
-      break;
-
-    case 'month':
-      query = `
-        SELECT 
-            COUNT(*) AS total_products_sold,
-            SUM(amount) AS total_sold_amount
-        FROM 
-            product_list
-        WHERE 
-            payment_status = 'sold'
-            AND EXTRACT(MONTH FROM sold_at) = EXTRACT(MONTH FROM CURRENT_DATE);
-      `;
-      break;
-
-    default:
-      throw new Error('Invalid period');
-  }
-
-  const result = await db.query(query);
-  const totalProductsSold = result.rows[0]?.total_products_sold || 0;
-  const totalSoldAmount = result.rows[0]?.total_sold_amount || 0; // return 0 if no result found
-  const totalProfit = totalSoldAmount * 0.2; // 20% profit
-
-  return { totalProductsSold, totalSoldAmount, totalProfit };
-}
-
 async function getTotalAdminSoldAndProfit(period) {
   let query;
 
@@ -401,23 +345,6 @@ router.get('/totals/withdrawals/:period', async (req, res) => {
     res.json({ totalWithdrawals: totalWithdrawal1 });
   } catch (err) {
     console.error('Error fetching withdrawal totals', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Route to get total sold amount and profit by period
-router.get('/totals/sold/:period', async (req, res) => {
-  const period = req.params.period;
-
-  try {
-    const { totalProductsSold, totalSoldAmount, totalProfit } = await getTotalSoldAndProfit(period);
-
-    const totalSold1 = numeral(totalSoldAmount).format('0,0.00');
-    const totalProfit1 = numeral(totalProfit).format('0,0.00');
-
-    res.json({ totalProductsSold, totalSoldAmount: totalSold1, totalProfit: totalProfit1 });
-  } catch (err) {
-    console.error('Error fetching total sold amount and profit', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

@@ -28,20 +28,6 @@ function generateTransferId() {
       );
     
       const notifications = notificationsResult.rows;
-
-      const incomeResult = await db.query(
-        "SELECT SUM(amount) AS total_sold_amount FROM product_list WHERE user_id = $1 AND payment_status = $2",
-        [userId, 'sold']
-      );
-  
-      const totalincome = incomeResult.rows[0].total_sold_amount || 0;
-
-      const profitResult = await db.query(
-        "SELECT SUM(payment_recieved) AS total_profit_amount FROM product_list WHERE user_id = $1 AND payment_status = $2",
-        [userId, 'sold']
-      );
-  
-      const totalProfit = profitResult.rows[0].total_profit_amount || 0;
     
         if (!userDetails) {
           return res.status(404).json({ error: 'User not found' });
@@ -51,7 +37,6 @@ function generateTransferId() {
           user: userDetails, 
           messages: req.flash(),
           timeSince, notifications,
-          totalincome, totalProfit,
           referralLink
          });
       } catch (error) {

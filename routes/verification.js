@@ -150,7 +150,9 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
     }
 
     // Filter only pending orders to return
-    const filteredOrders = activeOrders.filter(order => order.status === 'pending' || order.status === 'completed' && orderCodes.includes(order.order_code));
+    const filteredOrders = activeOrders.filter(order => 
+      (order.status === 'pending' || order.status === 'completed' || order.status === 'expired') 
+      && orderCodes.includes(order.order_code));
     return filteredOrders;
   } catch (error) {
     console.log(error);
@@ -207,6 +209,8 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
             );
 
             console.log(`Refund issued for order ${order.order_code}`);
+          } if (order.status === 'expired') {
+            await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [order.status, order.order_code]);
           }
         }
       }
@@ -216,7 +220,6 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
     return [];
   }
 };
-
 
 cron.schedule('*/30 * * * * *', async () => {
 
@@ -243,15 +246,21 @@ const getPhoneNumbersByStatus = async (userId) => {
       'SELECT * FROM sms_order WHERE user_id = $1 AND status = $2',
       [userId, 'complete']
     );
+    const expiredResult = await db.query(
+      'SELECT * FROM sms_order WHERE user_id = $1 AND status = $2',
+      [userId, 'expired']
+    );
+
 
     return {
       pendingNumbers: pendingResult.rows,
       completedNumbers: completedResult.rows,
+      expiredNumbers: expiredResult.rows
     };
   } catch (error) {
     console.log(error);
     console.error('Error fetching phone numbers by status:', error);
-    return { pendingNumbers: [], completedNumbers: [] };
+    return { pendingNumbers: [], completedNumbers: [],  expiredNumbers: []};
   }
 };
 
@@ -260,10 +269,10 @@ router.get("/sms/check", ensureAuthenticated, async (req, res) => {
 
   try {
     const orderCodes = await fetchOrderCodesForUser(userId);
-    const filteredOrders = await fetchAndFilterActiveOrders(orderCodes);
-    const { pendingNumbers, completedNumbers } = await getPhoneNumbersByStatus(userId);
+    const filteredOrders = (await fetchAndFilterActiveOrders(orderCodes)).slice(0, 8);
+    const { pendingNumbers, completedNumbers, expiredNumbers } = await getPhoneNumbersByStatus(userId);
 
-    const allNumbers = [...pendingNumbers, ...completedNumbers];
+    const allNumbers = [...pendingNumbers, ...completedNumbers, ...expiredNumbers];
 
     res.json({ filteredOrders, allNumbers });
 
@@ -290,6 +299,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     }
 
     const order = orderResult.rows[0];
+    
     if (order.status !== 'pending') {
       return res.status(400).json({ success: false, message: 'Order is not eligible for refund' });
     }
@@ -366,23 +376,25 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
       return res.status(400).json({ success: false, message: `${resend.message}` });
     }
 
-    const order = orderResult.rows[0];
-
     const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
 
     const rate = rateResult.rows[0].rate
 
-    const orderCharge = order.charge * rate;
+    const orderCharge = resend.charge * rate;
 
-    const charge = Math.floor(orderCharge + 500); 
+    const charge = resend.charge === 0 ? 0 : Math.floor(orderCharge + 500);
 
-    const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
-    await db.query(updateBalanceQuery, [charge, userId]);
+    if (charge > 0) {
+      const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
+      await db.query(updateBalanceQuery, [charge, userId]);
+    }
+
+    await db.query('UPDATE sms_order SET status = $1, cost = $2, amount = $3 WHERE order_id = $1', ['pending',  resend.charge, charge, resend.order_id]);
 
     return res.json({ success: true, message: `${resend.message}` });
 
   } catch (error) {
-    console.log(error);
+    console.error("They was an error trying to resend order", error);
     return res.status(400).json({ success: false, message: error.response ? error.response.data.message : error.message });
   }
 })
