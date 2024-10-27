@@ -14,7 +14,7 @@ const API_KEY = process.env.WKSMM_API_KEY;
 
 cron.schedule("*/2 * * * *", async () => {
   try {
-    // Get all orders with status 'pending' from the database
+    // Get all non-completed orders from the database
     const result = await db.query(
       "SELECT order_id FROM purchase_history WHERE status != $1",
       ["Completed"]
@@ -27,73 +27,92 @@ cron.schedule("*/2 * * * *", async () => {
         `${API_URL}?key=${API_KEY}&action=status&order=${orderId}`
       );
       const orderData = response.data;
-      // Update the status in the database if it has changed
-      if (orderData.status === "Partial") {
-        const purchaseResult = await db.query(
-          "SELECT * FROM purchase_history WHERE order_id = $1",
-          [orderId]
+
+      const purchaseResult = await db.query(
+        "SELECT * FROM purchase_history WHERE order_id = $1",
+        [orderId]
+      );
+      const purchase = purchaseResult.rows[0];
+
+      // Partial Status - Process Refund for Remaining
+      if (orderData.status === "Partial" && purchase.status !== "Partial") {
+        const amountPerItem = purchase.charge / purchase.quantity;
+        const amountRefund = amountPerItem * purchase.remain;
+
+        // Refund the user balance
+        const user_id = await db.query(
+          "UPDATE userprofile SET balance = balance + $1 WHERE id = $2 RETURNING id",
+          [amountRefund, purchase.user_id]
         );
-        const purchase = purchaseResult.rows[0];
 
-        if (purchase.status === "Partial") {
-          const totalResult = purchase.charge / purchase.quantity;
+        const userId = user_id.rows[0].id;
 
-          const amountRefund = totalResult * purchase.remain;
-          await db.query(
-            "UPDATE userprofile SET balance = balance + $1 WHERE id = $2",
-            [amountRefund, purchase.user_id]
-          );
-          await db.query(
-            "UPDATE purchase_history SET status = $1, refund_amount = $2 WHERE order_id = $3",
-            ["Refunded", amountRefund, orderId]
-          );
-        }
-        if (purchase.status === "Refunded") {
-          console.log("Payment already refunded");
-        }
-      } else if (orderData.status === "Canceled") {
-        const purchaseResult = await db.query(
-          "SELECT * FROM purchase_history WHERE order_id = $1",
-          [orderId]
+        // Update order status to Refunded
+        await db.query(
+          "UPDATE purchase_history SET status = $1, refund_amount = $2 WHERE order_id = $3",
+          [orderData.status, amountRefund, orderId]
         );
-        const purchase = purchaseResult.rows[0];
 
-        if (purchase.status === "Canceled") {
-          await db.query(
-            "UPDATE userprofile SET balance = balance + $1 WHERE id = $2",
-            [purchase.charge, purchase.user_id]
-          );
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', `Your SMM Service with order ID ${orderId} 
+            was partially fulfilled. A refund of ₦${amountRefund} has been credited to your main balance.`]
+        );
+  
 
-          await db.query(
-            "UPDATE purchase_history SET status = $1, start_count = $2, remain = $3, refund_amount = $4 WHERE order_id = $5",
-            ["Order Canceled", orderData.start_count, orderData.remains, purchase.charge, orderId]
-          );
+        console.log(`Partial order ${orderId} refunded with amount ${amountRefund}`);
+      }
 
-        }
-        if (purchase.status === "Order Canceled") {
-          console.log("Order Canceled");
-        }
-      }  else if (orderData.status !== "Completed") {
+      // Canceled Status - Full Refund
+      else if (orderData.status === "Canceled" && purchase.status !== "Canceled") {
+        // Refund the user balance with full charge amount
+        const user_id = await db.query(
+          "UPDATE userprofile SET balance = balance + $1 WHERE id = $2 RETURNING id",
+          [purchase.charge, purchase.user_id]
+        );
+
+        const userId = user_id.rows[0].id;
+
+        // Update order status to Order Canceled
+        await db.query(
+          "UPDATE purchase_history SET status = $1, start_count = $2, remain = $3, refund_amount = $4 WHERE order_id = $5",
+          [orderData.status, orderData.start_count, orderData.remains, purchase.charge, orderId]
+        );
+
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', `Your SMM Service with order ID ${orderId} was canceled. 
+            A full refund of ₦${purchase.charge} has been credited to your main balance.`]
+        );
+
+        console.log(`Canceled order ${orderId} refunded with amount ${purchase.charge}`);
+      }
+
+      // Any other statuses (e.g., Pending or In Progress) - Update status only
+      else if (orderData.status !== "Completed") {
         await db.query(
           "UPDATE purchase_history SET status = $1, start_count = $2, remain = $3 WHERE order_id = $4",
           [orderData.status, orderData.start_count, orderData.remains, orderId]
         );
       }
+
+      // Completed Status - Finalize order as completed
       else {
-        // Update the status to 'completed' if the order is completed;
         await db.query(
           "UPDATE purchase_history SET status = $1, start_count = $2, remain = $3 WHERE order_id = $4",
-          [orderData.status, orderData.start_count, orderData.remains, orderId]
+          ["Completed", orderData.start_count, orderData.remains, orderId]
         );
       }
     }
 
-    console.log("Order statuses, start_count, and remain updated successfully");
+    console.log("Order statuses, start_count, and remain updated successfully.");
   } catch (err) {
-    console.log(err)
     console.error("Error updating order statuses:", err.message);
   }
 });
+
 
 router.get("/exchange-rate", async (req, res) => {
   try {
