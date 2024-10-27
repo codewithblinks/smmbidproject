@@ -206,7 +206,7 @@ export const sendWelcomeEmail = async (email, username) => {
     
     try {
       const html = await ejs.renderFile(templatePath, {
-        name: username,
+        email:email,
         name: username,
         purchaseId: purchaseId,
         appName: appName
@@ -215,6 +215,32 @@ export const sendWelcomeEmail = async (email, username) => {
       const mailOptions = {
         to: email,
         subject: 'Purchase Alert',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendDeleteAccounEmail = async (email, username) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'userDeleteAccounEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Account Deletion Request',
         html: html
       };
   

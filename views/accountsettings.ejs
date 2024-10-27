@@ -1226,10 +1226,13 @@
                         class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
                     </label>
                   </div>
+
                   <div class="panel space-y-5">
+                    <form id="deleteAccountForm" action="/account/delete" method="post">
                     <h5 class="mb-4 text-lg font-semibold">Delete Account</h5>
                     <p>Once you delete the account, there is no going back. Please be certain.</p>
-                    <button class="btn btn-danger btn-delete-account">Delete my account</button>
+                    <button type="button" class="btn btn-danger btn-delete-account" onclick="confirmAccountDelete()">Delete my account</button>
+                  </form>
                   </div>
                 </div>
               </div>
@@ -1336,6 +1339,23 @@
 
             function showErrorMessage(message) {
               toastr.error(message);
+            }
+          </script>
+
+          <script>
+             async function confirmAccountDelete() {
+              new window.Swal({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: "You have 48 hours to contact the support to revert this, if you change your mind!",
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                padding: '2em',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  document.getElementById(`deleteAccountForm`).submit();
+                }
+              });
             }
           </script>
 

@@ -58,12 +58,17 @@ router.post('/login', async (req, res, next) => {
         }
         try {
             const result = await db.query(
-                "SELECT email, username, email_verified, notify_unusual_activity, last_login_ip FROM userprofile WHERE id = $1",
+                "SELECT email, username, email_verified, notify_unusual_activity, last_login_ip, deletion_requested FROM userprofile WHERE id = $1",
                 [user.id]
             );
 
             if (result.rows.length > 0) {
-                const { email, username, email_verified, notify_unusual_activity, last_login_ip } = result.rows[0];
+                const { email, username, email_verified, notify_unusual_activity, last_login_ip, deletion_requested } = result.rows[0];
+
+                if (deletion_requested) {
+                    req.flash('error', 'You submitted a request to delete your account, deletion is pending approval. If you changed your mind contact customer support');
+                    return res.redirect('/login');
+                }
 
                 if (!email_verified) {
                     req.flash('error', 'Please verify your email before logging in.');

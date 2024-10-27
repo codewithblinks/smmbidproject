@@ -107,7 +107,6 @@ router.delete('/delete/activity-log/:id', ensureAuthenticated, async (req, res) 
     const result = await db.query('DELETE FROM activity_log WHERE id = $1 AND user_id = $2', [activityId, userId]);
 
     if (result.rowCount > 0) {
-      // If the deletion was successful
       res.status(200).json({ message: 'Activity log deleted successfully' });
     } else {
       res.status(404).json({ error: 'Activity log not found' });

@@ -42,8 +42,7 @@ router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
   function generateTransactionReference() {
     return `trans_${crypto.randomBytes(8).toString('hex')}`;
   }
-  
-  
+   
 router.post('/deposit', ensureAuthenticated, async (req, res) => {
     const { paystack_amount } = req.body;
     const userId = req.user.id;
@@ -281,7 +280,6 @@ router.post('/webhook', express.json(), async (req, res) => {
     console.log(error);
   }
 });
-
   
 router.post('/deposit/bank', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;

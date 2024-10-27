@@ -1,19 +1,16 @@
 import express from "express";
 import db from "../db/index.js";
-const router = express.Router();
+import session from "express-session";
+import flash from "connect-flash"
 import axios from "axios";
-import flash from "connect-flash";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import {sendEmail} from "../config/transporter.js";
-import session from "express-session";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
-import { error } from "console";
-import { sendChangeEmail, sendChangeEmailConfirmation } from "../config/emailMessages.js";
+import { sendChangeEmail, sendChangeEmailConfirmation, sendDeleteAccounEmail } from "../config/emailMessages.js";
 
-
-
+const router = express.Router();
 
 const saltRounds = Number(process.env.SALT_ROUNDS);
 
@@ -347,6 +344,44 @@ router.post('/update-notification-preference', ensureAuthenticated, userRole, as
   }
  
 });
+
+router.post('/account/delete', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    await db.query(
+      `INSERT INTO deletion_date (user_id, request_time) VALUES ($1, NOW()) RETURNING *`,
+      [userId]
+    );
+
+    const result = await db.query('UPDATE userprofile SET deletion_requested = $1 WHERE id = $2 RETURNING username, email', [true, userId]);
+
+    const { username, email } = result.rows[0];
+
+    await sendDeleteAccounEmail(email, username,);
+
+    req.logout((err) => {
+      if (err) {
+        console.error('Error logging out:', err);
+        return res.status(500).send('Error logging out');
+      }
+
+      req.session.destroy((sessionErr) => {
+        if (sessionErr) {
+          console.error('Error destroying session:', sessionErr);
+          return res.status(500).send('Error clearing session');
+        }
+
+        res.redirect('/login'); 
+      });
+    });
+
+  } catch (error) {
+    console.error('Error requesting account deletion:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
 
 
 export default router;

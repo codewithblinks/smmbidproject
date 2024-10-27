@@ -1,11 +1,13 @@
 import express from "express";
 import db from "../../db/index.js";
-import {adminEnsureAuthenticated} from "../../authMiddleware/authMiddleware.js";
+import {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js";
 import flash from "connect-flash";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import bcrypt from "bcrypt";
 import { sendEmail } from "../../config/transporter.js";
+import numeral from "numeral";
+import moment from "moment";
 
 
 dotenv.config();
@@ -148,5 +150,56 @@ router.get("/admin/forgot", (req, res) => {
         res.redirect('/forgot');
     }
 });
+
+router.get("/admin/account/delete", adminEnsureAuthenticated, adminRole, async (req, res) => {
+    const adminId = req.user.id;
+
+    try {
+        const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+        const user = adminResult.rows[0];
+
+        const userDeletionRequest = await db.query(`
+            SELECT userprofile.*, deletion_date.request_time
+            FROM userprofile
+            JOIN deletion_date 
+            ON userprofile.id = deletion_date.user_id
+            WHERE userprofile.deletion_requested = $1
+        `, [true]);        
+
+            const deletionRequest = userDeletionRequest.rows;
+
+            deletionRequest.forEach(deletionRequest => {
+                deletionRequest.request_time = moment(deletionRequest.request_time).format('D MMM h:mmA');
+                deletionRequest.balance = numeral(deletionRequest.balance).format("0,0.00");
+              })
+      
+    
+        res.render("admin/deletionRequest", {user, deletionRequest})
+    } catch (error) {
+        console.error("error deplaying deletion page", error)
+        res.status(500).json({ error: 'Internal server error' });
+    }
+  })
+
+router.post('/admin/account/delete/:userId', adminEnsureAuthenticated, adminRole, async (req, res) => {
+    const userId = req.params.userId;
+    const action = req.body.action;
+
+    try {
+        if (action === 'approve') {
+            // Delete user from database
+            await db.query('DELETE FROM userprofile WHERE id = $1', [userId]);
+        } else if (action === 'reject') {
+            // Reset user status to 'active'
+            await db.query('UPDATE userprofile SET deletion_requested = $1 WHERE id = $2', [false, userId]);
+        }
+       
+        return res.redirect("/admin/account/delete")
+    } catch (error) {
+        console.error('Error updating account status:', error);
+        res.status(500).send('Internal server error');
+    }
+});
+
 
 export default router;

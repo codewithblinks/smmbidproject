@@ -235,6 +235,14 @@ VALUES ('paystack', true), ('flutterwave', true);
 
 -- remember to add
 
+ALTER TABLE userprofile ADD COLUMN deletion_requested BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE deletion_date (
+	id SERIAL PRIMARY KEY,
+	user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+	request_time TIMESTAMPTZ DEFAULT NOW()
+);
+
 
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
@@ -292,7 +300,7 @@ CREATE TABLE ticket_responses (
 DROP TABLE IF EXISTS pending_deposits;
 CREATE TABLE pending_deposits (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES userprofile(id),
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     amount NUMERIC(15, 2) NOT NULL,
 	reference VARCHAR(100) NOT NULL,
     transaction_reference VARCHAR(100),

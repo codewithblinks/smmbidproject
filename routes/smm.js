@@ -180,6 +180,13 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
   const amount = Number(req.body.amount);
 
   try {
+    const userResult = await db.query("SELECT balance FROM userprofile WHERE id = $1", [userId]);
+    const user = userResult.rows[0];
+
+    if (!user || user.balance < amount) {
+      return res.status(400).json({ error: "Insufficient balance, please top-up your balance." });
+    }
+
     const response = await axios.post(
       `${API_URL}?key=${API_KEY}&action=add&service=${serviceId}&link=${link}&quantity=${quantity}`
     );
@@ -187,72 +194,51 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
 
     const order = data.order;
 
-    const result = await db.query(
-      "SELECT balance FROM userprofile WHERE id = $1",
-      [userId]
-    );
-    const user = result.rows[0];
+    if (order) {
+      const orderResponse = await axios.post(
+        `${API_URL}?key=${API_KEY}&action=status&order=${order}`
+      );
+      const orderData = orderResponse.data;
+      const orderStatus = orderData.status || 'Pending';
 
-    if (user.balance >= amount) {
-      if (order) {
-        const orderResponse = await axios.post(
-          `${API_URL}?key=${API_KEY}&action=status&order=${order}`
-        );
-        const orderData = orderResponse.data;
-
-        const orderStatus = !orderData.status ? 'Pending' : orderData.status;
-        
-        const addTransferQuery = `
+      const addTransferQuery = `
         INSERT INTO purchase_history (user_id, charge, order_id, status, start_count, remain, quantity, link, service)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       `;
-        await db.query(addTransferQuery, [
-          userId,
-          amount,
-          order,
-          orderStatus,
-          orderData.start_count,
-          orderData.remains,
-          quantity,
-          link,
-          service,
-        ]);
+      await db.query(addTransferQuery, [
+        userId,
+        amount,
+        order,
+        orderStatus,
+        orderData.start_count,
+        orderData.remains,
+        quantity,
+        link,
+        service,
+      ]);
 
-        const updateBalanceQuery =
-          "UPDATE userprofile SET balance = balance - $1 WHERE id = $2";
-        await db.query(updateBalanceQuery, [amount, userId]);
+      const updateBalanceQuery = "UPDATE userprofile SET balance = balance - $1 WHERE id = $2";
+      await db.query(updateBalanceQuery, [amount, userId]);
 
-        await db.query(`
-          INSERT INTO notifications (user_id, type, message) 
-          VALUES ($1, $2, $3)`, 
-          [userId, 'purchase', 
-            `You have successfully purchase an SMM Service with the order id ${order}` 
-          ])
+      await db.query(`
+        INSERT INTO notifications (user_id, type, message) 
+        VALUES ($1, $2, $3)`, 
+        [userId, 'purchase', `You have successfully purchased an SMM Service with the order id ${order}`]
+      );
 
-        req.flash("success", "Service purchase successful, processing now.");
-        return res.redirect("/dashboard");
-      } else if (data.error == "Not enough funds on balance") {
-        req.flash(
-          "error",
-          "Unable to complete purchase at the moment, try again later."
-        );
-        return res.redirect("/dashboard");
-      } else if (data.error === "Quantity more than maximum 1000") {
-        req.flash("error", data.error);
-        return res.redirect("/smm");
-      } else if (data.error === "Quantity less than minimal 1000") {
-        req.flash("error", data.error);
-        return res.redirect("/smm");
-      }
+      return res.status(200).json({ message: "Service purchase successful, processing now." });
     } else {
-      req.flash("error", "Insufficient balance, please topup your balance");
-      return res.redirect("/smm");
+      const errorMessage = data.error === "Not enough funds on balance"
+        ? "Unable to complete purchase at the moment, try again later."
+        : data.error || "An error occurred, please try again.";
+
+      return res.status(400).json({ error: errorMessage });
     }
   } catch (error) {
-    console.log(error);
-    console.error(error.message);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error processing purchase:", error.message);
+    res.status(500).json({ error: "Internal server error. Please try again." });
   }
 });
+
 
 export default router;
