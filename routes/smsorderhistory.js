@@ -19,8 +19,6 @@ import moment from "moment";
         const orderResult = await db.query("SELECT * FROM sms_order WHERE user_id = $1 ORDER BY timestamp DESC LIMIT $2 OFFSET $3", [userId, limit, offset]);
         const order = orderResult.rows;
 
-        console.log(order)
-
         const notificationsResult = await db.query(
           'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
           [userId, false]
@@ -43,7 +41,7 @@ import moment from "moment";
           totalPages: Math.ceil(totalSms / limit),
         });
     } catch (error) {
-      console.log(error);
+      console.error('Error fetching data:', error);
     }
   });
   

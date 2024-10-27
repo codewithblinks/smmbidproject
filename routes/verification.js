@@ -300,7 +300,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
 
     const order = orderResult.rows[0];
     
-    if (order.status !== 'pending') {
+    if (order.status !== 'pending' && order.status !== 'expired') {
       return res.status(400).json({ success: false, message: 'Order is not eligible for refund' });
     }
 
@@ -323,23 +323,24 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
 
     await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', orderId]);
 
+    const orderAmount = Number(order.amount);
+
     const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
-    await db.query(updateBalanceQuery, [order.amount, userId]);
+    await db.query(updateBalanceQuery, [orderAmount, userId]);
 
     await db.query(`
       INSERT INTO notifications (user_id, type, message) 
       VALUES ($1, $2, $3)`, 
       [userId, 'purchase', 
-        `The order ${orderId} has been cancelled, and you have been refunded ${order.amount}` 
+        `The order ${orderId} has been cancelled, and you have been refunded ${orderAmount}` 
       ])
 
     return res.json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
     
 
   } catch (error) {
-    console.log(error);
     console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ success: false, message: `${error.response.data.message}` });
   }
 })
 

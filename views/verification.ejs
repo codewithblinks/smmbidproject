@@ -938,13 +938,17 @@
                     row.innerHTML = `
                        <td>+${item.cc} ${item.number}</td>
                        <td class="code" style="cursor: pointer;">
-                           ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : '')}
+                           ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : item.code)}
                         </td>
                        <td>${item.short_name}</td>
                        <td>${item.service}</td>
                        <td class="status"><span class="${item.status === 'pending' ? "badge badge-outline-warning" : (item.status === 'expired' ?  "badge badge-outline-danger" :  "badge badge-outline-success")}">
                         ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
-                       <td class="action">${item.status === 'pending' ? getRefundButton(item.order_code) : getResendButton(item.order_code)}</td>
+                       <td class="action">
+                        ${item.status === 'pending' ? getRefundButton(item.order_code)
+                         : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code) 
+                         : getResendButton(item.order_code))}
+                         </td>
                        
                   `;
                     tableBody.appendChild(row);

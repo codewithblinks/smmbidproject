@@ -285,6 +285,21 @@ CREATE TABLE ticket_responses (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+
+-- INSERT INTO payment_gateways (gateway_name, is_enabled) 
+-- VALUES ('bankaccount', true);
+
+DROP TABLE IF EXISTS pending_deposits;
+CREATE TABLE pending_deposits (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id),
+    amount NUMERIC(15, 2) NOT NULL,
+	reference VARCHAR(100) NOT NULL,
+    transaction_reference VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    verified_by_admin BOOLEAN DEFAULT FALSE
+);
 -- delete
 
 
