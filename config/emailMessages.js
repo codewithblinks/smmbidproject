@@ -252,3 +252,60 @@ export const sendWelcomeEmail = async (email, username) => {
       throw error;
     }
   };
+
+  export const sendDepositPendingEmail = async (email, username, transactionReference, bank_amount) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'newPendingDepositEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        transactionReference: transactionReference,
+        bank_amount: bank_amount,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Deposit Received and Awaiting Approval',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendDepositPendingAdminEmail = async (adminEmail, username, transactionReference, bank_amount, adminUsername) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'newDepositAdmin.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        transactionReference: transactionReference,
+        bank_amount: bank_amount,
+        adminUsername: adminUsername,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: adminEmail,
+        subject: 'New Deposit Awaiting Approval',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };

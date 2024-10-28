@@ -199,10 +199,13 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
   const amount = Number(req.body.amount);
 
   try {
+    await db.query("BEGIN");
+
     const userResult = await db.query("SELECT balance FROM userprofile WHERE id = $1", [userId]);
     const user = userResult.rows[0];
 
     if (!user || user.balance < amount) {
+      await db.query("ROLLBACK");
       return res.status(400).json({ error: "Insufficient balance, please top-up your balance." });
     }
 
@@ -245,8 +248,12 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
         [userId, 'purchase', `You have successfully purchased an SMM Service with the order id ${order}`]
       );
 
+      await db.query("COMMIT");
+
       return res.status(200).json({ message: "Service purchase successful, processing now." });
     } else {
+      await db.query("ROLLBACK")
+
       const errorMessage = data.error === "Not enough funds on balance"
         ? "Unable to complete purchase at the moment, try again later."
         : data.error || "An error occurred, please try again.";
@@ -254,6 +261,7 @@ router.post("/buysmm", ensureAuthenticated, async (req, res) => {
       return res.status(400).json({ error: errorMessage });
     }
   } catch (error) {
+    await db.query("ROLLBACK")
     console.error("Error processing purchase:", error.message);
     res.status(500).json({ error: "Internal server error. Please try again." });
   }

@@ -708,14 +708,14 @@
                                 </td>
                                 <td><%= transactions.reference %></td>
                                 <td><%= transactions.transaction_reference %></td>
-                                <td><span class="<%= transactions.status === "success" ? 'text-success' : ( transactions.status === 'pending' ? 'text-warning' : 'text-danger' ) %>"><%= transactions.status ? transactions.status.charAt(0).toUpperCase() + transactions.status.slice(1).toLowerCase() : "Null" %>                                </span></td>
+                                <td><span class="<%= transactions.status === "success" ? 'text-success' : ( transactions.status === 'pending' ? 'text-warning' : 'text-warning' ) %>"><%= transactions.status ? transactions.status.charAt(0).toUpperCase() + transactions.status.slice(1).toLowerCase() : "Null" %>                                </span></td>
                                 <td> <span class="<%= transactions.type === "deposit" ? 'text-success' : 'text-danger' %>"> <%= transactions.type === "deposit" ? "₦" : "₦"%><%= transactions.amount %></span></td>
                                 <td >
                                     <ul class="flex gap-2">
 
                                         
 
-                                        <li>
+                                        <li style="cursor: pointer;">
                                             <form id="approveForm-<%= transactions.id %>" action="/admin/deposits/<%= transactions.id %>/approve" method="post">
                                             <a onclick="confirmApprove('<%= transactions.id %>')" x-tooltip="Approve">
                                                 <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary">
@@ -725,7 +725,7 @@
                                             </a>
                                         </form>
                                         </li>
-                                        <li>
+                                        <li style="cursor: pointer;">
                                             <form id="rejectForm-<%= transactions.id %>" action="/admin/deposits/<%= transactions.id %>/reject" method="post">
                                             <a onclick="confirmReject('<%= transactions.id %>')" x-tooltip="Reject">
                                                 <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-danger">

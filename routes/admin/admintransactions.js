@@ -1,9 +1,10 @@
 import express from "express";
 import db from "../../db/index.js"
-const router = express.Router();
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
+
+const router = express.Router();
 
 
 router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, res) => {
@@ -125,8 +126,63 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
   const depositId = req.params.id;
 
   try {
-      await db.query("UPDATE deposits SET status = 'Approved', verified_by_admin = TRUE WHERE id = $1", [depositId]);
-      res.redirect('/admin/deposits');
+
+    const pendingTransQuery = await db.query(`
+        UPDATE pending_deposits 
+        SET status = 'Approved', 
+        verified_by_admin = TRUE 
+        WHERE id = $1 RETURNING amount, reference, user_id
+        `, 
+        [depositId]);
+
+        const {reference, user_id} = pendingTransQuery.rows[0];
+        const amount = Number(pendingTransQuery.rows[0].amount);
+
+        await db.query(`
+          UPDATE transactions 
+          SET status = 'success'
+          WHERE user_id = $1 
+          And reference = $2
+          `, 
+          [user_id, reference]);
+
+          const creditUserQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
+          await db.query(creditUserQuery, [amount, user_id]);
+
+          await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", 
+            [user_id, 'deposit', `Your deposit of ₦${amount} was successfull and the amount credited into your balance` ])
+
+            const depositCount = await db.query('SELECT COUNT(*) FROM deposits WHERE user_id = $1', [user_id]);
+            const depositNumber = Number(depositCount.rows[0].count) + 1;
+      
+      
+            if (depositNumber <= 3) {
+              await db.query('INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)', [user_id, amount, depositNumber]);
+      
+              const referral = await db.query('SELECT referred_by, commission_earned FROM referrals WHERE referred_user = $1', [user_id]);
+      
+              if (referral.rows.length > 0 && !referral.rows[0].commission_earned) {
+                const referredBy = referral.rows[0].referred_by;
+      
+                let commissionPercentage = depositNumber === 1 ? 0.10 : depositNumber === 2 ? 0.06 : depositNumber === 3 ? 0.03 : 0;
+      
+                if (commissionPercentage > 0) {
+                  const commissionAmount = amount * commissionPercentage;
+                  await db.query(
+                    'INSERT INTO commissions (user_id, referred_user_id, deposit_number, commission_amount) VALUES ($1, $2, $3, $4)',
+                    [referredBy, user_id, depositNumber, commissionAmount]
+                  );
+                }
+      
+                if (depositNumber === 3) {
+                  await db.query('UPDATE referrals SET commission_earned = TRUE WHERE referred_user = $1', [user_id]);
+                }
+              }
+            }
+
+
+           res.redirect('/admin/pending-deposit');
+
   } catch (err) {
       console.error('Error updating deposit status:', err);
       res.status(500).send('Error updating deposit status');
@@ -137,8 +193,29 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
   const depositId = req.params.id;
 
   try {
-      await db.query("UPDATE deposits SET status = 'Rejected' WHERE id = $1", [depositId]);
-      res.redirect('/admin/deposits');
+
+      const pendingTransQuery = await db.query(`
+        UPDATE pending_deposits 
+        SET status = 'Rejected'
+        WHERE id = $1 RETURNING amount, reference, user_id
+        `, 
+        [depositId]);
+
+        const {reference, user_id} = pendingTransQuery.rows[0];
+        const amount = Number(pendingTransQuery.rows[0].amount);
+
+        await db.query(`
+          UPDATE transactions 
+          SET status = 'canceled'
+          WHERE user_id = $1 
+          And reference = $2
+          `, 
+          [user_id, reference]);
+
+          await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", 
+            [user_id, 'deposit', `Your deposit of ₦${amount} was canceled and no amount was credited into your balance` ])
+
+      res.redirect('/admin/pending-deposit');
   } catch (err) {
       console.error('Error updating deposit status:', err);
       res.status(500).send('Error updating deposit status');
