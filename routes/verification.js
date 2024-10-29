@@ -390,7 +390,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
       await db.query(updateBalanceQuery, [charge, userId]);
     }
 
-    await db.query('UPDATE sms_order SET status = $1, cost = $2, amount = $3 WHERE order_id = $1', ['pending',  resend.charge, charge, resend.order_id]);
+    await db.query('UPDATE sms_order SET status = $1, cost = $2, amount = $3 WHERE order_id = $4', ['pending',  resend.charge, charge, resend.order_id]);
 
     return res.json({ success: true, message: `${resend.message}` });
 
