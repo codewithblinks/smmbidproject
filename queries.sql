@@ -242,9 +242,24 @@ CREATE TABLE deletion_date (
 );
 
 
+INSERT INTO payment_gateways (gateway_name, is_enabled) 
+VALUES ('bankaccount', true);
+
+DROP TABLE IF EXISTS pending_deposits;
+CREATE TABLE pending_deposits (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
+    amount NUMERIC(15, 2) NOT NULL,
+	reference VARCHAR(100) NOT NULL,
+    transaction_reference VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    verified_by_admin BOOLEAN DEFAULT FALSE,
+    ALTER TABLE pending_deposits ADD COLUMN proof_image BYTEA
+);
+
 -- remember to add
 
-ALTER TABLE pending_deposits ADD COLUMN proof_image BYTEA
 
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
@@ -296,20 +311,7 @@ CREATE TABLE ticket_responses (
 );
 
 
-INSERT INTO payment_gateways (gateway_name, is_enabled) 
-VALUES ('bankaccount', true);
 
-DROP TABLE IF EXISTS pending_deposits;
-CREATE TABLE pending_deposits (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    amount NUMERIC(15, 2) NOT NULL,
-	reference VARCHAR(100) NOT NULL,
-    transaction_reference VARCHAR(100),
-    status VARCHAR(20) DEFAULT 'Pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    verified_by_admin BOOLEAN DEFAULT FALSE
-);
 -- delete
 
 

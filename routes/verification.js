@@ -395,7 +395,6 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     return res.json({ success: true, message: `${resend.message}` });
 
   } catch (error) {
-    console.error("They was an error trying to resend order", error);
     return res.status(400).json({ success: false, message: error.response ? error.response.data.message : error.message });
   }
 })

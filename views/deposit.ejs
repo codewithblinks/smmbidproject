@@ -837,7 +837,7 @@
                   <div class="overflow-hidden">
                     <div class="rounded-lg bg-white dark:bg-black">
 
-                      <label class="payment-option mt-8" id="bankaccount-gateway" style="height: 50px; display: none;">
+                      <label class="payment-option mt-8" id="bankaccount-gateway" style="height: 50px; ">
                         <input type="radio" name="payment" value="bankaccount">
                         <span class="radio-custom"></span>
                         <span class="payment-text">Our Account</span>
@@ -1044,7 +1044,7 @@
 
   </script>
 
-  <script>
+  <!-- <script>
     async function loadPaymentGateways() {
       const response = await fetch('/api/payment-gateways');
       const gateways = await response.json();
@@ -1067,9 +1067,9 @@
 
     loadPaymentGateways();
 
-  </script>
+  </script> -->
 
-  <script>
+  <!-- <script>
     async function loadPaymentGatewaysCheck() {
       const response = await fetch('/api/payment-gateways/check');
       const gatewaysCheck = await response.json();
@@ -1083,7 +1083,7 @@
 
     loadPaymentGatewaysCheck();
 
-  </script>
+  </script> -->
 
 <script>
   const depositForm = document.getElementById('depositForm');
