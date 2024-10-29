@@ -105,43 +105,43 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
     }
   });
 
-  router.get('/api/payment-gateways', ensureAuthenticated, async (req, res) => {
-    try {
-      const result = await db.query('SELECT * FROM payment_gateways');
-      res.json(result.rows);
-    } catch (error) {
-      console.log(error)
-      console.error('Error fetching payment gateways:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+  // router.get('/api/payment-gateways', ensureAuthenticated, async (req, res) => {
+  //   try {
+  //     const result = await db.query('SELECT * FROM payment_gateways');
+  //     res.json(result.rows);
+  //   } catch (error) {
+  //     console.log(error)
+  //     console.error('Error fetching payment gateways:', error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // });
 
-  router.post('/api/payment-gateways/toggle', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    const { gatewayName, isEnabled } = req.body;
+  // router.post('/api/payment-gateways/toggle', adminEnsureAuthenticated, adminRole, async (req, res) => {
+  //   const { gatewayName, isEnabled } = req.body;
   
-    try {
-      await db.query(
-        'UPDATE payment_gateways SET is_enabled = $1 WHERE gateway_name = $2',
-        [isEnabled, gatewayName]
-      );
-      res.send('Gateway status updated successfully');
-    } catch (error) {
-      console.log(error)
-      console.error('Error updating gateway status:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+  //   try {
+  //     await db.query(
+  //       'UPDATE payment_gateways SET is_enabled = $1 WHERE gateway_name = $2',
+  //       [isEnabled, gatewayName]
+  //     );
+  //     res.send('Gateway status updated successfully');
+  //   } catch (error) {
+  //     console.log(error)
+  //     console.error('Error updating gateway status:', error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // });
 
-  router.get('/api/payment-gateways/check', ensureAuthenticated, async (req, res) => {
-    try {
-      const result = await db.query('SELECT * FROM payment_gateways WHERE is_enabled = true');
-      res.json(result.rows);
-    } catch (error) {
-      console.log(error)
-      console.error('Error fetching payment gateways:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+  // router.get('/api/payment-gateways/check', ensureAuthenticated, async (req, res) => {
+  //   try {
+  //     const result = await db.query('SELECT * FROM payment_gateways WHERE is_enabled = true');
+  //     res.json(result.rows);
+  //   } catch (error) {
+  //     console.log(error)
+  //     console.error('Error fetching payment gateways:', error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // });
 
   router.get('/api/withdrawal-status', adminEnsureAuthenticated, adminRole, async (req, res) => {
     try {

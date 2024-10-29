@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 import db from "../db/index.js";
 import { sendEmail } from "./transporter.js";
 import path from 'path';
-import ejs, { name } from "ejs";
+import ejs from "ejs";
 import { fileURLToPath } from 'url';
 
 
@@ -274,7 +274,7 @@ export const sendWelcomeEmail = async (email, username) => {
   
       await sendEmail(mailOptions);
   
-      console.log('Verification email sent');
+      console.log('Deposit pending email sent to user');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
@@ -287,12 +287,13 @@ export const sendWelcomeEmail = async (email, username) => {
     const appName = 'SMMBIDMEDIA';
     
     try {
+
       const html = await ejs.renderFile(templatePath, {
         name: username,
         transactionReference: transactionReference,
         bank_amount: bank_amount,
         adminUsername: adminUsername,
-        appName: appName
+        appName: appName,
       });
   
       const mailOptions = {
@@ -303,7 +304,7 @@ export const sendWelcomeEmail = async (email, username) => {
   
       await sendEmail(mailOptions);
   
-      console.log('Verification email sent');
+      console.log('Admin email sent with payment proof');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;

@@ -21,6 +21,37 @@
   href="../assets/images/favicon.png"
   type="image/x-icon"
 />
+<style>
+  #imageModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #modalContent {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    max-width: 70%; 
+    max-height: 80%;
+    overflow: auto;
+  }
+
+  #proofImage {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -202,6 +233,20 @@
                         </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deposits</span>
+                    </div>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/pending-deposit" class="group">
+                    <div class="flex items-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.5" d="M18.6667 12C20.5513 11.7213 22 10.0457 22 8.02036C22 5.79998 20.2589 4 18.1111 4H5.88889C3.74112 4 2 5.79998 2 8.02036C2 10.0457 3.44873 11.7213 5.33333 12" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M12 7V14M12 14L14 11.6667M12 14L10 11.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5 11C5 9.11438 5 8.17157 5.58579 7.58579C6.17157 7 7.11438 7 9 7H15C16.8856 7 17.8284 7 18.4142 7.58579C19 8.17157 19 9.11438 19 11V17C19 18.8856 19 19.8284 18.4142 20.4142C17.8284 21 16.8856 21 15 21H9C7.11438 21 6.17157 21 5.58579 20.4142C5 19.8284 5 18.8856 5 17V11Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path opacity="0.5" d="M5 18H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      <span
+                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Pending Deposits</span>
                     </div>
                   </a>
                 </li>
@@ -680,6 +725,7 @@
                                 <th>Transaction Reference</th>
                                 <th>Status</th>
                                 <th>Amount</th>
+                                <th>Proof</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -710,11 +756,9 @@
                                 <td><%= transactions.transaction_reference %></td>
                                 <td><span class="<%= transactions.status === "success" ? 'text-success' : ( transactions.status === 'pending' ? 'text-warning' : 'text-warning' ) %>"><%= transactions.status ? transactions.status.charAt(0).toUpperCase() + transactions.status.slice(1).toLowerCase() : "Null" %>                                </span></td>
                                 <td> <span class="<%= transactions.type === "deposit" ? 'text-success' : 'text-danger' %>"> <%= transactions.type === "deposit" ? "₦" : "₦"%><%= transactions.amount %></span></td>
+                                <td style="cursor: pointer;" onclick="showImageModal('<%= transactions.id %>')">View</td>
                                 <td >
                                     <ul class="flex gap-2">
-
-                                        
-
                                         <li style="cursor: pointer;">
                                             <form id="approveForm-<%= transactions.id %>" action="/admin/deposits/<%= transactions.id %>/approve" method="post">
                                             <a onclick="confirmApprove('<%= transactions.id %>')" x-tooltip="Approve">
@@ -762,7 +806,12 @@
         </div>
       
         <!-- end main content section -->
-      </div>
+        <div id="imageModal" style="display: none;">
+          <div id="modalContent">
+            <span onclick="closeModal()" style="cursor: pointer;">&times; Close</span>
+            <img id="proofImage" src="" alt="Proof of Payment" style="max-width: 100%;">
+          </div>
+        </div>
 
       <!-- start footer section -->
       <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
@@ -816,6 +865,33 @@
               });
             }
           </script>
+
+<script>
+  async function showImageModal(depositId) {
+    try {
+      // Fetch the image for the selected deposit
+      const response = await fetch(`/admin/view-deposit/${depositId}`);
+      if (!response.ok) throw new Error('Image could not be fetched');
+
+      // Set the image source in the modal
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      document.getElementById('proofImage').src = imageUrl;
+
+      // Show the modal
+      document.getElementById('imageModal').style.display = 'flex';
+    } catch (error) {
+      console.error(error);
+      alert('Failed to load image');
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.getElementById('proofImage').src = '';
+  }
+</script>
+
 
           <script>
             // main section

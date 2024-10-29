@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS userprofile (
     referral_code VARCHAR(50) UNIQUE,
     business_balance numeric(15,2) DEFAULT 0.00,
     notify_unusual_activity BOOLEAN DEFAULT FALSE,
-    last_login_ip VARCHAR(255)
+    last_login_ip VARCHAR(255),
+    deletion_requested BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -233,9 +234,6 @@ CREATE TABLE payment_gateways (
 INSERT INTO payment_gateways (gateway_name, is_enabled) 
 VALUES ('paystack', true), ('flutterwave', true);
 
--- remember to add
-
-ALTER TABLE userprofile ADD COLUMN deletion_requested BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE deletion_date (
 	id SERIAL PRIMARY KEY,
@@ -243,6 +241,10 @@ CREATE TABLE deletion_date (
 	request_time TIMESTAMPTZ DEFAULT NOW()
 );
 
+
+-- remember to add
+
+ALTER TABLE pending_deposits ADD COLUMN proof_image BYTEA
 
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
@@ -294,8 +296,8 @@ CREATE TABLE ticket_responses (
 );
 
 
--- INSERT INTO payment_gateways (gateway_name, is_enabled) 
--- VALUES ('bankaccount', true);
+INSERT INTO payment_gateways (gateway_name, is_enabled) 
+VALUES ('bankaccount', true);
 
 DROP TABLE IF EXISTS pending_deposits;
 CREATE TABLE pending_deposits (

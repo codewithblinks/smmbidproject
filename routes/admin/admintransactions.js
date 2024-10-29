@@ -3,6 +3,8 @@ import db from "../../db/index.js"
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -121,7 +123,6 @@ router.get("/admin/pending-deposit", adminEnsureAuthenticated, adminRole, async 
   }
 });
 
-
 router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const depositId = req.params.id;
 
@@ -131,11 +132,15 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
         UPDATE pending_deposits 
         SET status = 'Approved', 
         verified_by_admin = TRUE 
-        WHERE id = $1 RETURNING amount, reference, user_id
+        WHERE id = $1 RETURNING amount, reference, user_id, proof_image
         `, 
         [depositId]);
 
-        const {reference, user_id} = pendingTransQuery.rows[0];
+
+        if (pendingTransQuery.rows.length === 0) {
+          return res.status(404).send('Deposit not found.');
+        }
+        const {reference, user_id, proof_image} = pendingTransQuery.rows[0];
         const amount = Number(pendingTransQuery.rows[0].amount);
 
         await db.query(`
@@ -154,8 +159,7 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
 
             const depositCount = await db.query('SELECT COUNT(*) FROM deposits WHERE user_id = $1', [user_id]);
             const depositNumber = Number(depositCount.rows[0].count) + 1;
-      
-      
+
             if (depositNumber <= 3) {
               await db.query('INSERT INTO deposits (user_id, amount, deposit_number) VALUES ($1, $2, $3)', [user_id, amount, depositNumber]);
       
@@ -180,6 +184,18 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
               }
             }
 
+            if (proof_image) {
+              const filePath = Buffer.isBuffer(proof_image) ? proof_image.toString('utf-8') : proof_image;
+              const resolvedPath = path.resolve(filePath);
+              if (fs.existsSync(resolvedPath)) {
+                fs.unlinkSync(resolvedPath); // Delete the image file
+                console.log(`Proof image deleted successfully.`);
+              } else {
+                console.log(`Proof image does not exist.`);
+              }
+            }
+            await db.query('DELETE FROM pending_deposits WHERE id = $1', [depositId]);
+
 
            res.redirect('/admin/pending-deposit');
 
@@ -197,11 +213,15 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
       const pendingTransQuery = await db.query(`
         UPDATE pending_deposits 
         SET status = 'Rejected'
-        WHERE id = $1 RETURNING amount, reference, user_id
+        WHERE id = $1 RETURNING amount, reference, user_id, proof_image
         `, 
         [depositId]);
 
-        const {reference, user_id} = pendingTransQuery.rows[0];
+        if (pendingTransQuery.rows.length === 0) {
+          return res.status(404).send('Deposit not found.');
+        }
+
+        const {reference, user_id, proof_image} = pendingTransQuery.rows[0];
         const amount = Number(pendingTransQuery.rows[0].amount);
 
         await db.query(`
@@ -215,12 +235,42 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
           await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", 
             [user_id, 'deposit', `Your deposit of ₦${amount} was canceled and no amount was credited into your balance` ])
 
+            if (proof_image) {
+              const filePath = Buffer.isBuffer(proof_image) ? proof_image.toString('utf-8') : proof_image;
+              const resolvedPath = path.resolve(filePath);
+              if (fs.existsSync(resolvedPath)) {
+                fs.unlinkSync(resolvedPath); // Delete the image file
+                console.log(`Proof image deleted successfully.`);
+              } else {
+                console.log(`Proof image does not exist.`);
+              }
+            }
+
+            await db.query('DELETE FROM pending_deposits WHERE id = $1', [depositId]);
+
       res.redirect('/admin/pending-deposit');
   } catch (err) {
       console.error('Error updating deposit status:', err);
       res.status(500).send('Error updating deposit status');
   }
 });
+
+router.get('/admin/view-deposit/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await db.query('SELECT proof_image FROM pending_deposits WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) return res.status(404).send('Image not found');
+
+    const proofImage = result.rows[0].proof_image;
+    res.contentType('image/png');
+    res.send(proofImage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving image');
+  }
+});
+
 
 
 
