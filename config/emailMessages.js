@@ -306,6 +306,62 @@ export const sendWelcomeEmail = async (email, username) => {
     }
   };
 
+  export const sendDepositApproveEmail = async (email, username, transactionReference, amount) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'depsoitApprovedEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        transactionReference: transactionReference,
+        amount: amount,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Deposit Approved and Credited to Your Account',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Deposit approval email sent to user');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendDepositRejectedEmail = async (email, username, transactionReference, amount) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'depsoitRejectedEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        transactionReference: transactionReference,
+        amount: amount,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Deposit Rjected',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Deposit rejected email sent to user');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
   export const sendDepositPendingAdminEmail = async (adminEmail, username, transactionReference, bank_amount, adminUsername) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'newDepositAdmin.ejs');
   

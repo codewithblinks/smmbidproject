@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    }
+    .btn {
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Deposit Received and Awaiting Approval</h2>
+    <p>Hi <%= name %>,</p>
+
+    <p>Great news! Your deposit of ₦<%= amount %> has been reviewed and approved. The amount is now available in your account balance.</p>
+
+     <p>Referrence ID: <%= transactionReference %></p>
+
+    <p>Thank you for trusting us with your transactions. If you have any further questions, feel free to reach out.</p>
+
+    <p>Thanks, <br>The <%= appName %> Team</p>
+  </div>
+</body>
+</html>
