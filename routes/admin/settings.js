@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import { sendEmail } from "../../config/transporter.js";
 import numeral from "numeral";
 import moment from "moment";
+import { forgotPasswordAdminEmail, sendResetPasswordAdminConfirmation } from "../../config/emailMessages.js";
 
 
 dotenv.config();
@@ -25,6 +26,7 @@ router.get("/admin/forgot", (req, res) => {
     try {
         const userRes = await db.query('SELECT * FROM admins WHERE email = $1', [email]);
         const user = userRes.rows[0];
+
         if (!user) {
             req.flash('error', 'Email does not exist');
             return res.redirect('/admin/forgot');
@@ -38,16 +40,11 @@ router.get("/admin/forgot", (req, res) => {
             [user.id, token, new Date(Date.now() + 600000), false] 
         );
   
-        const mailOptions = {
-            to: user.email,
-            subject: 'Password Reset',
-            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-                   Please click on the following link, or paste this into your browser to complete the process:\n\n
-                   http://${req.headers.host}/admin/reset/${token}\n\n
-                   If you did not request this, please ignore this email and your password will remain unchanged.\n`
-        };
-  
-        await sendEmail(mailOptions);
+        const username = user.username;
+
+        const resetLink = `http://${req.headers.host}/admin/reset/${token}`;
+
+        await forgotPasswordAdminEmail(email, username, resetLink);
   
         req.flash('success', 'An email has been sent to ' + user.email + ' with further instructions.');
         res.redirect('/login/admin');
@@ -63,10 +60,14 @@ router.get("/admin/forgot", (req, res) => {
     const { token } = req.params;
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userRes = await db.query('SELECT * FROM admins WHERE id = $1', [decoded.id]);
-        const user = userRes.rows[0];
-
         const userId = decoded.id;
+
+        const userRes = await db.query('SELECT * FROM admins WHERE id = $1', [userId]);
+
+        if (userRes.rows.length === 0) {
+            req.flash('error', 'Invalid or expired token');
+            return res.redirect('/admin/forgot');
+        }
 
         const tokenRes = await db.query(
             `SELECT * FROM admin_password_reset_tokens 
@@ -74,36 +75,38 @@ router.get("/admin/forgot", (req, res) => {
             [token, userId]
         );
 
-        if (tokenRes.rows.length === 0) {
-            req.flash('error', 'Password reset token is invalid or has expired.');
+        if (tokenRes.rows.length === 0 || tokenRes.rows[0].used) {
+            req.flash('error', 'Password reset token is invalid, expired, or already used.');
             return res.redirect('/admin/forgot');
         }
-
-        const tokenRecord = tokenRes.rows[0];
-        if (tokenRecord.used) {
-            req.flash('error', 'This password reset link has already been used.');
-            return res.redirect('/admin/forgot');
-        }
-
         res.render('admin/resetPW', { token, message: req.flash('error') });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error resetting admin password", error);
         req.flash('error', 'Invalid or expired token');
         res.redirect('/admin/forgot');
     }
   });
 
-  router.post('/admin/reset/:token', async (req, res) => {
+router.post('/admin/reset/:token', async (req, res) => {
     const { token } = req.params;
-    const { password } = req.body;
+    const { password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        return res.json({ success: false, message: 'Passwords do not match.' });
+    }
+    if (password.length < 8 || confirmPassword.length < 8) {
+        return res.json({ success: false, message: 'Passwords must be at least 8 characters long.' });
+    }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userRes = await db.query('SELECT * FROM admins WHERE id = $1', [decoded.id]);
-        const user = userRes.rows[0];
-
         const userId = decoded.id;
+
+        const userRes = await db.query('SELECT * FROM admins WHERE id = $1', [userId]);
+        if (userRes.rows.length === 0) {
+            return res.json({ success: false, message: 'Invalid or expired token.' });
+        }
+        const user = userRes.rows[0];
 
         const tokenRes = await db.query(
             `SELECT * FROM admin_password_reset_tokens 
@@ -111,21 +114,14 @@ router.get("/admin/forgot", (req, res) => {
             [token, userId]
         );
 
-        if (tokenRes.rows.length === 0) {
-            req.flash('error', 'Password reset token is invalid or has expired.');
-            return res.redirect('/admin/forgot');
+        if (tokenRes.rows.length === 0 || tokenRes.rows[0].used) {
+            return res.json({ success: false, message: 'Password reset token is invalid, expired, or already used.' });
         }
-
-        const tokenRecord = tokenRes.rows[0];
-        if (tokenRecord.used) {
-            req.flash('error', 'This password reset link has already been used.');
-            return res.redirect('/admin/forgot');
-        }
-
 
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.query('UPDATE admins SET password = $1 WHERE id = $2', [hashedPassword, userId]);
 
+        const tokenRecord = tokenRes.rows[0];
         await db.query(
             `UPDATE admin_password_reset_tokens
              SET used = TRUE 
@@ -133,21 +129,14 @@ router.get("/admin/forgot", (req, res) => {
             [tokenRecord.id]
         );
 
-        const mailOptions = {
-            to: user.email,
-            subject: 'Your password has been changed',
-            text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
-        };
+        const { username, email } = user;
 
-        await sendEmail(mailOptions);
+        await sendResetPasswordAdminConfirmation(email, username);
 
-        req.flash('success', 'Success! Your password has been changed.');
-        res.redirect('/login/admin');
+        return res.json({ success: true, message: 'Success! Your password has been changed.' });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
-        req.flash('error', 'An error occurred. Please try again.');
-        res.redirect('/forgot');
+        console.error("Error in admin password reset:", error)
+        return res.json({ success: false, message: 'An error occurred. Please try again.' });
     }
 });
 
@@ -200,6 +189,5 @@ router.post('/admin/account/delete/:userId', adminEnsureAuthenticated, adminRole
         res.status(500).send('Internal server error');
     }
 });
-
 
 export default router;

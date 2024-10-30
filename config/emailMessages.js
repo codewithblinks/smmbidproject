@@ -36,7 +36,6 @@ export const sendWelcomeEmail = async (email, username) => {
     }
   };
 
-
   export const resendVericationEmail = async (email, username, verificationCode) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'verifyEmail.ejs');
   
@@ -63,7 +62,6 @@ export const sendWelcomeEmail = async (email, username) => {
       throw error;
     }
   };
-
   
   export const forgotPasswordEmail = async (email, username, resetLink) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'forgotPasswordEmail.ejs');
@@ -121,6 +119,33 @@ export const sendWelcomeEmail = async (email, username) => {
 
   export const sendResetEmailConfirmation = async (email, username) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'resetConfirmationEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        email: email,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Password Reset',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const sendResetPasswordAdminConfirmation = async (email, username) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'resetPasswordAminConfrimationEmail.ejs');
   
     const appName = 'SMMBIDMEDIA';
     
@@ -305,6 +330,33 @@ export const sendWelcomeEmail = async (email, username) => {
       await sendEmail(mailOptions);
   
       console.log('Admin email sent with payment proof');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+
+  export const forgotPasswordAdminEmail = async (email, username, resetLink) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'forgotPasswordAdminEmail.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        name: username,
+        resetLink: resetLink,
+        appName: appName
+      });
+  
+      const mailOptions = {
+        to: email,
+        subject: 'Password Reset',
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+  
+      console.log('Verification email sent');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
