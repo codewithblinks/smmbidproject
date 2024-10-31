@@ -5,9 +5,7 @@ import numeral from "numeral";
 import moment from "moment";
 import { sendDepositApproveEmail, sendDepositRejectedEmail } from "../../config/emailMessages.js";
 
-
 const router = express.Router();
-
 
 router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
@@ -39,42 +37,7 @@ router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, r
           totalPages: Math.ceil(totalTransactions / limit), user
         })
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-router.get("/admin/withdrawals", adminEnsureAuthenticated, adminRole, async (req, res) => {
-  const adminId = req.user.id;
-
-  try {
-    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
-    const user = adminResult.rows[0];
-
-    const limit = 15;
-    const page = parseInt(req.query.page) || 1;
-    const offset = (page - 1) * limit;
-
-
-        const transactionsResult = await db.query("SELECT * FROM transactions WHERE type = 'withdraw' ORDER BY created_at DESC LIMIT $1 OFFSET $2",[limit, offset])
-        const transactions =transactionsResult.rows;
-
-        transactions.forEach(transactions => {
-            transactions.created_at = moment(transactions.created_at).format('D MMM h:mmA');
-            transactions.amount = numeral(transactions.amount).format("0,0.00");
-        })
-
-        const countQuery = "SELECT COUNT(*) FROM transactions WHERE transactions.type = 'withdraw'";
-        const countResult = await db.query(countQuery);
-        const totalTransactions = parseInt(countResult.rows[0].count);
-
-        res.render("admin/withdraws", {
-          transactions,
-          currentPage: page,
-          totalPages: Math.ceil(totalTransactions / limit), user
-        })
-  } catch (error) {
-    console.log(error);
+    console.error("Error getting admin deposits page", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -101,14 +64,14 @@ router.get("/admin/pending-deposit", adminEnsureAuthenticated, adminRole, async 
         WHERE pending_deposits.status = 'Pending'
         ORDER BY pending_deposits.created_at DESC 
         LIMIT $1 OFFSET $2`,[limit, offset])
-        const transactions =transactionsResult.rows;
+        const transactions = transactionsResult.rows;
 
         transactions.forEach(transactions => {
             transactions.created_at = moment(transactions.created_at).format('D MMM h:mmA');
             transactions.amount = numeral(transactions.amount).format("0,0.00");
         })
 
-        const countQuery = "SELECT COUNT(*) FROM pending_deposits WHERE pending_deposits.status = 'pending'";
+        const countQuery = "SELECT COUNT(*) FROM pending_deposits WHERE pending_deposits.status = 'Pending'";
         const countResult = await db.query(countQuery);
         const totalTransactions = parseInt(countResult.rows[0].count);
 
@@ -118,7 +81,7 @@ router.get("/admin/pending-deposit", adminEnsureAuthenticated, adminRole, async 
           totalPages: Math.ceil(totalTransactions / limit), user
         })
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching pending deposits:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -127,19 +90,22 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
   const depositId = req.params.id;
 
   try {
+    await db.query('BEGIN');
 
     const pendingTransQuery = await db.query(`
         UPDATE pending_deposits 
         SET status = 'Approved', 
         verified_by_admin = TRUE 
-        WHERE id = $1 RETURNING amount, reference, user_id
+        WHERE id = $1 
+        RETURNING amount, reference, user_id
         `, 
         [depositId]);
 
-
         if (pendingTransQuery.rows.length === 0) {
+          await db.query('ROLLBACK');
           return res.status(404).send('Deposit not found.');
         }
+
         const {reference, user_id} = pendingTransQuery.rows[0];
         const amount = Number(pendingTransQuery.rows[0].amount);
 
@@ -159,6 +125,7 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
           `, [amount, user_id]);
 
         if (userResult.rows.length === 0) {
+             await db.query('ROLLBACK');
              return res.status(404).send('User profile not found.');
              }
         
@@ -201,6 +168,7 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
            res.redirect('/admin/pending-deposit');
 
   } catch (err) {
+      await db.query('ROLLBACK');
       console.error('Error updating deposit status:', err);
       res.status(500).send('Error updating deposit status');
   }
@@ -227,11 +195,11 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
 
         await db.query(`
           UPDATE transactions 
-          SET status = 'canceled'
-          WHERE user_id = $1 
-          And reference = $2
+          SET status = $1
+          WHERE user_id = $2 
+          And reference = $3
           `, 
-          [user_id, reference]);
+          ['canceled', user_id, reference]);
 
           await db.query("INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)", 
             [user_id, 'deposit', `Your deposit of ₦${amount} was canceled and no amount was credited into your balance` ])
@@ -251,9 +219,9 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
 
             await sendDepositRejectedEmail(email, username, reference, amount);
 
-      res.redirect('/admin/pending-deposit');
+             res.redirect('/admin/pending-deposit');
   } catch (err) {
-      console.error('Error updating deposit status:', err);
+      console.error('Error rejecting deposit:', err);
       res.status(500).send('Error updating deposit status');
   }
 });

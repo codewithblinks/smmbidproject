@@ -1,6 +1,5 @@
 import express from "express";
-import db from "../db/index.js";
-import passport from "passport";
+
 const router = express.Router();
 
 router.get("/logout", (req, res) => {

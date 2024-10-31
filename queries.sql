@@ -111,15 +111,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS withdrawal_details (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
-    bank_name VARCHAR(100),
-    account_number VARCHAR(20),
-    bank_code VARCHAR(10),
-    recipient_code VARCHAR(100)
-);
-
 CREATE TABLE IF NOT EXISTS commissions (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
@@ -159,16 +150,6 @@ CREATE TABLE IF NOT EXISTS admin_password_reset_tokens (
     token VARCHAR(255) NOT NULL,
     expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     used BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS ratings_reviews (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    rating INTEGER,
-    review TEXT,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    writer_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    writer_username VARCHAR(15)
 );
 
 CREATE TABLE IF NOT EXISTS referral_withdrawals (
@@ -217,14 +198,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     read BOOLEAN DEFAULT false
 );
 
-CREATE TABLE user_archives (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
-  product_id INTEGER NOT NULL,
-  archived_at TIMESTAMP DEFAULT NOW(),
-  UNIQUE(user_id, product_id)
-);
-
 CREATE TABLE payment_gateways (
   id SERIAL PRIMARY KEY,
   gateway_name VARCHAR(50) UNIQUE NOT NULL,
@@ -232,7 +205,7 @@ CREATE TABLE payment_gateways (
 );
 
 INSERT INTO payment_gateways (gateway_name, is_enabled) 
-VALUES ('paystack', true), ('flutterwave', true);
+VALUES ('bankaccount', true);
 
 
 CREATE TABLE deletion_date (
@@ -241,9 +214,6 @@ CREATE TABLE deletion_date (
 	request_time TIMESTAMPTZ DEFAULT NOW()
 );
 
-
-INSERT INTO payment_gateways (gateway_name, is_enabled) 
-VALUES ('bankaccount', true);
 
 DROP TABLE IF EXISTS pending_deposits;
 CREATE TABLE pending_deposits (
@@ -313,6 +283,12 @@ CREATE TABLE ticket_responses (
 
 
 -- delete
+
+ratings_reviews 
+user_archives
+withdrawal_details
+DROP TABLE IF EXISTS withdrawal_details 
+DELETE FROM payment_gateways WHERE gateway_name = 'flutterwave'
 
 
 

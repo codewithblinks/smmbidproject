@@ -1,7 +1,8 @@
 import express from "express";
-import db from "../../db/index.js"
+import db from "../../db/index.js";
+import ensureAuthenticated, {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js";
+
 const router = express.Router();
-import ensureAuthenticated, {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 
 router.get('/admin/settings', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
@@ -14,14 +15,13 @@ router.get('/admin/settings', adminEnsureAuthenticated, adminRole, async (req, r
 
     res.render('admin/adminsettings', {rate, user});
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
   
 });
 
 router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    const userId = req.params.id;
     const rate = req.body.rate
 
     try {
@@ -29,7 +29,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
 
         res.redirect('/admin/settings');
     } catch (error) {
-        console.log(error);
+        console.error("Error updating rate", error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -39,14 +39,13 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
     const pass = req.body.pass;
 
     console.log(email)
-    console.log(typeof email)
 
     try {
         await db.query("UPDATE miscellaneous SET smtp_email = $1, smtp_pass = $2 WHERE id = $3", [email, pass, 1])
 
         res.redirect('/admin/settings');
     } catch (error) {
-        console.log(error);
+        console.error("Error updating smtp email", error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -60,7 +59,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
 
         res.redirect('/admin/settings');
     } catch (error) {
-      console.log(error);
+      console.error("Error inserting smtp email", error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -72,7 +71,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         await db.query("UPDATE miscellaneous SET sms_price = $1 WHERE id = 1", [sms_price])
         res.redirect('/admin/settings');
     } catch (error) {
-      console.log(error);
+      console.error("Error updating price", error);
         res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -86,7 +85,7 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         res.status(404).json({ error: 'Exchange rate not found' });
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching rate", error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -100,107 +99,8 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
         res.status(404).json({ error: 'Exchange rate not found' });
       }
     } catch (error) {
-       console.log(error);
+       console.error("Error fetching sms price", error);
       res.status(500).json({ error: 'Internal server error' });
-    }
-  });
-
-  // router.get('/api/payment-gateways', ensureAuthenticated, async (req, res) => {
-  //   try {
-  //     const result = await db.query('SELECT * FROM payment_gateways');
-  //     res.json(result.rows);
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.error('Error fetching payment gateways:', error);
-  //     res.status(500).send('Internal Server Error');
-  //   }
-  // });
-
-  // router.post('/api/payment-gateways/toggle', adminEnsureAuthenticated, adminRole, async (req, res) => {
-  //   const { gatewayName, isEnabled } = req.body;
-  
-  //   try {
-  //     await db.query(
-  //       'UPDATE payment_gateways SET is_enabled = $1 WHERE gateway_name = $2',
-  //       [isEnabled, gatewayName]
-  //     );
-  //     res.send('Gateway status updated successfully');
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.error('Error updating gateway status:', error);
-  //     res.status(500).send('Internal Server Error');
-  //   }
-  // });
-
-  // router.get('/api/payment-gateways/check', ensureAuthenticated, async (req, res) => {
-  //   try {
-  //     const result = await db.query('SELECT * FROM payment_gateways WHERE is_enabled = true');
-  //     res.json(result.rows);
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.error('Error fetching payment gateways:', error);
-  //     res.status(500).send('Internal Server Error');
-  //   }
-  // });
-
-  router.get('/api/withdrawal-status', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    try {
-      const result = await db.query(
-        `SELECT withdrawal_enabled FROM miscellaneous WHERE id = $1`, [1]
-      );
-      res.json({ isEnabled: result.rows[0].withdrawal_enabled });
-
-      console.log(result.rows[0].withdrawal_enabled)
-    } catch (error) {
-      console.log(error)
-      console.error('Error fetching withdrawal status:', error);
-      res.status(500).json({ error: 'Failed to fetch withdrawal status' });
-    }
-  });
-
-  router.post('/api/toggle-withdrawal', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    try {
-      const { isEnabled } = req.body;
-      await db.query(
-        `UPDATE miscellaneous 
-         SET withdrawal_enabled = $1 
-         WHERE id = 1`,
-        [isEnabled]
-      );
-      res.json({ message: 'Withdrawal status updated successfully' });
-    } catch (error) {
-      console.log(error)
-      console.error('Error updating withdrawal status:', error);
-      res.status(500).json({ error: 'Failed to update withdrawal status' });
-    }
-  });
-
-  router.get('/api/p2pmarket-enabled-status', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    try {
-      const result = await db.query(
-        `SELECT p2pmarket_enabled FROM miscellaneous WHERE id = $1`,
-        [1]
-      );
-      res.json({ isEnabled: result.rows[0].p2pmarket_enabled });
-    } catch (error) {
-      console.error('Error fetching withdrawal status:', error);
-      res.status(500).json({ error: 'Failed to fetch withdrawal status' });
-    }
-  });
-
-  router.post('/api/toggle-p2pmarket', adminEnsureAuthenticated, adminRole, async (req, res) => {
-    try {
-      const { isEnabled } = req.body;
-      await db.query(
-        `UPDATE miscellaneous  
-         SET p2pmarket_enabled  = $1 
-         WHERE id = $2`,
-        [isEnabled, 1]
-      );
-      res.json({ message: 'Withdrawal status updated successfully' });
-    } catch (error) {
-      console.error('Error updating withdrawal status:', error);
-      res.status(500).json({ error: 'Failed to update withdrawal status' });
     }
   });
   

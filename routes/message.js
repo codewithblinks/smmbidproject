@@ -1,9 +1,8 @@
 import express from "express";
 import db from "../db/index.js";
+import ensureAuthenticated from "../authMiddleware/authMiddleware.js";
+
 const router = express.Router();
-import ensureAuthenticated from "../authMiddleware/authMiddleware.js"
-
-
 
  router.get('/notifications/:userId', ensureAuthenticated, async (req, res) => {
     const { userId } = req.params;

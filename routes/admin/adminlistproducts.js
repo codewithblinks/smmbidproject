@@ -1,11 +1,11 @@
 import express from "express";
 import db from "../../db/index.js";
-const router = express.Router();
 import flash from "connect-flash";
 import { adminEnsureAuthenticated, adminRole } from "../../authMiddleware/authMiddleware.js";
 import moment from "moment";
 import numeral from "numeral";
 
+const router = express.Router();
 
 router.get("/admin/list/product", adminEnsureAuthenticated, adminRole, async(req, res) => {
   const userId = req.user.id;
@@ -17,13 +17,14 @@ router.get("/admin/list/product", adminEnsureAuthenticated, adminRole, async(req
       res.render('admin/adminListProducts', {messages: req.flash(), user });
       
     } catch (error) {
-      console.log(error);
+      console.error("error getting product list", error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
 
 router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
+
   const {
     option1,
     years,
@@ -67,7 +68,7 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
     req.flash("success", "Account listed successfully");
     res.redirect("/admin/list/product");
   } catch (error) {
-    console.log(error);
+    console.error("error listing account", error);
     req.flash("error", "Error: listing account was not successfully");
     return res.redirect("/admin/list/product");
   }
@@ -75,6 +76,7 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
 
 router.get("/admin/listed/products", adminEnsureAuthenticated, adminRole, async(req, res) => {
   const userId = req.user.id;
+
   try {
     const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
     const user = adminResult.rows[0];
@@ -105,7 +107,7 @@ router.get("/admin/listed/products", adminEnsureAuthenticated, adminRole, async(
        });
       
     } catch (error) {
-      console.log(error);
+      console.error("Error getting listed products", error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -135,8 +137,8 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
           products.amount = numeral(products.amount).format("0,0.00");
         })
   
-        const countQuery = "SELECT COUNT(*) FROM admin_products";
-        const countResult = await db.query(countQuery);
+        const countQuery = "SELECT COUNT(*) FROM admin_products WHERE payment_status != $1";
+        const countResult = await db.query(countQuery, ["sold"]);
         const totalOrders = parseInt(countResult.rows[0].count);
   
   
@@ -147,7 +149,7 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
         });
         
       } catch (error) {
-        console.log(error);
+        console.error("Error getting active products", error);
         res.status(500).json({ error: 'Internal server error' });
       }
     });
@@ -170,8 +172,8 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
             products.amount = numeral(products.amount).format("0,0.00");
           })
     
-          const countQuery = "SELECT COUNT(*) FROM admin_products";
-          const countResult = await db.query(countQuery);
+          const countQuery = "SELECT COUNT(*) FROM admin_products WHERE payment_status = $1";
+          const countResult = await db.query(countQuery, ["sold"]);
           const totalOrders = parseInt(countResult.rows[0].count);
     
           res.render('admin/soldproductsadmin', {messages: req.flash(), products, 
@@ -180,10 +182,9 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
            });
           
         } catch (error) {
-          console.log(error);
+          console.error("Error sold listed products", error);
           res.status(500).json({ error: 'Internal server error' });
         }
       });
-
 
 export default router;

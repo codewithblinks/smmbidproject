@@ -5,7 +5,6 @@ import flash from "connect-flash";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import bcrypt from "bcrypt";
-import { sendEmail } from "../../config/transporter.js";
 import numeral from "numeral";
 import moment from "moment";
 import { forgotPasswordAdminEmail, sendResetPasswordAdminConfirmation } from "../../config/emailMessages.js";
@@ -49,8 +48,7 @@ router.get("/admin/forgot", (req, res) => {
         req.flash('success', 'An email has been sent to ' + user.email + ' with further instructions.');
         res.redirect('/login/admin');
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error with admin forget passowrd", error);
         req.flash('error', 'An error occurred. Please try again.');
         res.redirect('/admin/forgot');
     }
@@ -176,10 +174,8 @@ router.post('/admin/account/delete/:userId', adminEnsureAuthenticated, adminRole
 
     try {
         if (action === 'approve') {
-            // Delete user from database
             await db.query('DELETE FROM userprofile WHERE id = $1', [userId]);
         } else if (action === 'reject') {
-            // Reset user status to 'active'
             await db.query('UPDATE userprofile SET deletion_requested = $1 WHERE id = $2', [false, userId]);
         }
        

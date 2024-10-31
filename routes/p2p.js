@@ -4,7 +4,6 @@ import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
 import { v4 as uuidv4 } from 'uuid';
-import { sendEmail } from "../config/transporter.js";
 import { sendOrderCompleteEmail } from "../config/emailMessages.js";
 
 
@@ -17,7 +16,6 @@ function generateTransferId() {
   const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 6);
   return `${prefix}_${base64Id}`;
 }
-
 
 
 router.get("/product/adminorderhistory", ensureAuthenticated, userRole, async (req, res) => {
@@ -345,25 +343,6 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
 }
 );
 
-router.post('/archive/product', ensureAuthenticated, async (req, res) => {
- const userId = req.user.id
-  const { productId } = req.body;
-
-  console.log(productId)
-
-  try {
-    await db.query(`
-      INSERT INTO user_archives (user_id, product_id)
-      VALUES ($1, $2)
-      ON CONFLICT DO NOTHING;
-    `, [userId, productId]);
-
-    res.json({ success: true, message: 'Product archived successfully' });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: 'Failed to archive product' });
-  }
-});
 
 
 export default router;

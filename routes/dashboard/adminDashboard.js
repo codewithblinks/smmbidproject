@@ -1,11 +1,10 @@
 import express from "express";
 import db from "../../db/index.js"
-const router = express.Router();
-import { Strategy } from "passport-local";
 import {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js";
 import numeral from "numeral";
 
-// Helper function to get totals based on week
+const router = express.Router();
+
 async function getWeeklyTotals() {
   const query = `
     SELECT 
@@ -30,7 +29,6 @@ async function getWeeklyTotals() {
   }
 }
 
-// Helper function to get totals based on period
 async function getTotalsByPeriodAndType(period, type) {
   let query;
 
@@ -79,7 +77,7 @@ async function getTotalsByPeriodAndType(period, type) {
   }
 
   const result = await db.query(query, [type]);
-  return result.rows[0]?.total_amount || 0; // return 0 if no result found
+  return result.rows[0]?.total_amount || 0;
 }
 
 async function getTotalAdminSoldAndProfit(period) {
@@ -248,8 +246,7 @@ router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, 
 
     const result = await db.query(`
       SELECT
-           COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) AS total_deposit,
-           COALESCE(SUM(CASE WHEN type = 'withdraw' THEN amount ELSE 0 END), 0) AS total_withdrawal
+           COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) AS total_deposit
       FROM
           transactions
       WHERE
@@ -281,12 +278,10 @@ const totalNotRefunded = Number(totalSmmAmount.total_not_refunded) || 0;
 let totalSmmAmount1 = totalCompleted + totalNotRefunded;
 
   totals.total_deposit = numeral(totals.total_deposit).format('0,0.00');
-  totals.total_withdrawal = numeral(totals.total_withdrawal).format('0,0.00');
   totalSmmAmount1 = numeral(totalSmmAmount1).format('0,0.00');
   totalSmsAmount.total_successful_sms_purchases = numeral(totalSmsAmount.total_successful_sms_purchases).format('0,0.00');
 
   const weekTotalDeposit = totalsThisWeek.find(row => row.type === 'deposit')?.total_amount || 0;
-  const weekTotalWithdawal = totalsThisWeek.find(row => row.type === 'withdrawal')?.total_amount || 0;
 
   const totalAdminSold = await db.query("SELECT * FROM admin_products WHERE payment_status = 'sold'");
   const adminSold = totalAdminSold.rows;
@@ -306,9 +301,7 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
         messages: req.flash(), 
         user: userDetails,
         totalDeposit: totals.total_deposit,
-        totalWithdrawal: totals.total_withdrawal,
-        weekTotalDeposit,
-        weekTotalWithdawal, totalSmmAmount1, 
+        weekTotalDeposit, totalSmmAmount1, 
         totalSmsAmount, adminSold, totalAdminSoldp2p
        });
     
@@ -329,22 +322,6 @@ router.get('/totals/deposits/:period', async (req, res) => {
     res.json({ totalDeposits: totalDeposit1 });
   } catch (err) {
     console.error('Error fetching deposit totals', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Route to get withdrawal totals by period
-router.get('/totals/withdrawals/:period', async (req, res) => {
-  const period = req.params.period;
-
-  try {
-    const totalWithdrawals = await getTotalsByPeriodAndType(period, 'withdrawal');
-
-    const totalWithdrawal1 = numeral(totalWithdrawals).format('0,0.00');
-
-    res.json({ totalWithdrawals: totalWithdrawal1 });
-  } catch (err) {
-    console.error('Error fetching withdrawal totals', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -370,10 +347,9 @@ router.get('/totals/smmpanel/:period', async (req, res) => {
   try {
     const { totalComplete, totalRefundAmount} = await getTotalSmmProfit(period);
 
-    const total_completed = numeral(totalComplete).format('0,0.00');
-    const total_not_refunded = numeral(totalRefundAmount).format('0,0.00');
+    let totalSmm1 =  totalComplete + totalRefundAmount;
 
-    const totalSmm = totalComplete + total_not_refunded;
+    const totalSmm = numeral(totalSmm1).format('0,0.00');
 
     res.json({ totalSmm });
   } catch (err) {

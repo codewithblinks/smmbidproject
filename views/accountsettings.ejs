@@ -898,7 +898,6 @@
                       </div>
 
                       <div class="mb-5">
-                        <% bankDetails.forEach( function(details) { %>
                           <div class="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
 
                             <div class="flex items-start justify-between py-3">
@@ -907,30 +906,22 @@
 
                               </div>
                               <h6 class="text-[15px] font-bold text-[#515365] dark:text-white-dark">
-                                <%= details.bank_name %>
 
                                   <span class="mt-1 block text-xs font-normal text-white-dark dark:text-white-light">
-                                    <%= details.account_number %>
                                   </span>
                               </h6>
                               <div class="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                <form id="deleteForm-<%= details.id %>"
-                                  action="/user/deleteBankAccount/<%= details.id %>" method="post">
-                                  <button type="button" class="btn btn-danger"
-                                    onclick="confirmDelete('<%= details.id %>')">Delete</button>
-                                </form>
+                                  <button type="button" class="btn btn-danger">Delete</button>
                               </div>
                             </div>
                           </div>
-                          <% }); %>
                       </div>
                     </div>
 
 
                     <!-- vertically centered -->
                     <div class="mb-5" x-data="modal">
-                      <button type="button" id="addAccountButton" class="btn btn-primary" <%=accountCount>= 3 ?
-                        'disabled' : '' %> @click="toggle">Add Payment Method</button>
+                      <button type="button" id="addAccountButton" class="btn btn-primary" @click="toggle">Add Payment Method</button>
 
 
                       <!-- modal -->
@@ -958,20 +949,16 @@
                                   </p>
                                 </div>
                                 <div class="mb-5">
-                                  <form action="/payment" method="POST">
                                     <div class="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                                       <div>
                                         <label for="payBrand">Select Your Bank</label>
                                         <select id="bank" name="bank_code" class="form-select text-white-dark" required>
                                           <option value="Select Bank">Select Bank</option>
-                                          <% banks.forEach(bank=> { %>
-                                            <option value="<%= bank.code %>" data-bank-name="<%= bank.name %>">
-                                              <%= bank.name %>
+                                            <option value="" >
                                             </option>
-                                            <% }) %>
                                         </select>
                                         <input type="hidden" id="bank_name" name="bank_name"
-                                          value="<%= banks[0].name %>">
+                                          value="">
                                       </div>
                                       <div>
                                         <label for="payNumber">Account Number</label>
@@ -986,7 +973,6 @@
                                       <button type="submit"
                                         class="btn btnAdd btn-primary ltr:ml-4 rtl:mr-4">Add</button>
                                     </div>
-                                  </form>
                                 </div>
                               </div>
 
@@ -1392,17 +1378,13 @@
                 saveButton.disabled = !hasChanges;
               };
 
-              // Add event listeners to each input field to detect changes
               inputs.forEach(input => {
                 input.addEventListener('input', checkForChanges);
               });
 
               handle2FA();
 
-              handleBankAccountValidation();
-
               handleEmailUpdate();
-
 
               const profilePicture = document.getElementById('profilePicture');
               const fileInput = document.getElementById('fileInput');
@@ -1498,51 +1480,6 @@
               }
             }
 
-            function handleBankAccountValidation() {
-              const acct = document.querySelector("#account_number");
-              const warn = document.querySelector(".warningText");
-              const btn = document.querySelector(".btnAdd");
-              const bank = document.querySelector("#bank");
-
-              if (acct && warn && btn && bank) {
-                acct.addEventListener("input", () => {
-                  let val = acct.value.trim();
-                  warn.innerText = val.length < 10 ? "Invalid account number" : "";
-                });
-
-                btn.addEventListener('click', function (event) {
-                  const value = acct.value.trim();
-                  if (value.length < 10 || isNaN(value)) {
-                    event.preventDefault();
-                    warn.innerText = "Please enter at least 10 digits.";
-                  } else if (bank.value === "Select Bank") {
-                    event.preventDefault();
-                    warn.innerText = "Please select a valid bank.";
-                  } else {
-                    warn.innerText = "";
-                  }
-                });
-
-                const addAccountButton = document.getElementById('addAccountButton');
-                updateAddAccountButton(<%= accountCount %>);
-
-                function updateAddAccountButton(accountCount) {
-                  if (accountCount >= 3) {
-                    addAccountButton.disabled = true;
-                    addAccountButton.classList.add('disabled-button');
-                  } else {
-                    addAccountButton.disabled = false;
-                    addAccountButton.classList.remove('disabled-button');
-                  }
-                }
-
-                addAccountButton.addEventListener('click', function () {
-                  let accountCount = <%= accountCount %> + 1;
-                  updateAddAccountButton(accountCount);
-                });
-              }
-            }
-
             document.body.addEventListener('click', function (event) {
               if (event.target.matches('#changeEmailBTN')) {
                 handleEmailUpdate();
@@ -1592,7 +1529,6 @@
                     }
                   });
 
-                  // Set a flag to avoid attaching the event listener again
                   changeEmailBTN.hasListenerAttached = true;
                 }
               }
@@ -1613,39 +1549,6 @@
                 toastr.success(successMessage);
               }
             });
-          </script>
-
-          <script>
-            async function confirmDelete(detailsId) {
-              new window.Swal({
-                icon: 'warning',
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                showCancelButton: true,
-                confirmButtonText: 'Delete',
-                padding: '2em',
-              }).then((result) => {
-                if (result.value) {
-                  document.getElementById(`deleteForm-${detailsId}`).submit();
-                }
-              });
-            }
-          </script>
-
-          <script>
-            setTimeout(() => {
-              const bankSelect = document.getElementById('bank');
-              const bankNameInput = document.getElementById('bank_name');
-
-              if (bankSelect && bankNameInput) {
-                bankSelect.addEventListener('change', (event) => {
-                  const selectedOption = bankSelect.options[bankSelect.selectedIndex];
-                  bankNameInput.value = selectedOption.text;
-                });
-              } else {
-
-              }
-            }, 1000); 
           </script>
 
           <script>

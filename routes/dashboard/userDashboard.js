@@ -1,12 +1,11 @@
 import express from "express";
-import db from "../../db/index.js"
-const router = express.Router();
-import { Strategy } from "passport-local";
+import db from "../../db/index.js";
 import ensureAuthenticated, {userRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
 import timeSince from "../../controller/timeSince.js";
 
+const router = express.Router();
 
 router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
@@ -116,8 +115,6 @@ router.delete('/delete/activity-log/:id', ensureAuthenticated, async (req, res) 
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 
 export default router;

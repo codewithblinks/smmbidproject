@@ -1,10 +1,10 @@
 import express from "express";
 import db from "../../db/index.js"
-const router = express.Router();
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
 
+const router = express.Router();
 
 router.get("/admin/smmorders", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
@@ -34,7 +34,7 @@ router.get("/admin/smmorders", adminEnsureAuthenticated, adminRole, async (req, 
           totalPages: Math.ceil(totalOrders / limit), user
         })
   } catch (error) {
-    console.log(error);
+    console.error("Error with smm admin table", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -616,26 +616,24 @@
                   <li>
                     <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
                       <h4 class="text-lg">Notification</h4>
-                      <template x-if="notifications.length">
-                        <span class="badge bg-primary/80" x-text="notifications.length + 'New'"></span>
+                      <template >
+                        <span class="badge bg-primary/80"></span>
                       </template>
                     </div>
                   </li>
-                  <template x-for="notification in notifications">
                     <li class="dark:text-white-light/90">
                       <div class="group flex items-center px-4 py-2" @click.self="toggle">
                         <div class="grid place-content-center rounded">
                           <div class="relative h-12 w-12">
-                            <img class="h-12 w-12 rounded-full object-cover"
-                              :src="`../assets/images/${notification.profile}`" alt="image" />
+                            <img class="h-12 w-12 rounded-full object-cover" alt="image" />
                             <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
                           </div>
                         </div>
                         <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
                           <div class="ltr:pr-3 rtl:pl-3">
-                            <h6 x-html="notification.message"></h6>
+                            <h6 ></h6>
                             <span class="block text-xs font-normal dark:text-gray-500"
-                              x-text="notification.time"></span>
+                             ></span>
                           </div>
                           <button type="button"
                             class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
@@ -651,8 +649,7 @@
                         </div>
                       </div>
                     </li>
-                  </template>
-                  <template x-if="notifications.length">
+                  <template >
                     <li>
                       <div class="p-4">
                         <button class="btn btn-primary btn-small block w-full" @click="toggle">

@@ -35,7 +35,7 @@ router.get("/admin/smsorders", adminEnsureAuthenticated, adminRole, async (req, 
           totalPages: Math.ceil(totalOrders / limit), user
         })
   } catch (error) {
-    console.log(error);
+    console.error("Error at admin sms orders page", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -12,15 +12,14 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Multer configuration for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       const uploadDir = path.join(__dirname, 'uploads');
       fs.mkdir(uploadDir, { recursive: true }).catch(err => console.error('Error creating uploads directory:', err));
-      cb(null, uploadDir); // Save in /uploads folder
+      cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+      cb(null, Date.now() + path.extname(file.originalname)); 
     },
   });
 
@@ -32,14 +31,12 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Limit file size to 5MB
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// Profile picture upload route
 router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => {
   upload.single('profilePicture')(req, res, (err) => {
     if (err instanceof multer.MulterError) {
@@ -65,7 +62,7 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
     const oldImagePath = userResult.rows[0].profile_picture;
 
     if (oldImagePath && oldImagePath !== '/uploads/default-profile.png') {
-      const oldImageFilePath = path.join(__dirname, '..', oldImagePath); // Resolve the full path
+      const oldImageFilePath = path.join(__dirname, '..', oldImagePath); 
       try {
         await fs.unlink(oldImageFilePath);
         console.log('Old image deleted successfully');
@@ -74,14 +71,13 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
       }
     }
 
-    const originalPath = req.file.path; // ./uploads/filename.ext
-    const outputPath = `./uploads/resized-${req.file.filename}`; // ./uploads/resized-filename.ext
+    const originalPath = req.file.path;
+    const outputPath = `./uploads/resized-${req.file.filename}`;
 
     await sharp(originalPath)
-      .resize(250, 250) // Set desired width and height
+      .resize(250, 250)
       .toFile(outputPath);
 
-    // Delete the original uploaded file
     try {
         await fs.unlink(originalPath);
         console.log('Original image deleted successfully');
@@ -89,7 +85,6 @@ router.post('/upload-profile-picture', ensureAuthenticated, (req, res, next) => 
         console.error('Error deleting original image:', err);
       }
 
-    // Save the resized image path to PostgreSQL
     const imagePath = `/uploads/resized-${req.file.filename}`;
 
     await db.query('UPDATE userprofile SET profile_picture = $1 WHERE id = $2', [

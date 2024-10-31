@@ -933,8 +933,11 @@
                 const result = await response.json();
 
                   if (response.ok) {
-                    
                     toastr.success(result.message || 'Purchase successful', 'Success');
+
+                    setTimeout(() => {
+                     window.location.reload();
+                      }, 2000);
                   } else {
                     toastr.error(result.error || 'An error occurred', 'Error');
                   }

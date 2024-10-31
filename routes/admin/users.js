@@ -1,10 +1,11 @@
 import express from "express";
 import db from "../../db/index.js"
-const router = express.Router();
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
 import timeSince from "../../controller/timeSince.js";
+
+const router = express.Router();
 
 function getCurrentWeek() {
   const startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
@@ -18,7 +19,6 @@ const getDaysSinceRegistration = (registrationDate) => {
   const diffDays = now.diff(registrationMoment, 'days');
   return diffDays;
 };
-
 
 router.get("/admin/users/list", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
@@ -63,7 +63,7 @@ router.get("/admin/users/list", adminEnsureAuthenticated, adminRole, async (req,
       });
   
   } catch (error) {
-    console.log(error);
+    console.error("Error getting user list", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -136,14 +136,13 @@ router.get("/admin/users/list/unverified", adminEnsureAuthenticated, adminRole, 
        });
   
   } catch (error) {
-    console.log(error);
+    console.error("Error getting unverified users", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get('/searchActiveUsers', adminEnsureAuthenticated, async (req, res) => {
   const query = req.query.query || '';
-  const userId = req.user.id;
   
   try {
 
@@ -158,7 +157,7 @@ router.get('/searchActiveUsers', adminEnsureAuthenticated, async (req, res) => {
 
       res.json(result.rows); 
   } catch (error) {
-    console.log(error);
+    console.error("Error with searchActiveUsers", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -180,7 +179,7 @@ router.get('/searchSuspendedUsers', adminEnsureAuthenticated, async (req, res) =
 
       res.json(result.rows); 
   } catch (error) {
-    console.log(error);
+    console.error("Error with searchSuspendedUsers", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -202,7 +201,7 @@ router.get('/searchUnverifiedUsers', adminEnsureAuthenticated, async (req, res) 
 
       res.json(result.rows); 
   } catch (error) {
-    console.log(error);
+    console.error("Error with searchUnverifiedUsers", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -348,52 +347,5 @@ router.get("/admin/weekly/challenges/history", adminEnsureAuthenticated, adminRo
     res.status(500).json({ error: 'Internal server error' });
   }
 })
-
-router.get("/admin/review/profile/:id", adminEnsureAuthenticated, adminRole, async(req, res) => {
-  const userId = req.user.id;
-  const id = req.params.id
-
-  try {
-    const usersResult = await db.query("SELECT * FROM admins WHERE id = $1", [userId]);
-    const user = usersResult.rows[0]
-
-    const productResult = await db.query("SELECT payment_status FROM product_list WHERE user_id = $1 AND payment_status = $2", [id, 'sold'])
-    const soldProductCount = productResult.rows;
-
-       const badReviewResult = await db.query("SELECT * FROM ratings_reviews WHERE user_id = $1 AND rating IN (1, 3)", [id])
-       const badReview = badReviewResult.rows
-
-       const goodReviewResult = await db.query("SELECT * FROM ratings_reviews WHERE user_id = $1 AND rating IN (4, 5)", [id])
-       const goodReview = goodReviewResult.rows
-
-       const userResult = await db.query("SELECT created_at FROM userprofile WHERE id = $1", [id])
-       const registrationDate = userResult.rows[0].created_at
-
-       const daysSinceRegistration = getDaysSinceRegistration(registrationDate);
-
-       goodReview.forEach(review => {
-        review.formattedDate = moment(review.created_at).format('D MMM h:mmA');
-    });
-
-    badReview.forEach(review => {
-      review.badReviewformattedDate = moment(review.created_at).format('D MMM h:mmA');
-  });
-
-    const othersResult = await db.query("SELECT email_verified, firstname, lastname FROM userprofile WHERE id = $1", [id])
-    const other = othersResult.rows[0]
-
-    res.render('admin/reviewProfile', {
-      daysSinceRegistration, 
-      soldProductCount, other, user,
-      timeSince,
-      badReview, goodReview
-    })
-  } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
 
 export default router;

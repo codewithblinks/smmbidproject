@@ -8,7 +8,6 @@ import timeSince from "../controller/timeSince.js";
 
 const router = express.Router();
 
-
 const API_URL = process.env.WKSMM_API_URL;
 const API_KEY = process.env.WKSMM_API_KEY;
 
@@ -112,7 +111,6 @@ cron.schedule("*/2 * * * *", async () => {
     console.error("Error updating order statuses:", err.message);
   }
 });
-
 
 router.get("/exchange-rate", async (req, res) => {
   try {

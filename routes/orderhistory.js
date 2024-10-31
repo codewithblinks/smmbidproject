@@ -1,10 +1,11 @@
 import express from "express";
-const router = express.Router();
 import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import numeral from "numeral";
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
+
+const router = express.Router();
 
 
   router.get("/orderhistory", ensureAuthenticated, userRole, async(req, res) => {

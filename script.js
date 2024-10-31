@@ -76,7 +76,6 @@ import loginOutRoute from "./routes/logout.js"
 import userDashboardRoute from "./routes/dashboard/userDashboard.js"
 import adminDashboardRoute from "./routes/dashboard/adminDashboard.js"
 import profileRoute from "./routes/profile.js"
-import previewRoute from "./routes/preview.js"
 import accountsettingsRoute from "./routes/accountsettings.js"
 import depositRoute from "./routes/payment/deposit.js"
 import smmRoute from "./routes/smm.js"
@@ -109,7 +108,6 @@ app.use("/", userDashboardRoute)
 app.use("/", adminDashboardRoute)
 app.use("/", p2pRoute)
 app.use("/", profileRoute)
-app.use('/', previewRoute)
 app.use('/', accountsettingsRoute)
 app.use("/", depositRoute)
 app.use('/', smmRoute)

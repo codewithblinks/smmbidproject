@@ -18,25 +18,12 @@ router.get("/settings", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
   // const banks = await getBanks();
   try {
-    const response = await axios.get("https://api.paystack.co/bank", {
-      headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-      },
-    });
-
-    const banks = response.data.data;
-
     const userResult = await db.query(
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]
     );
-    const userBank = await db.query(
-      "SELECT * FROM withdrawal_details WHERE user_id = $1",
-      [userId]
-    );
+
     const userDetails = userResult.rows[0];
-    const bankDetails = userBank.rows;
-    const accountCount = bankDetails.length;
 
     const notificationsResult = await db.query(
       'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
@@ -52,9 +39,6 @@ router.get("/settings", ensureAuthenticated, userRole, async (req, res) => {
     res.render("accountsettings", {
       messages: req.flash(),
       user: userDetails,
-      banks,
-      bankDetails,
-      accountCount,
       timeSince,
       notifications
     });
@@ -63,121 +47,6 @@ router.get("/settings", ensureAuthenticated, userRole, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-router.post("/payment", ensureAuthenticated, async (req, res) => {
-  const userId = req.user.id;
-  const { account_number, bank_code, bank_name } = req.body;
-
-  try {
-    const userQuery = "SELECT * FROM userprofile WHERE id = $1";
-    const userResult = await db.query(userQuery, [userId]);
-    const user = userResult.rows[0];
-
-    const bankQuery =
-      "SELECT * FROM withdrawal_details WHERE user_id = $1";
-    const bankResult = await db.query(bankQuery, [userId]);
-    const bank = bankResult.rows;
-
-    const fullname = `${user.firstname} ${user.lastname}`;
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    } else {
-      const accountExists = bank.some(
-        (bank) => bank.account_number === account_number && bank.bank_name === bank_name
-      );
-    
-      if (accountExists) {
-        req.flash("error", "Bank account already exist");
-        res.redirect("/settings");
-      } else {
-        // Construct Paystack create recipient payload
-        const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
-        const payload = {
-          type: "nuban",
-          name: fullname,
-          account_number: account_number,
-          bank_code: bank_code,
-          currency: "NGN",
-          metadata: {
-            userId: userId,
-            userEmail: user.email,
-          },
-        };
-  
-        // Make request to Paystack API
-        const headers = {
-          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        };
-  
-        const response = await axios.post(paystackCreateRecipientUrl, payload, {
-          headers,
-        });
-        const recipientData = response.data.data;
-        const errortData = response.data.message;
-  
-        const userPayment = await db.query(
-          "INSERT INTO withdrawal_details (user_id, bank_name, account_number, bank_code, recipient_code) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-          [
-            userId,
-            bank_name,
-            account_number,
-            bank_code,
-            recipientData.recipient_code,
-          ]
-        );
-
-        await db.query(
-          `INSERT INTO activity_log 
-          (user_id, activity)
-          VALUES
-          ($1, $2)`,
-          [userId, 'New bank account added']
-      );
-
-        req.flash("success", "Bank account successfully add");
-        res.redirect("settings");
-      }
-    }
-    
-  } catch (error) {
-    if (error.response && error.response.data && error.response.data.message) {
-      req.flash("error", "Invalid bank account");
-      return res.redirect("/settings");
-    }
-    console.error(error.message);
-    console.log("error data", error)
-    return res.status(500).json({ error: "Server error" });
-  }
-});
-
-router.post("/user/deleteBankAccount/:accountId", ensureAuthenticated, async (req, res) => {
-    const accountId = req.params.accountId;
-    const userId = req.user.id
-
-    try {
-      await db.query("DELETE FROM withdrawal_details WHERE id = $1", [
-        accountId,
-      ]);
-
-      await db.query(
-        `INSERT INTO activity_log 
-        (user_id, activity)
-        VALUES
-        ($1, $2)`,
-        [userId, 'Bank account deleted']
-    );
-
-      req.flash("success", "Bank account successfully deleted");
-      res.redirect("/settings");
-    } catch (error) {
-      console.log(error);
-      req.flash("error", "Error: unable to delete bank account");
-      res.status(500).send("Error deleting account");
-    }
-  }
-);
 
 router.post("/changeEmail", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;

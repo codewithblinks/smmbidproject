@@ -219,20 +219,6 @@
                     </div>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="/admin/withdrawals" class="group">
-                    <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 15L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M20.8333 9H18.2308C16.4465 9 15 10.3431 15 12C15 13.6569 16.4465 15 18.2308 15H20.8333C20.9167 15 20.9583 15 20.9935 14.9979C21.5328 14.965 21.9623 14.5662 21.9977 14.0654C22 14.0327 22 13.994 22 13.9167V10.0833C22 10.006 22 9.96726 21.9977 9.9346C21.9623 9.43384 21.5328 9.03496 20.9935 9.00214C20.9583 9 20.9167 9 20.8333 9Z" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M20.965 9C20.8873 7.1277 20.6366 5.97975 19.8284 5.17157C18.6569 4 16.7712 4 13 4L10 4C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13C16.7712 20 18.6569 20 19.8284 18.8284C20.6366 18.0203 20.8873 16.8723 20.965 15" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M17.991 12H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">withdrawals</span>
-                    </div>
-                  </a>
-                </li>
                 <li class="menu nav-item">
                   <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
                     @click="activeDropdown === 'invoice' ? activeDropdown = null : activeDropdown = 'invoice'">
@@ -511,77 +497,74 @@
                   </span>
                 </a>
                 <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                  class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
-                  <li>
-                    <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
-                      <h4 class="text-lg">Notification</h4>
-                      <template x-if="notifications.length">
-                        <span class="badge bg-primary/80" x-text="notifications.length + 'New'"></span>
-                      </template>
-                    </div>
-                  </li>
-                  <template x-for="notification in notifications">
-                    <li class="dark:text-white-light/90">
-                      <div class="group flex items-center px-4 py-2" @click.self="toggle">
-                        <div class="grid place-content-center rounded">
-                          <div class="relative h-12 w-12">
-                            <img class="h-12 w-12 rounded-full object-cover"
-                              :src="`../assets/images/${notification.profile}`" alt="image" />
-                            <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
-                          </div>
-                        </div>
-                        <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
-                          <div class="ltr:pr-3 rtl:pl-3">
-                            <h6 x-html="notification.message"></h6>
-                            <span class="block text-xs font-normal dark:text-gray-500"
-                              x-text="notification.time"></span>
-                          </div>
-                          <button type="button"
-                            class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
-                            @click="removeNotification(notification.id)">
-                            <svg width="20" height="20" viewbox="0 0 24 24" fill="none"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5">
-                              </circle>
-                              <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round"></path>
-                            </svg>
-                          </button>
+                class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
+                <li>
+                  <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
+                    <h4 class="text-lg">Notification</h4>
+                    <template >
+                      <span class="badge bg-primary/80"></span>
+                    </template>
+                  </div>
+                </li>
+                  <li class="dark:text-white-light/90">
+                    <div class="group flex items-center px-4 py-2" @click.self="toggle">
+                      <div class="grid place-content-center rounded">
+                        <div class="relative h-12 w-12">
+                          <img class="h-12 w-12 rounded-full object-cover" alt="image" />
+                          <span class="absolute right-[6px] bottom-0 block h-2 w-2 rounded-full bg-success"></span>
                         </div>
                       </div>
-                    </li>
-                  </template>
-                  <template x-if="notifications.length">
-                    <li>
-                      <div class="p-4">
-                        <button class="btn btn-primary btn-small block w-full" @click="toggle">
-                          Read All Notifications
+                      <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
+                        <div class="ltr:pr-3 rtl:pl-3">
+                          <h6 ></h6>
+                          <span class="block text-xs font-normal dark:text-gray-500"
+                           ></span>
+                        </div>
+                        <button type="button"
+                          class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
+                          @click="removeNotification(notification.id)">
+                          <svg width="20" height="20" viewbox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5">
+                            </circle>
+                            <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor"
+                              stroke-width="1.5" stroke-linecap="round"></path>
+                          </svg>
                         </button>
                       </div>
-                    </li>
-                  </template>
-                  <template x-if="!notifications.length">
-                    <li>
-                      <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
-                        <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
-                          <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.5"
-                              d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
-                              fill="currentColor"></path>
-                          </svg>
-                        </div>
-                        No data available.
+                    </div>
+                  </li>
+                <template >
+                  <li>
+                    <div class="p-4">
+                      <button class="btn btn-primary btn-small block w-full" @click="toggle">
+                        Read All Notifications
+                      </button>
+                    </div>
+                  </li>
+                </template>
+                <template x-if="!notifications.length">
+                  <li>
+                    <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
+                      <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
+                        <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.5"
+                            d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
+                            fill="currentColor"></path>
+                          <path
+                            d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
+                            fill="currentColor"></path>
+                          <path
+                            d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
+                            fill="currentColor"></path>
+                        </svg>
                       </div>
-                    </li>
-                  </template>
-                </ul>
+                      No data available.
+                    </div>
+                  </li>
+                </template>
+              </ul>
               </div>
               <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
                 <a href="javascript:;" class="group relative" @click="toggle()">
@@ -713,23 +696,23 @@
                         <% }); %>
                     </tbody>
                   </table>
+                  <div class="flex mt-3">
+                    <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
+                        <% if (currentPage > 1) { %>
+                        <a href="/admin/sold/products?page=<%= currentPage - 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button></li></a>
+                        <% } %>
+                    
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="/admin/sold/products?page=<%= i %>"><li><button type="button" class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light"><%= i %></button></li></a>
+                        <% } %>
+                    
+                        <% if (currentPage < totalPages) { %>
+                        <a href="/admin/sold/products?page=<%= currentPage + 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button></li></a>
+                        <% } %>
+                    </ul>
+                    </div>
               </div>
             </div>
-            <div class="flex">
-              <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
-                  <% if (currentPage > 1) { %>
-                  <a href="/admin/sold/products?page=<%= currentPage - 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button></li></a>
-                  <% } %>
-              
-                  <% for (let i = 1; i <= totalPages; i++) { %>
-                  <a href="/admin/sold/products?page=<%= i %>"><li><button type="button" class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light"><%= i %></button></li></a>
-                  <% } %>
-              
-                  <% if (currentPage < totalPages) { %>
-                  <a href="/admin/sold/products?page=<%= currentPage + 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button></li></a>
-                  <% } %>
-              </ul>
-              </div>
         </div>
 
         <!-- end main content section -->

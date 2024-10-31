@@ -1,11 +1,11 @@
 import express from "express";
-const router = express.Router();
 import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
 import cron from "node-cron";
 import numeral from "numeral";
+const router = express.Router();
 
 
 function getCurrentWeek() {

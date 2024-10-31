@@ -1,10 +1,11 @@
 import express from "express";
 import db from "../db/index.js";
-const router = express.Router();
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
 import moment from "moment";
 
+
+const router = express.Router();
 
   router.get('/smsorderhistory', ensureAuthenticated, userRole, async (req, res) => {
     const userId = req.user.id; 
@@ -45,6 +46,5 @@ import moment from "moment";
     }
   });
   
- 
 
 export default router;

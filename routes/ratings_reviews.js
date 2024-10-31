@@ -28,9 +28,6 @@ const getDaysSinceRegistration = (registrationDate) => {
   
     const notifications = notificationsResult.rows;
 
-      const productResult = await db.query("SELECT payment_status FROM product_list WHERE user_id = $1 AND payment_status = $2", [id, 'sold'])
-      const soldProductCount = productResult.rows;
-
          const badReviewResult = await db.query("SELECT * FROM ratings_reviews WHERE user_id = $1 AND rating IN (1, 3)", [id])
          const badReview = badReviewResult.rows
 
@@ -54,8 +51,7 @@ const getDaysSinceRegistration = (registrationDate) => {
       const other = othersResult.rows[0]
 
       res.render('reviewProfile', {
-        daysSinceRegistration, 
-        soldProductCount, other, user,
+        daysSinceRegistration, other, user,
         timeSince, notifications,
         badReview, goodReview
       })
