@@ -109,13 +109,18 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
         const {reference, user_id} = pendingTransQuery.rows[0];
         const amount = Number(pendingTransQuery.rows[0].amount);
 
-        await db.query(`
+        const transactionUpdate = await db.query(`
           UPDATE transactions 
           SET status = 'success'
           WHERE user_id = $1 
           And reference = $2
           `, 
           [user_id, reference]);
+          
+          if (transactionUpdate.rowCount === 0) {
+            await db.query('ROLLBACK');
+            return res.status(404).send('Transaction not found.');
+          }
 
           const userResult = await db.query(`
             UPDATE userprofile 
@@ -124,10 +129,10 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
             RETURNING username, email
           `, [amount, user_id]);
 
-        if (userResult.rows.length === 0) {
-             await db.query('ROLLBACK');
-             return res.status(404).send('User profile not found.');
-             }
+          if (userResult.rows.length === 0) {
+            await db.query('ROLLBACK');
+            return res.status(404).send('User profile not found.');
+          }
         
           const { username, email } = userResult.rows[0];
 
@@ -164,6 +169,8 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
             await db.query('DELETE FROM pending_deposits WHERE id = $1', [depositId]);
 
             await sendDepositApproveEmail(email, username, reference, amount);
+
+            await db.query('COMMIT');
 
            res.redirect('/admin/pending-deposit');
 
