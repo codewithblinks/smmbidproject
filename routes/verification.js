@@ -399,18 +399,106 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
   }
 })
 
+// router.post("/ordersms", ensureAuthenticated, async (req, res) => {
+//   const userId = req.user.id;
+//   const { country, service, pricing_option, quantity, charge } = req.body;
+
+//   const displaycharge1 = Number(req.body.displaycharge1);
+
+
+//   try {
+//     const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
+//     const user = result.rows[0];
+
+//     if (user.balance >= displaycharge1) {
+
+//       const form = new FormData();
+//       form.append('country', country);
+//       form.append('service', service);
+//       form.append('pricing_option', pricing_option);
+//       form.append('quantity', quantity);
+
+//       const headers = {
+//         ...form.getHeaders(),  // Include form data headers
+//         'Authorization': `Bearer ${BEARER_TOKEN}`
+
+//       };
+
+//       const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
+
+//       const data = response.data;
+
+//       db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+//         [userId, data.phonenumber, data.order_id, data.country, data.service, charge, displaycharge1])
+
+//         await db.query(`
+//           INSERT INTO notifications (user_id, type, message) 
+//           VALUES ($1, $2, $3)`, 
+//           [userId, 'purchase', 
+//             `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id} Amount: ₦${displaycharge1}` 
+//           ])
+
+//       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
+//       await db.query(updateBalanceQuery, [displaycharge1, userId]);
+
+//       req.flash('success', `${data.message}`)
+//       res.redirect('/verification')
+//     } else {
+//       req.flash('error', 'Insufficient balance, please topup your balance');
+//       return res.redirect('/verification');
+//     }
+
+//   } catch (error) {
+//     console.log(error);
+
+//     if (error.response) {
+//       if (error.response.data.type === "BALANCE_ERROR") {
+//         req.flash('error', 'Service currently unavailable, Try later or contact support')
+//         res.redirect('/verification')
+//       } else {
+//         if (error.response.data.type === "OUT_OF_STOCK") {
+//           req.flash('error', `${error.response.data.errors.message}`)
+//           res.redirect('/verification')
+//         } else {
+//           if (error.response.data.type === "PRICE_NOT_FOUND") {
+//             req.flash('error', `${error.response.data[0].message}`)
+//             res.redirect('/verification')
+//           } else {
+//             if (error.response.data) {
+//               req.flash('error', `${error.response.data.message}`)
+//               res.redirect('/verification')
+//             }
+//           }
+//         }
+//       }
+
+//     } else if (error.request) {
+//       console.error('No response received from API:', error.request);
+//       console.log(error);
+//       req.flash('error', "error from the network, try later")
+//       res.redirect('/verification')
+//     } else {
+//       console.error('Error setting up request:', error.message);
+//       res.status(500).json({ error: 'Error setting up request' });
+//     }
+//   }
+// });
+
 router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const { country, service, pricing_option, quantity, charge } = req.body;
-
   const displaycharge1 = Number(req.body.displaycharge1);
 
-
   try {
+    await db.query('BEGIN');
+
     const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
     const user = result.rows[0];
 
-    if (user.balance >= displaycharge1) {
+    if (!user || user.balance < displaycharge1) {
+      await db.query("ROLLBACK");
+      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
+    }
 
       const form = new FormData();
       form.append('country', country);
@@ -419,13 +507,12 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       form.append('quantity', quantity);
 
       const headers = {
-        ...form.getHeaders(),  // Include form data headers
+        ...form.getHeaders(),  
         'Authorization': `Bearer ${BEARER_TOKEN}`
 
       };
 
       const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
-
       const data = response.data;
 
       db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
@@ -438,48 +525,35 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
             `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id} Amount: ₦${displaycharge1}` 
           ])
 
-      const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
-      await db.query(updateBalanceQuery, [displaycharge1, userId]);
+      await db.query('UPDATE userprofile SET balance = balance - $1 WHERE id = $2', [displaycharge1, userId]);
 
-      req.flash('success', `${data.message}`)
-      res.redirect('/verification')
-    } else {
-      req.flash('error', 'Insufficient balance, please topup your balance');
-      return res.redirect('/verification');
-    }
+      await db.query('COMMIT');
+
+      return res.json({ message: data.message});
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
+    await db.query('ROLLBACK');
 
     if (error.response) {
-      if (error.response.data.type === "BALANCE_ERROR") {
-        req.flash('error', 'Service currently unavailable, Try later or contact support')
-        res.redirect('/verification')
-      } else {
-        if (error.response.data.type === "OUT_OF_STOCK") {
-          req.flash('error', `${error.response.data.errors.message}`)
-          res.redirect('/verification')
-        } else {
-          if (error.response.data.type === "PRICE_NOT_FOUND") {
-            req.flash('error', `${error.response.data[0].message}`)
-            res.redirect('/verification')
-          } else {
-            if (error.response.data) {
-              req.flash('error', `${error.response.data.message}`)
-              res.redirect('/verification')
-            }
-          }
-        }
-      }
+      const errType = error.response.data.type;
 
+    if (errType === "BALANCE_ERROR") {
+      return res.status(400).json({ error: 'Service currently unavailable, try later or contact support' });
+    } else if (errType === "OUT_OF_STOCK") {
+      return res.status(400).json({ error: error.response.data.errors?.message || 'Out of stock' });
+    } else if (errType === "PRICE_NOT_FOUND") {
+      return res.status(400).json({ error: error.response.data[0]?.message || 'Price not found' });
+    } else {
+      return res.status(400).json({ error: error.response.data?.message || 'Unknown error' });
+    }
     } else if (error.request) {
       console.error('No response received from API:', error.request);
-      console.log(error);
-      req.flash('error', "error from the network, try later")
-      res.redirect('/verification')
+      return res.status(500).json({ error: 'Network error, try again later' });
     } else {
       console.error('Error setting up request:', error.message);
-      res.status(500).json({ error: 'Error setting up request' });
+      return res.status(500).json({ error: 'Error setting up request' });
     }
   }
 });

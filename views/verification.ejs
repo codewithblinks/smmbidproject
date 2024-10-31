@@ -721,7 +721,8 @@
                 <small> <span style="color: red;">Important Requirement </span>:
                   <ul style="list-style: circle; padding-left: 15px;">
                     <li>
-                      Please use the regular WhatsApp if you are having issues receiving the verification code on Business WhatsApp.
+                      Please use the regular WhatsApp if you are having issues receiving the verification code on
+                      Business WhatsApp.
                     </li>
                     <li>
                       We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased
@@ -730,7 +731,7 @@
                   </ul>
 
                 </small>
-                <form action="/ordersms" method="post">
+                <form id="orderForm" action="/ordersms" method="post">
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <div class="mt-4">
                       <div>
@@ -759,20 +760,19 @@
                     <div class="mt-4">
                       <div>
                         <label for="shipping-charge">Quantity </label>
-                        <input id="displayquantity" disabled type="number"  class="form-input" value="1">
+                        <input id="displayquantity" disabled type="number" class="form-input" value="1">
                       </div>
                     </div>
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="quantity" type="number" name="quantity" class="form-input" value="1"
-                          required>
+                        <input id="quantity" type="number" name="quantity" class="form-input" value="1" required>
                       </div>
                     </div>
                     <div class="mt-4">
                       <div>
                         <label for="shipping-charge">Pricing option </label>
-                        <select name="pricing_option" id="" class="form-select">
+                        <select name="pricing_option" id="pricing_option" class="form-select">
                           <option value="1">Select highest success rate</option>
                           <option value="0">Select cheapest rate</option>
                         </select>
@@ -781,25 +781,25 @@
                     <div class="mt-4">
                       <div>
                         <label for="charge">Success Rate</label>
-                        <input id="successrate" disabled type="text" name="successrate" class="form-input" value="">
+                        <input id="successrate" disabled type="text" name="successrate" class="form-input">
                       </div>
                     </div>
                     <div class="mt-4">
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge" disabled type="text" class="form-input" value="" required>
+                        <input id="displaycharge" disabled type="text" class="form-input" required>
                       </div>
                     </div>
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="text" name="displaycharge1" class="form-input" value=""
+                        <input id="displaycharge1" type="text" name="displaycharge1" class="form-input"
                           required>
                       </div>
                     </div>
                   </div>
                   <div class="mt-4">
-                    <input id="charge" type="hidden" name="charge" class="form-input" value="">
+                    <input id="charge" type="hidden" name="charge" class="form-input" >
                     <p>This is the price range, for a guaranteed price feel free to use the advanced view to select a
                       pool to get a more specific price.</p>
                     <div class="mb-3 mt-2 sm:mb-0 flex justify-between">
@@ -906,6 +906,48 @@
             </script>
 
             <script>
+              document.getElementById('orderForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const purchaseButton = document.getElementById('purchaseBTN');
+                purchaseButton.disabled = true;
+                purchaseButton.textContent = 'Processing...';
+
+  
+                try {
+                  const response = await fetch('/ordersms', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                  },
+                    body: JSON.stringify({
+                    country: document.getElementById('country-select').value,
+                    service: document.getElementById('service-select').value,
+                    quantity: document.getElementById('quantity').value,
+                    pricing_option: document.getElementById('pricing_option').value,
+                    displaycharge1: document.getElementById('displaycharge1').value,
+                    charge: document.getElementById('charge').value
+                  })
+                });
+
+                const result = await response.json();
+
+                  if (response.ok) {
+                    
+                    toastr.success(result.message || 'Purchase successful', 'Success');
+                  } else {
+                    toastr.error(result.error || 'An error occurred', 'Error');
+                  }
+                } catch (error) {
+                  toastr.error('A network error occurred, please try again later.', 'Network Error');
+                } finally {
+                  purchaseButton.disabled = false;
+                  purchaseButton.textContent = 'Purchase';
+                }
+              });
+            </script>
+
+            <script>
               document.addEventListener("DOMContentLoaded", () => {
                 const alertBox = document.getElementById('alertBox');
                 const alertContent = document.getElementById('alertContent');
@@ -936,21 +978,21 @@
                     const row = document.createElement('tr');
                     row.dataset.orderCode = item.order_code;
                     row.innerHTML = `
-                       <td>+${item.cc} ${item.number}</td>
-                       <td class="code" style="cursor: pointer;">
-                           ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : item.code)}
-                        </td>
-                       <td>${item.short_name}</td>
-                       <td>${item.service}</td>
-                       <td class="status"><span class="${item.status === 'pending' ? "badge badge-outline-warning" : (item.status === 'expired' ?  "badge badge-outline-danger" :  "badge badge-outline-success")}">
-                        ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
-                       <td class="action">
-                        ${item.status === 'pending' ? getRefundButton(item.order_code)
-                         : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code) 
-                         : getResendButton(item.order_code))}
-                         </td>
-                       
-                  `;
+           <td>+${item.cc} ${item.number}</td>
+           <td class="code" style="cursor: pointer;">
+               ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : item.code)}
+            </td>
+           <td>${item.short_name}</td>
+           <td>${item.service}</td>
+           <td class="status"><span class="${item.status === 'pending' ? "badge badge-outline-warning" : (item.status === 'expired' ? "badge badge-outline-danger" : "badge badge-outline-success")}">
+            ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
+           <td class="action">
+            ${item.status === 'pending' ? getRefundButton(item.order_code)
+                        : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code)
+                          : getResendButton(item.order_code))}
+             </td>
+           
+      `;
                     tableBody.appendChild(row);
                   });
                   document.querySelectorAll('.code').forEach(cell => {
@@ -967,8 +1009,8 @@
                   const row = document.querySelector(`[data-order-code="${order_code}"]`);
                   if (row) {
                     row.querySelector('.code').innerHTML = status === 'pending' ? getSvgLoader() : code;
-                    row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : (status === 'expired' ?  "badge badge-outline-danger" :  "badge badge-outline-success")}">
-          ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
+                    row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : (status === 'expired' ? "badge badge-outline-danger" : "badge badge-outline-success")}">
+${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     row.querySelector('.action').innerHTML = status === 'pending' ? getRefundButton(order_code) : getResendButton(order_code);
                   }
                 };
@@ -1008,6 +1050,9 @@
                   if (event.target.closest('.resend-button')) {
                     const button = event.target.closest('.resend-button')
                     const orderId = button.getAttribute('data-order-id');
+
+                    button.disabled = true;
+
                     if (confirm('Are you sure you would like to resend this order??')) {
                       try {
                         const response = await fetch('/sms/resend', {
@@ -1027,49 +1072,55 @@
                         }
                       } catch (error) {
                         alert('Error processing refund');
+                      } finally {
+                        setTimeout(() => {
+                          button.disabled = false;
+                        }, 60000);
                       }
+                    } else {
+                      button.disabled = false;
                     }
                   }
                 });
 
                 function getSvgLoader() {
                   return `
-                   <svg viewbox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="inline-block h-5 w-5 shrink-0 animate-[spin_2s_linear_infinite] align-middle ltr:mr-2 rtl:ml-2">
-                      <line x1="12" y1="2" x2="12" y2="6"></line>
-                      <line x1="12" y1="18" x2="12" y2="22"></line>
-                      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-                      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-                      <line x1="2" y1="12" x2="6" y2="12"></line>
-                      <line x1="18" y1="12" x2="22" y2="12"></line>
-                       <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-                       <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-                    </svg>
-                `;
+       <svg viewbox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="inline-block h-5 w-5 shrink-0 animate-[spin_2s_linear_infinite] align-middle ltr:mr-2 rtl:ml-2">
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+          <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+          <line x1="2" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="22" y2="12"></line>
+           <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+           <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+        </svg>
+    `;
                 }
 
                 function getRefundButton(orderId) {
                   return `
-                    <button type="button" class="refund-button" data-order-id="${orderId}">
-                        <span class="flex items-center"> Refund
-                            <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-4 w-4">
-                                <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                                <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                            </svg>
-                        </span>
-                    </button>
-                `;
+        <button type="button" class="refund-button" data-order-id="${orderId}">
+            <span class="flex items-center"> Refund
+                <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-4 w-4">
+                    <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
+                    <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                </svg>
+            </span>
+        </button>
+    `;
                 }
 
                 function getResendButton(orderId) {
                   return `
-                    <button type="button" class="resend-button" data-order-id="${orderId}">
-                        <span class="flex items-center"> Resend
-                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                             <path fill-rule="evenodd" clip-rule="evenodd" d="M3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447ZM17 14.75C17.4142 14.75 17.75 15.0858 17.75 15.5C17.75 15.9142 17.4142 16.25 17 16.25H12.0715L13.4801 17.4238C13.7983 17.689 13.8413 18.1619 13.5762 18.4801C13.311 18.7983 12.8381 18.8413 12.5199 18.5762L9.51986 16.0762C9.34887 15.9337 9.25 15.7226 9.25 15.5C9.25 15.2774 9.34887 15.0663 9.51986 14.9238L12.5199 12.4238C12.8381 12.1587 13.311 12.2017 13.5762 12.5199C13.8413 12.8381 13.7983 13.311 13.4801 13.5762L12.0715 14.75H17ZM17.75 8.5C17.75 8.08579 17.4142 7.75 17 7.75H12.0715L13.4801 6.57617C13.7983 6.31099 13.8413 5.83807 13.5762 5.51986C13.311 5.20165 12.8381 5.15866 12.5199 5.42383L9.51986 7.92383C9.34887 8.06633 9.25 8.27741 9.25 8.5C9.25 8.72258 9.34887 8.93367 9.51986 9.07617L12.5199 11.5762C12.8381 11.8413 13.311 11.7983 13.5762 11.4801C13.8413 11.1619 13.7983 10.689 13.4801 10.4238L12.0715 9.25H17C17.4142 9.25 17.75 8.91421 17.75 8.5ZM7.75 6C7.75 5.58579 7.41421 5.25 7 5.25C6.58579 5.25 6.25 5.58579 6.25 6V18C6.25 18.4142 6.58579 18.75 7 18.75C7.41421 18.75 7.75 18.4142 7.75 18V6Z" fill="currentColor"/>
-                           </svg>
-                        </span>
-                    </button>
-                `;
+        <button type="button" class="resend-button" data-order-id="${orderId}">
+            <span class="flex items-center"> Resend
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447ZM17 14.75C17.4142 14.75 17.75 15.0858 17.75 15.5C17.75 15.9142 17.4142 16.25 17 16.25H12.0715L13.4801 17.4238C13.7983 17.689 13.8413 18.1619 13.5762 18.4801C13.311 18.7983 12.8381 18.8413 12.5199 18.5762L9.51986 16.0762C9.34887 15.9337 9.25 15.7226 9.25 15.5C9.25 15.2774 9.34887 15.0663 9.51986 14.9238L12.5199 12.4238C12.8381 12.1587 13.311 12.2017 13.5762 12.5199C13.8413 12.8381 13.7983 13.311 13.4801 13.5762L12.0715 14.75H17ZM17.75 8.5C17.75 8.08579 17.4142 7.75 17 7.75H12.0715L13.4801 6.57617C13.7983 6.31099 13.8413 5.83807 13.5762 5.51986C13.311 5.20165 12.8381 5.15866 12.5199 5.42383L9.51986 7.92383C9.34887 8.06633 9.25 8.27741 9.25 8.5C9.25 8.72258 9.34887 8.93367 9.51986 9.07617L12.5199 11.5762C12.8381 11.8413 13.311 11.7983 13.5762 11.4801C13.8413 11.1619 13.7983 10.689 13.4801 10.4238L12.0715 9.25H17C17.4142 9.25 17.75 8.91421 17.75 8.5ZM7.75 6C7.75 5.58579 7.41421 5.25 7 5.25C6.58579 5.25 6.25 5.58579 6.25 6V18C6.25 18.4142 6.58579 18.75 7 18.75C7.41421 18.75 7.75 18.4142 7.75 18V6Z" fill="currentColor"/>
+               </svg>
+            </span>
+        </button>
+    `;
                 }
 
                 fetchOrders();
