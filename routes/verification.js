@@ -122,7 +122,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
   try {
 
     const form = new FormData();
-    form.append('key', '');
+    form.append('key', BEARER_TOKEN);
 
     const headers = {
       ...form.getHeaders(),
@@ -137,16 +137,18 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
     for (const order of activeOrders) {
       if (orderCodes.includes(order.order_code)) {
         if (order.status === 'completed') {
-          // Update database with verification code and status
-          await db.query(
-            'UPDATE sms_order SET code = $1, status = $2 WHERE order_id = $3',
-            [order.code, 'complete', order.order_code]
-          );
-          notifyOrderStatusChange(order);
-          console.log(`Order updated to complete with code`);
+          try {
+            await db.query(
+              'UPDATE sms_order SET code = $1, status = $2 WHERE order_id = $3',
+              [order.code, 'complete', order.order_code]
+            );
+            notifyOrderStatusChange(order);
+            console.log(`Order updated to complete with code`);
+          } catch (dbError) {
+            console.error(`Error updating order ${order.order_code}:`, dbError);
+          }
         }
       }
-
     }
 
     // Filter only pending orders to return
@@ -155,7 +157,6 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
       && orderCodes.includes(order.order_code));
     return filteredOrders;
   } catch (error) {
-    console.log(error);
     console.error('Error fetching and filtering data:', error);
     return [];
   }
@@ -168,7 +169,7 @@ const notifyOrderStatusChange = (order) => {
 const fetchAndFilterExpiredOrders = async (orderCodes) => {
   try {
     const form = new FormData();
-    form.append('key', '');
+    form.append('key', BEARER_TOKEN);
 
     const headers = {
       ...form.getHeaders(),
@@ -176,52 +177,54 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
     };
 
     const response = await axios.post('https://api.smspool.net/request/history', form, { headers });
-    const orders = response.data;
+    const orders = response.data; // Ensure this matches the actual response format from the API
 
     for (const order of orders) {
       if (orderCodes.includes(order.order_code)) {
+        try {
+          const orderResult = await db.query(
+            'SELECT status, amount, user_id FROM sms_order WHERE order_id = $1',
+            [order.order_code]
+          );
 
-        const orderResult = await db.query('SELECT status, amount, user_id FROM sms_order WHERE order_id = $1', [order.order_code]);
-        
-        if (orderResult.rows.length > 0) {
+          if (orderResult.rows.length > 0) {
+            const { status, amount, user_id } = orderResult.rows[0];
+            const refundAmount = Number(amount);
 
-          const { status, user_id } = orderResult.rows[0];
+            // Skip orders already marked as refunded
+            if (status === 'refunded') {
+              continue;
+            }
 
-          const refundAmount = Number(orderResult.rows[0].amount);
+            if (order.status === 'refunded') {
+              // Update order status to refunded and add balance to user's account
+              await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', order.order_code]);
+              await db.query('UPDATE userprofile SET balance = balance + $1 WHERE id = $2', [refundAmount, user_id]);
 
-          if (status === 'refunded') {
-            continue;
+              // Insert refund notification
+              await db.query(
+                'INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)',
+                [user_id, 'refund', `Your order ${order.order_code} has been refunded. Amount: ₦${refundAmount}`]
+              );
+
+              console.log(`Refund issued for order ${order.order_code}`);
+            }
+
+            if (order.status === 'expired') {
+              await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [order.status, order.order_code]);
+            }
           }
-
-          if (order.status === 'refunded') {
-
-            await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', order.order_code]);
-            
-            // Refund the user
-            const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
-            await db.query(updateBalanceQuery, [refundAmount, user_id]);
-
-            // Optionally, send notification
-            await db.query(`
-              INSERT INTO notifications (user_id, type, message) 
-              VALUES ($1, $2, $3)`,
-              [user_id, 'refund', `Your order ${order.order_code} has been refunded. Amount: ₦${refundAmount}`]
-            );
-
-            console.log(`Refund issued for order ${order.order_code}`);
-          } if (order.status === 'expired') {
-            await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [order.status, order.order_code]);
-          }
+        } catch (dbError) {
+          console.error(`Error updating order ${order.order_code} in the database:`, dbError);
         }
       }
     }
   } catch (error) {
-    console.error('Error fetching and filtering data:', error);
-    return [];
+    console.error('Error fetching and filtering data:', error.response?.data || error.message);
   }
 };
 
-cron.schedule('*/30 * * * * *', async () => {
+cron.schedule('* * * * *', async () => {
 
   try {
     const userIds = await fetchAllUserIds();
