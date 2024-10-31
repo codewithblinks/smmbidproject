@@ -1035,8 +1035,9 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         const result = await response.json();
 
                         if (result.success === 1) {
-                          toastr.success('The order has been cancelled, and you have been refunded');
                           location.reload();
+                          toastr.success('The order has been cancelled, and you have been refunded');
+                          
                         } else {
                           toastr.error(`Refund failed: ${result.message}`);
                         }
@@ -1068,8 +1069,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         const result = await response.json();
 
                         if (result.success === 1) {
-                          toastr.success(`Refund success: ${result.message}`);
                           location.reload();
+                          toastr.success(`Refund success: ${result.message}`);
                         } else {
                           toastr.error(`Refund failed: ${result.message}`);
                         }
