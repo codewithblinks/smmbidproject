@@ -433,8 +433,13 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
       const data = response.data;
 
-      db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      const orderResult = await db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [userId, data.phonenumber, data.order_id, data.country, data.service, charge, displaycharge1])
+
+        if (orderResult.rowCount === 0) {
+          await db.query('ROLLBACK');
+          return res.status(500).json({ error: 'Failed to record the order.' });
+        }
 
         await db.query(`
           INSERT INTO notifications (user_id, type, message) 
@@ -450,9 +455,8 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       return res.json({ message: data.message});
 
   } catch (error) {
-    console.error(error);
-
     await db.query('ROLLBACK');
+    console.error('Error processing order:', error);
 
     if (error.response) {
       const errType = error.response.data.type;
