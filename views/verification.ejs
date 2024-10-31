@@ -937,7 +937,7 @@
 
                     setTimeout(() => {
                      window.location.reload();
-                      }, 2000);
+                      }, 1000);
                   } else {
                     toastr.error(result.error || 'An error occurred', 'Error');
                   }
@@ -1034,9 +1034,12 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         });
                         const result = await response.json();
 
-                        if (result.success === 1) {
+                        console.log("result", result)
+                        console.log("result type", result.success)
+
+                        if (result.success === true) {
                           location.reload();
-                          toastr.success('The order has been cancelled, and you have been refunded');
+                          toastr.success(`The order has been cancelled, and you have been refunded`);
                           
                         } else {
                           toastr.error(`Refund failed: ${result.message}`);
@@ -1068,14 +1071,14 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         });
                         const result = await response.json();
 
-                        if (result.success === 1) {
+                        if (result.success === true) {
                           location.reload();
                           toastr.success(`Refund success: ${result.message}`);
                         } else {
                           toastr.error(`Refund failed: ${result.message}`);
                         }
                       } catch (error) {
-                        alert('Error processing refund');
+                        toastr.error('Error processing refund');
                       } finally {
                         setTimeout(() => {
                           button.disabled = false;

@@ -38,11 +38,11 @@ router.get('/login', checkAuthenticated, (req, res) => {
 router.post('/login', async (req, res, next) => {
     const token = req.body.g_recaptcha_response; 
 
-    const isHuman = await validateRecaptcha(token);
-    if (!isHuman) {
-        req.flash('error', 'reCAPTCHA failed. Are you a robot?');
-        return res.redirect('/login');
-    }
+    // const isHuman = await validateRecaptcha(token);
+    // if (!isHuman) {
+    //     req.flash('error', 'reCAPTCHA failed. Are you a robot?');
+    //     return res.redirect('/login');
+    // }
 
     passport.authenticate('user-local', async (err, user, info) => {
         if (err) {
