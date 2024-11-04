@@ -47,6 +47,21 @@ router.post('/admin/unlock-user/:id', adminEnsureAuthenticated, adminRole, async
     console.error("Error unlocking user", error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+})
+
+router.post('/admin/delete-user/:id', adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const userId = req.params.id;
+  try {
+    await db.query(`
+      DELETE FROM userprofile
+      WHERE id = $1 AND email_verified = $2;
+
+      `, [userId, false]);
+  res.redirect('/admin/users/list/unverified');
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});;
 
 export default router;

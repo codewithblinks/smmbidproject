@@ -284,13 +284,6 @@ CREATE TABLE ticket_responses (
 
 -- delete
 
-ratings_reviews 
-user_archives
-withdrawal_details
-DROP TABLE IF EXISTS withdrawal_details 
-DELETE FROM payment_gateways WHERE gateway_name = 'flutterwave'
-
-
 
 
 
