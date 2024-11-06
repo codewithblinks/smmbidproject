@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Primary Email Address Changed</title>
+  <title><%= subject %></title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -30,14 +30,8 @@
 </head>
 <body>
   <div class="container">
-    <h2>Primary Email Address Changed</h2>
-    <p>Hi <%= name %>,</p>
-    <p>Your primary email address has been changed.</p>
-
-    <p>If you did this, please ignore this email.</p>
-
-    <p>If you did not do this, please secure your account.</p>
-
+    <h3> <%= greeting %>,</h3>
+    <p><%- message %></p>
     <p>Thanks, <br>The <%= appName %> Team</p>
   </div>
 </body>

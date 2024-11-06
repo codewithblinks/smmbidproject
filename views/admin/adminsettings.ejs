@@ -772,15 +772,58 @@
                              
                           </div>
                           <div class="panel">
-                              <div class="mb-5 flex items-center justify-between">
-                                  <h5 class="text-lg font-semibold dark:text-white-light">P2P Market</h5>
+                            <div class="mb-5" x-data="modal">
+                              <!-- button -->
+                              <div class="flex items-center justify-center">
+                                  <button type="button" class="btn btn-info" @click="toggle">Send Email To Users</button>
                               </div>
-                              <div class="mb-5">
-                                  <label class="relative h-6 w-12">
-                                      <input type="checkbox" class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0" id="p2p-toggle">
-                                      <span for="custom_switch_checkbox6" class="outline_checkbox block h-full rounded-full border-2 border-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-[#ebedf2] before:transition-all before:duration-300 peer-checked:border-primary peer-checked:before:left-7 peer-checked:before:bg-primary dark:border-white-dark dark:before:bg-white-dark"></span>
-                                  </label>
+                          
+                              <!-- modal -->
+                              <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+                                  <div class="flex items-center justify-center min-h-screen px-4" @click.self="open = false">
+                                      <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
+                                        <button type="button" class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4" @click="toggle">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                                          </svg>
+                                      </button>
+                                      <div class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">Send Email</div>
+                                      <div class="p-5">
+                                          <form action="/send-email-to-users" onsubmit="event.preventDefault(); sendEmail();">
+                                              <div class="mb-5">
+                                                  <label for="subject">Email Subject *</label>
+                                                  <input id="subject" name="subject" type="text" placeholder="Enter Email Subject" class="form-input" required>
+                                              </div>
+                                              <div class="mb-5">
+                                                  <label for="greeting">Email Greeting</label>
+                                                  <input id="greeting" name="greeting" type="text" placeholder="Email Greeting" class="form-input" required>
+                                              </div>
+                                              <div class="mb-5">
+                                                <label for="greeting">Users</label>
+                                                <select id="userId" class="form-select" name="userId">
+                                                  <option value="">Select User</option>
+                                                  <% usersEmail.forEach(function(email) { %>
+                                                  <option value="<%= email.id %>"><%= email.email %></option>
+                                                  <% }); %>
+                                              </select>
+                                            </div>
+                                              <div class="mb-5">
+                                                  <label>Your Message *</label>
+                                                  <textarea id="message" name="message" rows="3" class="form-textarea" placeholder="Write Your Message*" required></textarea>
+                                              </div>
+                                              <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
+                                                  <button type="button" class="btn btn-outline-danger" @click="toggle">Cancel</button>
+                                                  <button type="submit" id="sendBTN" class="btn btn-primary ltr:ml-4 rtl:mr-4">
+                                                      Send
+                                                  </button>
+                                              </div>
+                                          </form>
+                                      </div>
+                                      </div>
+                                  </div>
                               </div>
+                          </div>
                           </div>
                       </div>
                   </div>
@@ -800,6 +843,17 @@
     </div>
   </div>
 
+  <% if (messages.error) { %>
+    <div id="error-message">
+      <%= messages.error %>
+    </div>
+    <% } %>
+      <% if (messages.success) { %>
+        <div id="success-message">
+          <%= messages.success %>
+        </div>
+        <% } %>
+
           <script src="../assets/js/alpine-collaspe.min.js"></script>
           <script src="../assets/js/alpine-persist.min.js"></script>
           <script defer="" src="../assets/js/alpine-ui.min.js"></script>
@@ -808,9 +862,63 @@
           <script src="../assets/js/custom.js"></script>
           <script defer="" src="../assets/js/apexcharts.js"></script>
           <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
           <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+          
+          <script>
+            $(function () {
+              var errorMessage = $('#error-message').text();
+              var successMessage = $('#success-message').text();
+
+              if (errorMessage) {
+                toastr.error(errorMessage);
+              }
+
+              if (successMessage) {
+                toastr.success(successMessage);
+              }
+            });
+          </script>
+
+          <script>
+            async function sendEmail() {
+              const sendBTN = document.getElementById("sendBTN");
+              sendBTN.disabled = true;
+              sendBTN.innerText = "Sending...";
+
+              try {
+                const response = await fetch('/send-email-to-users', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    subject: document.getElementById('subject').value,
+                    greeting: document.getElementById('greeting').value,
+                    message: document.getElementById('message').value,
+                    userId: document.getElementById('userId').value
+                  })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                  toastr.success("Email sent successful.");
+                  window.location.href = "/admin/settings";
+                } else {
+                  toastr.error(result.error || "An error occurred. Please try again.");
+                  buyButton.disabled = false;
+                  buyButton.innerText = "Send";
+                }
+              } catch (error) {
+                console.error("Request failed:", error);
+                toastr.error("Fail to send email to users.");
+                buyButton.disabled = false;
+                buyButton.innerText = "Send";
+              }
+            }
+          </script>
 
           <script>
             // main section
@@ -1039,6 +1147,7 @@
                 removeMessage(value) {
                   this.messages = this.messages.filter((d) => d.id !== value);
                 },
+                
               }));
 
               // content section

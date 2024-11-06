@@ -418,3 +418,34 @@ export const sendWelcomeEmail = async (email, username) => {
       throw error;
     }
   };
+
+  export const sendEmailsWithDelay = async (emails, subject, greeting, message) => {
+    const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'sendEmailToUsers.ejs');
+  
+    const appName = 'SMMBIDMEDIA';
+    
+    try {
+      const html = await ejs.renderFile(templatePath, {
+        subject: subject,
+        greeting: greeting,
+        message: message,
+        appName: appName
+      });
+
+      for (const email of emails) {
+      const mailOptions = {
+        to: email,
+        subject: subject,
+        html: html
+      };
+  
+      await sendEmail(mailOptions);
+      console.log('email sent');
+
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+    }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };

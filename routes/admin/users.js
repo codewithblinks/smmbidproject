@@ -3,7 +3,7 @@ import db from "../../db/index.js"
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
-import timeSince from "../../controller/timeSince.js";
+import { sendEmailsWithDelay } from "../../config/emailMessages.js";
 
 const router = express.Router();
 
@@ -347,5 +347,34 @@ router.get("/admin/weekly/challenges/history", adminEnsureAuthenticated, adminRo
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+
+router.post('/send-email-to-users', adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const { subject, greeting, message, userId } = req.body;
+  try {
+    let emailList = [];
+
+    if (userId) {
+      const result = await db.query('SELECT email FROM userprofile WHERE id = $1', [userId]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+      emailList.push(result.rows[0].email);
+    } else {
+      const result = await db.query('SELECT email FROM userprofile');
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: 'No users found.' });
+      }
+      emailList = result.rows.map(row => row.email);
+    }
+
+
+    await sendEmailsWithDelay(emailList, subject, greeting, message); 
+    return res.status(200).json({ message: "Email sent successful" });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ message: 'Error sending email.', error: error.message });
+  }
+});
+
 
 export default router;
