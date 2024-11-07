@@ -763,6 +763,12 @@
                         <input id="displayquantity" disabled type="number" class="form-input" value="1">
                       </div>
                     </div>
+                    <div class="mt-4">
+                      <div>
+                        <label for="stock">Stock</label>
+                        <input id="stock" disabled type="text" class="form-input" value="">
+                      </div>
+                    </div>
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
@@ -1147,6 +1153,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                 const displaycharge = document.getElementById('displaycharge');
                 const displaycharge1 = document.getElementById('displaycharge1');
                 const successrate = document.getElementById('successrate');
+                const stock = document.getElementById('stock');
 
                 // Suppress console logs temporarily
                 const originalConsoleLog = console.log;
@@ -1224,14 +1231,55 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   }
                 };
 
+                const updateStock = async () => {
+                  const value1 = select1.value;
+                  const value2 = select2.value;
+
+                  console.log(value1)
+                  console.log(value2)
+
+                  try {
+                    const response = await fetch('/sms/all_stock', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        country: value1,
+                        service: value2,
+                      }),
+                    });
+
+                    if (!response.ok) {
+                      throw new Error('Failed to fetch options');
+                    }
+
+                    const data = await response.json();
+
+                    const totalStock = data[0].reduce((sum, item) => sum + item.stock, 0);
+
+                    if (totalStock) {
+                      stock.value = totalStock;
+                    } else {
+                      stock.value = '0';
+                      console.warn('Failed to fetch stock, using default value');
+                    }
+
+                  } catch (error) {
+                    console.error('Error updating stock:', error);
+                  }
+                };
+
                 const handleSelectChange = () => {
                   updatePrice();
+                  updateStock();
                 };
 
                 select1.addEventListener('change', handleSelectChange);
                 select2.addEventListener('change', handleSelectChange);
 
                 updatePrice();
+                updateStock();
               });
             </script>
 

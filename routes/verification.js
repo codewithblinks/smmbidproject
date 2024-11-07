@@ -76,6 +76,34 @@ router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
+
+  const { country, service} = req.body;
+
+  try {
+    const form = new FormData();
+    form.append('key', BEARER_TOKEN);
+    form.append('country', country);
+    form.append('service', service);
+
+    const headers = {
+      ...form.getHeaders(),  
+      'Authorization': `Bearer ${BEARER_TOKEN}`
+
+    };
+
+    const response = await axios.post('https://api.smspool.net/sms/all_stock', form, { headers });
+
+    const data = response.data;
+
+    res.json(data)
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
+
 router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res) => {
 
   const { country, service} = req.body;
@@ -285,6 +313,7 @@ router.get("/sms/check", ensureAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
+
 
 router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
