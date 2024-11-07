@@ -454,11 +454,16 @@ export const sendWelcomeEmail = async (email, username) => {
   
       for (let i = 0; i < batches.length; i++) {
         const batch = batches[i];
-        setTimeout(() => {
+
+
+         await new Promise(resolve => {
+        setTimeout(async () => {
           console.log(`Sending batch ${i + 1} of ${batches.length}`);
-          sendBatch(batch).catch(error => console.error(`Error in batch ${i + 1}:`, error));
-        }, i * 3600000);
-      }
+          await sendBatch(batch).catch(error => console.error(`Error in batch ${i + 1}:`, error));
+          resolve();
+        }, i * 3600000); 
+      });
+    }
   
       console.log('All batches scheduled for sending.');
     } catch (error) {
