@@ -762,22 +762,6 @@
                     Home
                   </a>
                 </li>
-                <li class="inline-block">
-                  <a href="javascript:;"
-                    class="flex tab gap-2 border-b border-transparent p-4 hover:border-primary hover:text-primary"
-                    :class="{'!border-primary text-primary active' : tab == 'payment-details'}"
-                    @click="tab='payment-details'; sessionStorage.setItem('activeTab', 'payment-details')">
-                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5">
-                      <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                      <path d="M12 6V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                      <path
-                        d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5"
-                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    </svg>
-                    Payment Details
-                  </a>
-                </li>
                 <li class="inline-block " id="preferences">
                   <a href="javascript:;"
                     class="flex tab gap-2 border-b border-transparent p-4 hover:border-primary hover:text-primary"
@@ -880,114 +864,6 @@
                   </form>
                 </div>
               </template>
-              <template x-if="tab === 'payment-details'">
-                <div>
-                  <div class="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-1">
-
-                    <div class="panel">
-                      <div class="mb-5">
-                        <h5 class="mb-4 text-lg font-semibold">Withdrawal Banks</h5>
-                        <p>
-                          Changes to your <span class="text-primary">Withdraw Method</span> information will take effect
-                          starting
-                          with scheduled payment and will be refelected on your next invoice.
-                        </p>
-                        <br>
-                        <p>
-                          You can only add <span class="text-primary">three</span> bank accounts </p>
-                      </div>
-
-                      <div class="mb-5">
-                          <div class="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-
-                            <div class="flex items-start justify-between py-3">
-                              <div class="flex-none ltr:mr-4 rtl:ml-4">
-                                <img src="assets/images/bank.svg" alt="image" style="width: 30px;">
-
-                              </div>
-                              <h6 class="text-[15px] font-bold text-[#515365] dark:text-white-dark">
-
-                                  <span class="mt-1 block text-xs font-normal text-white-dark dark:text-white-light">
-                                  </span>
-                              </h6>
-                              <div class="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                  <button type="button" class="btn btn-danger">Delete</button>
-                              </div>
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-
-
-                    <!-- vertically centered -->
-                    <div class="mb-5" x-data="modal">
-                      <button type="button" id="addAccountButton" class="btn btn-primary" @click="toggle">Add Payment Method</button>
-
-
-                      <!-- modal -->
-                      <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
-                        <div class="flex items-center justify-center min-h-screen px-4" @click.self="open = false">
-                          <div x-show="open" x-transition x-transition.duration.300
-                            class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
-
-                            <div class="p-5">
-                              <div class="dark:text-white-dark/70 text-base font-medium text-[#1f2937]">
-                                <div class="flex items-center justify-between gap-5 py-8  dark:bg-[#121c2c]">
-                                  <h5 class="text-lg font-semibold">Add Payment Method</h5>
-                                  <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
-                                      viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                      stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-                                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                  </button>
-                                </div>
-                                <div class="mb-8">
-
-                                  <p>Changes your New <span class="text-primary">Payment Method</span> Information.
-                                  </p>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                      <div>
-                                        <label for="payBrand">Select Your Bank</label>
-                                        <select id="bank" name="bank_code" class="form-select text-white-dark" required>
-                                          <option value="Select Bank">Select Bank</option>
-                                            <option value="" >
-                                            </option>
-                                        </select>
-                                        <input type="hidden" id="bank_name" name="bank_name"
-                                          value="">
-                                      </div>
-                                      <div>
-                                        <label for="payNumber">Account Number</label>
-                                        <input id="account_number" name="account_number" type="text"
-                                          placeholder="Account Number" class="form-input" required>
-                                        <small class="warningText" style="color: red;"></small>
-                                      </div>
-                                    </div>
-                                    <div class="flex justify-end items-center mt-8">
-                                      <button type="button" class="btn btn-outline-danger"
-                                        @click="toggle">Discard</button>
-                                      <button type="submit"
-                                        class="btn btnAdd btn-primary ltr:ml-4 rtl:mr-4">Add</button>
-                                    </div>
-                                </div>
-                              </div>
-
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                </div>
-            </div>
-            </template>
             <template x-if="tab === 'preferences'">
               <div class="switch">
                 <div class="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -1050,7 +926,7 @@
                   </div>
                   <div class="panel space-y-5">
                     <h5 class="mb-4 text-lg font-semibold">Activity data</h5>
-                    <p>Download your Summary, Task and Payment History Data</p>
+                    <p>Download your account Summary, Purchase and Payment History Data</p>
                     <button type="button" class="btn btn-primary">Download Data</button>
                   </div>
                 </div>

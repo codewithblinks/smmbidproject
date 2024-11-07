@@ -854,9 +854,8 @@
                       </div>
                       <div class="flex flex-auto items-start justify-between font-semibold ltr:ml-4 rtl:mr-4">
                         <h6 class="text-[13px] text-white-dark dark:text-white-dark">
-                          Income <span class="block text-base text-[#515365] dark:text-white-light">₦ 0</span>
+                          Total Deposit <span class="block text-base text-[#515365] dark:text-white-light">₦ <%= totals.total_deposit  %></span>
                         </h6>
-                        <p class="text-secondary ltr:ml-auto rtl:mr-auto">90%</p>
                       </div>
                     </div>
                   </div>
@@ -877,9 +876,8 @@
                       </div>
                       <div class="flex flex-auto items-start justify-between font-semibold ltr:ml-4 rtl:mr-4">
                         <h6 class="text-[13px] text-white-dark dark:text-white-dark">
-                          Profit <span class="block text-base text-[#515365] dark:text-white-light">₦ 0</span>
+                          Total Spent <span class="block text-base text-[#515365] dark:text-white-light" id="spent">₦ 0</span>
                         </h6>
-                        <p class="text-info ltr:ml-auto rtl:mr-auto">65%</p>
                       </div>
                     </div>
                   </div>
@@ -896,9 +894,8 @@
                       </div>
                       <div class="flex flex-auto items-start justify-between font-semibold ltr:ml-4 rtl:mr-4">
                         <h6 class="text-[13px] text-white-dark dark:text-white-dark">
-                          Expenses <span class="block text-base text-[#515365] dark:text-white-light">₦ 00.0</span>
+                          Total Referral Commissions <span class="block text-base text-[#515365] dark:text-white-light">₦ 0.00</span>
                         </h6>
-                        <p class="text-warning ltr:ml-auto rtl:mr-auto">0%</p>
                       </div>
                     </div>
                   </div>
@@ -983,9 +980,31 @@
   function copyReferralLink() {
       var copyText = document.getElementById("inputField");
       copyText.select();
-      copyText.setSelectionRange(0, 99999); /* For mobile devices */
+      copyText.setSelectionRange(0, 99999); 
       navigator.clipboard.writeText(copyText.value);
   }
+</script>
+
+<script>
+  const apiUrl = '/weekly-progress';
+
+  async function fetchData() {
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    document.getElementById('spent').innerText = `₦ ${data.totalSuccessfulTransaction}`;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+fetchData();
 </script>
 
   <script>

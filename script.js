@@ -86,7 +86,6 @@ import usersRoute from "./routes/admin/users.js"
 import checkRoute from "./routes/admin/check.js"
 import set2faRoute from "./routes/admin/2fa.js"
 import smsorderhistoryRoute from './routes/smsorderhistory.js'
-import ratingRoute from './routes/ratings_reviews.js'
 import transactionsRoute from './routes/payment/transactions.js'
 import smmOrdersRoute from './routes/admin/smmorders.js'
 import smsOrdersRoute from './routes/admin/smsorders.js'
@@ -118,7 +117,6 @@ app.use(usersRoute)
 app.use(checkRoute)
 app.use(set2faRoute)
 app.use(smsorderhistoryRoute)
-app.use(ratingRoute)
 app.use(transactionsRoute)
 app.use(smmOrdersRoute)
 app.use(smsOrdersRoute)

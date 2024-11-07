@@ -421,9 +421,8 @@ export const sendWelcomeEmail = async (email, username) => {
 
   export const sendEmailsWithDelay = async (emails, subject, greeting, message) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'sendEmailToUsers.ejs');
-  
     const appName = 'SMMBIDMEDIA';
-    
+  
     try {
       const html = await ejs.renderFile(templatePath, {
         subject: subject,
@@ -431,19 +430,37 @@ export const sendWelcomeEmail = async (email, username) => {
         message: message,
         appName: appName
       });
-
-      for (const email of emails) {
-      const mailOptions = {
-        to: email,
-        subject: subject,
-        html: html
+  
+      const batchSize = 30;
+      const batches = [];
+  
+      for (let i = 0; i < emails.length; i += batchSize) {
+        batches.push(emails.slice(i, i + batchSize));
+      }
+  
+      console.log(`Total batches to send: ${batches.length}`);
+  
+      const sendBatch = async (batch) => {
+        for (const email of batch) {
+          const mailOptions = {
+            to: email,
+            subject: subject,
+            html: html
+          };
+          await sendEmail(mailOptions);
+          console.log(`Email sent to ${email}`);
+        }
       };
   
-      await sendEmail(mailOptions);
-      console.log('email sent');
-
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
-    }
+      for (let i = 0; i < batches.length; i++) {
+        const batch = batches[i];
+        setTimeout(() => {
+          console.log(`Sending batch ${i + 1} of ${batches.length}`);
+          sendBatch(batch).catch(error => console.error(`Error in batch ${i + 1}:`, error));
+        }, i * 3600000);
+      }
+  
+      console.log('All batches scheduled for sending.');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
