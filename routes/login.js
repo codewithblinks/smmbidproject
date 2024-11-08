@@ -8,7 +8,6 @@ import ensureAuthenticated, {
   checkAdminAuthenticated,
 } from "../authMiddleware/authMiddleware.js";
 import { sendUnusualActivityEmail } from "../config/emailMessages.js";
-import { sendEmail } from "../config/transporter.js";
 import axios from "axios";
 
 const router = express.Router();
@@ -109,7 +108,7 @@ router.post("/login", async (req, res, next) => {
                 );
 
                 if (last_login_ip && last_login_ip !== currentLocation.city) {
-                  await sendUnusualActivityEmail(email, username, verificationCode);
+                  await sendUnusualActivityEmail(email, username, currentIP);
                 }
 
                 await db.query(

@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 import db from "../db/index.js";
 import { sendEmail } from "./transporter.js";
 import path from 'path';
-import ejs from "ejs";
+import ejs, { name } from "ejs";
 import { fileURLToPath } from 'url';
 
 
@@ -472,53 +472,27 @@ export const sendWelcomeEmail = async (email, username) => {
     }
   };
 
-  export const sendUnusualActivityEmail = async (emails, subject, greeting, message) => {
+  export const sendUnusualActivityEmail = async (email, username, currentIP) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'UnusualActivity.ejs');
     const appName = 'SMMBIDMEDIA';
   
     try {
       const html = await ejs.renderFile(templatePath, {
-        subject: subject,
-        greeting: greeting,
-        message: message,
+        name: username,
+        currentIP: currentIP,
         appName: appName
       });
   
-      const batchSize = 30;
-      const batches = [];
   
-      for (let i = 0; i < emails.length; i += batchSize) {
-        batches.push(emails.slice(i, i + batchSize));
-      }
-  
-      console.log(`Total batches to send: ${batches.length}`);
-  
-      const sendBatch = async (batch) => {
-        for (const email of batch) {
-          const mailOptions = {
-            to: email,
-            subject: subject,
-            html: html
-          };
-          await sendEmail(mailOptions);
-          console.log(`Email sent to ${email}`);
-        }
+      const mailOptions = {
+        to: email,
+        subject: 'Unusual Activity Detected',
+        html: html
       };
   
-      for (let i = 0; i < batches.length; i++) {
-        const batch = batches[i];
-
-
-         await new Promise(resolve => {
-        setTimeout(async () => {
-          console.log(`Sending batch ${i + 1} of ${batches.length}`);
-          await sendBatch(batch).catch(error => console.error(`Error in batch ${i + 1}:`, error));
-          resolve();
-        }, i * 3600000); 
-      });
-    }
+      await sendEmail(mailOptions);
   
-      console.log('All batches scheduled for sending.');
+      console.log('Unusual Activity Detected email sent');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
