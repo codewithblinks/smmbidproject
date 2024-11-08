@@ -93,9 +93,9 @@ router.post("/login", async (req, res, next) => {
 
         if (notify_unusual_activity) {
           const currentIP =
-            req.ip === "::1" || req.ip === "127.0.0.1" ? "127.0.0.1" : req.ip;
+            req.ip === req.headers['x-forwarded-for'] || req.ip;
 
-          if (currentIP === "127.0.0.1") {
+          if (currentIP === "127.0.0.1" || currentIP === '::1' || currentIP.startsWith('::ffff:')) {
             console.log("Local login detected, skipping location lookup");
           } else {
             try {

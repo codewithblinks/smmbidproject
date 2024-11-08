@@ -26,6 +26,8 @@ const server = createServer(app);
 const io = new Server(server);
 const port = 3000;
 
+app.set('trust proxy', true);
+
 env.config();
 
 app.use(session({
