@@ -799,194 +799,217 @@
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="text" name="displaycharge1" class="form-input"
-                          required>
+                        <input id="displaycharge1" type="text" name="displaycharge1" class="form-input" required>
                       </div>
                     </div>
                   </div>
                   <div class="mt-4">
-                    <input id="charge" type="hidden" name="charge" class="form-input" >
+                    <input id="charge" type="hidden" name="charge" class="form-input">
                     <p>This is the price range, for a guaranteed price feel free to use the advanced view to select a
                       pool to get a more specific price.</p>
                     <div class="mb-3 mt-2 sm:mb-0 flex justify-between">
                       <button type="submit" id="purchaseBTN" class="btn btn-primary">Purchase</button>
+                      <button type="button" id="advancedBTN" class="btn btn-primary"
+                        onclick="toggleVisibility()">Advanced view</button>
                     </div>
                   </div>
                 </form>
+                <!-- advance view -->
+                <div id="toggleDiv" style="display: none;" class="mt-8">
+                  <h3 style="display: block;">View our advanced view, which shows success rate, pricing and all the
+                    information you need!</h3>
+
+                  <div class="grid grid-cols-1 gap-6 pt-5 xl:grid-cols-3" id="stockDisplay">
+
+                  </div>
+
+                  <!-- advance view end -->
+                </div>
+              </div>
+              <div>
               </div>
             </div>
-            <div>
+            <div id="alertBox"
+              class="flex items-center rounded bg-primary-light p-3.5 text-primary dark:bg-primary-dark-light mb-3"
+              style="display: none;">
+              <span class="ltr:pr-2 rtl:pl-2" id="alertContent"></span>
+              <button id="alertDismiss" type="button" class="hover:opacity-80 ltr:ml-auto rtl:mr-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="h-5 w-5">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
             </div>
-          </div>
-          <div id="alertBox"
-            class="flex items-center rounded bg-primary-light p-3.5 text-primary dark:bg-primary-dark-light mb-3"
-            style="display: none;">
-            <span class="ltr:pr-2 rtl:pl-2" id="alertContent"></span>
-            <button id="alertDismiss" type="button" class="hover:opacity-80 ltr:ml-auto rtl:mr-auto">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-          <div class="panel table-responsive">
-            <h5 class="text-lg font-semibold dark:text-white-light mb-4">Pending SMS</h5>
-            <table id="phoneNumbersTable">
-              <thead>
-                <tr>
-                  <th>Phone Number</th>
-                  <th>
-                    <button type="button" x-tooltip="In order to view the full code, click on any of the codes"
-                      data-placement="top" role="tooltip">
-                      Code
-                    </button>
-                  </th>
-                  <th>Country</th>
-                  <th>Service</th>
-                  <th class="text-center">status</th>
-                  <th class="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+            <div class="panel table-responsive">
+              <h5 class="text-lg font-semibold dark:text-white-light mb-4">Pending SMS</h5>
+              <table id="phoneNumbersTable">
+                <thead>
+                  <tr>
+                    <th>Phone Number</th>
+                    <th>
+                      <button type="button" x-tooltip="In order to view the full code, click on any of the codes"
+                        data-placement="top" role="tooltip">
+                        Code
+                      </button>
+                    </th>
+                    <th>Country</th>
+                    <th>Service</th>
+                    <th class="text-center">status</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
 
-              </tbody>
-            </table>
-          </div>
+                </tbody>
+              </table>
+            </div>
 
-          <!-- end main content section -->
+            <!-- end main content section -->
+          </div>
         </div>
+        <!-- start footer section -->
+        <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
+          © <span id="footer-year">2022</span>.
+        </div>
+        <!-- end footer section -->
+
       </div>
-      <!-- start footer section -->
-      <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
-        © <span id="footer-year">2022</span>.
-      </div>
-      <!-- end footer section -->
+      <% if (messages.error) { %>
+        <div id="error-message">
+          <%= messages.error %>
+        </div>
+        <% } %>
+          <% if (messages.success) { %>
+            <div id="success-message">
+              <%= messages.success %>
+            </div>
+            <% } %>
 
-    </div>
-    <% if (messages.error) { %>
-      <div id="error-message">
-        <%= messages.error %>
-      </div>
-      <% } %>
-        <% if (messages.success) { %>
-          <div id="success-message">
-            <%= messages.success %>
-          </div>
-          <% } %>
+              <script src="https://cdn.jsdelivr.net/npm/nice-select2/dist/js/nice-select2.min.js" defer></script>
+              <script src="assets/js/alpine-collaspe.min.js"></script>
+              <script src="assets/js/alpine-persist.min.js"></script>
+              <script defer="" src="assets/js/alpine-ui.min.js"></script>
+              <script defer="" src="assets/js/alpine-focus.min.js"></script>
+              <script defer="" src="assets/js/alpine.min.js"></script>
+              <script src="assets/js/custom.js"></script>
+              <script defer="" src="assets/js/apexcharts.js"></script>
+              <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+              <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+              <script src="../assets/js/notification.js"></script>
 
-            <script src="https://cdn.jsdelivr.net/npm/nice-select2/dist/js/nice-select2.min.js" defer></script>
-            <script src="assets/js/alpine-collaspe.min.js"></script>
-            <script src="assets/js/alpine-persist.min.js"></script>
-            <script defer="" src="assets/js/alpine-ui.min.js"></script>
-            <script defer="" src="assets/js/alpine-focus.min.js"></script>
-            <script defer="" src="assets/js/alpine.min.js"></script>
-            <script src="assets/js/custom.js"></script>
-            <script defer="" src="assets/js/apexcharts.js"></script>
-            <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-            <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-            <script src="../assets/js/notification.js"></script>
+              <script>
+                $(function () {
+                  var errorMessage = $('#error-message').text();
+                  var successMessage = $('#success-message').text();
 
-            <script>
-              $(function () {
-                var errorMessage = $('#error-message').text();
-                var successMessage = $('#success-message').text();
-
-                if (errorMessage) {
-                  toastr.error(errorMessage);
-                }
-
-                if (successMessage) {
-                  toastr.success(successMessage);
-                }
-              });
-            </script>
-
-            <script>
-              const alertDismiss = document.getElementById('alertDismiss');
-
-              alertDismiss.addEventListener('click', () => {
-                alertBox.style.display = 'none';
-              });
-            </script>
-
-            <script>
-              document.getElementById('orderForm').addEventListener('submit', async function (event) {
-                event.preventDefault();
-
-                const purchaseButton = document.getElementById('purchaseBTN');
-                purchaseButton.disabled = true;
-                purchaseButton.textContent = 'Processing...';
-
-  
-                try {
-                  const response = await fetch('/ordersms', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                  },
-                    body: JSON.stringify({
-                    country: document.getElementById('country-select').value,
-                    service: document.getElementById('service-select').value,
-                    quantity: document.getElementById('quantity').value,
-                    pricing_option: document.getElementById('pricing_option').value,
-                    displaycharge1: document.getElementById('displaycharge1').value,
-                    charge: document.getElementById('charge').value
-                  })
-                });
-
-                const result = await response.json();
-
-                  if (response.ok) {
-                    toastr.success(result.message || 'Purchase successful', 'Success');
-
-                    setTimeout(() => {
-                     window.location.reload();
-                      }, 1000);
-                  } else {
-                    toastr.error(result.error || 'An error occurred', 'Error');
+                  if (errorMessage) {
+                    toastr.error(errorMessage);
                   }
-                } catch (error) {
-                  toastr.error('A network error occurred, please try again later.', 'Network Error');
-                } finally {
-                  purchaseButton.disabled = false;
-                  purchaseButton.textContent = 'Purchase';
-                }
-              });
-            </script>
 
-            <script>
-              document.addEventListener("DOMContentLoaded", () => {
-                const alertBox = document.getElementById('alertBox');
-                const alertContent = document.getElementById('alertContent');
-                const purchaseBTN = document.getElementById('purchaseBTN');
+                  if (successMessage) {
+                    toastr.success(successMessage);
+                  }
+                });
+              </script>
 
-                const socket = io();
+              <script>
+                const alertDismiss = document.getElementById('alertDismiss');
 
-
-                socket.on('orderStatusUpdated', (data) => {
-                  const { order_code, cc, number, code, short_name, service, status, time_left } = data;
-                  updateTable(order_code, cc, number, code, short_name, service, status, time_left);
+                alertDismiss.addEventListener('click', () => {
+                  alertBox.style.display = 'none';
                 });
 
-                const fetchOrders = () => {
-                  fetch('/sms/check')
-                    .then(response => response.json())
-                    .then(data => {
-                      const { filteredOrders } = data;
-                      populateTable('#phoneNumbersTable tbody', filteredOrders);
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-                };
+                function toggleVisibility() {
 
-                function populateTable(selector, data) {
-                  const tableBody = document.querySelector(selector);
-                  tableBody.innerHTML = '';
-                  data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.dataset.orderCode = item.order_code;
-                    row.innerHTML = `
+                  var div = document.getElementById("toggleDiv");
+
+                  if (div.style.display === "none" || div.style.display === "") {
+                    div.style.display = "grid";
+                  } else {
+                    div.style.display = "none";
+                  }
+                }
+              </script>
+
+              <script>
+                document.getElementById('orderForm').addEventListener('submit', async function (event) {
+                  event.preventDefault();
+
+                  const purchaseButton = document.getElementById('purchaseBTN');
+                  purchaseButton.disabled = true;
+                  purchaseButton.textContent = 'Processing...';
+
+
+                  try {
+                    const response = await fetch('/ordersms', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        country: document.getElementById('country-select').value,
+                        service: document.getElementById('service-select').value,
+                        quantity: document.getElementById('quantity').value,
+                        pricing_option: document.getElementById('pricing_option').value,
+                        displaycharge1: document.getElementById('displaycharge1').value,
+                        charge: document.getElementById('charge').value
+                      })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                      toastr.success(result.message || 'Purchase successful', 'Success');
+
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
+                    } else {
+                      toastr.error(result.error || 'An error occurred', 'Error');
+                    }
+                  } catch (error) {
+                    toastr.error('A network error occurred, please try again later.', 'Network Error');
+                  } finally {
+                    purchaseButton.disabled = false;
+                    purchaseButton.textContent = 'Purchase';
+                  }
+                });
+              </script>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  const alertBox = document.getElementById('alertBox');
+                  const alertContent = document.getElementById('alertContent');
+                  const purchaseBTN = document.getElementById('purchaseBTN');
+
+                  const socket = io();
+
+
+                  socket.on('orderStatusUpdated', (data) => {
+                    const { order_code, cc, number, code, short_name, service, status, time_left } = data;
+                    updateTable(order_code, cc, number, code, short_name, service, status, time_left);
+                  });
+
+                  const fetchOrders = () => {
+                    fetch('/sms/check')
+                      .then(response => response.json())
+                      .then(data => {
+                        const { filteredOrders } = data;
+                        populateTable('#phoneNumbersTable tbody', filteredOrders);
+                      })
+                      .catch(error => console.error('Error fetching data:', error));
+                  };
+
+                  function populateTable(selector, data) {
+                    const tableBody = document.querySelector(selector);
+                    tableBody.innerHTML = '';
+                    data.forEach(item => {
+                      const row = document.createElement('tr');
+                      row.dataset.orderCode = item.order_code;
+                      row.innerHTML = `
            <td>+${item.cc} ${item.number}</td>
            <td class="code" style="cursor: pointer;">
                ${item.status === 'pending' ? getSvgLoader() : (item.status === "completed" ? item.code : item.code)}
@@ -997,107 +1020,107 @@
             ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
            <td class="action">
             ${item.status === 'pending' ? getRefundButton(item.order_code)
-                        : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code)
-                          : getResendButton(item.order_code))}
+                          : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code)
+                            : getResendButton(item.order_code))}
              </td>
            
       `;
-                    tableBody.appendChild(row);
-                  });
-                  document.querySelectorAll('.code').forEach(cell => {
-                    cell.addEventListener('click', (event) => {
-                      const orderCode = event.currentTarget.closest('tr').dataset.orderCode;
-                      const item = data.find(order => order.order_code === orderCode);
-                      showFullCode(item.full_code);
+                      tableBody.appendChild(row);
                     });
-                  });
-                }
+                    document.querySelectorAll('.code').forEach(cell => {
+                      cell.addEventListener('click', (event) => {
+                        const orderCode = event.currentTarget.closest('tr').dataset.orderCode;
+                        const item = data.find(order => order.order_code === orderCode);
+                        showFullCode(item.full_code);
+                      });
+                    });
+                  }
 
 
-                const updateTable = (order_code, cc, number, code, short_name, service, status, time_left) => {
-                  const row = document.querySelector(`[data-order-code="${order_code}"]`);
-                  if (row) {
-                    row.querySelector('.code').innerHTML = status === 'pending' ? getSvgLoader() : code;
-                    row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : (status === 'expired' ? "badge badge-outline-danger" : "badge badge-outline-success")}">
+                  const updateTable = (order_code, cc, number, code, short_name, service, status, time_left) => {
+                    const row = document.querySelector(`[data-order-code="${order_code}"]`);
+                    if (row) {
+                      row.querySelector('.code').innerHTML = status === 'pending' ? getSvgLoader() : code;
+                      row.querySelector('.status').innerHTML = `<span class="${status === 'pending' ? "badge badge-outline-warning" : (status === 'expired' ? "badge badge-outline-danger" : "badge badge-outline-success")}">
 ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
-                    row.querySelector('.action').innerHTML = status === 'pending' ? getRefundButton(order_code) : getResendButton(order_code);
-                  }
-                };
+                      row.querySelector('.action').innerHTML = status === 'pending' ? getRefundButton(order_code) : getResendButton(order_code);
+                    }
+                  };
 
 
-                document.addEventListener('click', async (event) => {
-                  if (event.target.closest('.refund-button')) {
-                    const button = event.target.closest('.refund-button')
-                    const orderId = button.getAttribute('data-order-id');
-                    if (confirm('Are you sure you want to cancel and refund this order?')) {
-                      try {
-                        const response = await fetch('/sms/cancel', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({ orderId })
-                        });
-                        const result = await response.json();
+                  document.addEventListener('click', async (event) => {
+                    if (event.target.closest('.refund-button')) {
+                      const button = event.target.closest('.refund-button')
+                      const orderId = button.getAttribute('data-order-id');
+                      if (confirm('Are you sure you want to cancel and refund this order?')) {
+                        try {
+                          const response = await fetch('/sms/cancel', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ orderId })
+                          });
+                          const result = await response.json();
 
-                        console.log("result", result)
-                        console.log("result type", result.success)
+                          console.log("result", result)
+                          console.log("result type", result.success)
 
-                        if (result.success === true) {
-                          location.reload();
-                          toastr.success(`The order has been cancelled, and you have been refunded`);
-                          
-                        } else {
-                          toastr.error(`Refund failed: ${result.message}`);
+                          if (result.success === true) {
+                            location.reload();
+                            toastr.success(`The order has been cancelled, and you have been refunded`);
+
+                          } else {
+                            toastr.error(`Refund failed: ${result.message}`);
+                          }
+                        } catch (error) {
+                          console.error('Error processing refund:', error);
+                          alert('Error processing refund');
                         }
-                      } catch (error) {
-                        console.error('Error processing refund:', error);
-                        alert('Error processing refund');
                       }
                     }
-                  }
-                });
+                  });
 
 
-                document.addEventListener('click', async (event) => {
-                  if (event.target.closest('.resend-button')) {
-                    const button = event.target.closest('.resend-button')
-                    const orderId = button.getAttribute('data-order-id');
+                  document.addEventListener('click', async (event) => {
+                    if (event.target.closest('.resend-button')) {
+                      const button = event.target.closest('.resend-button')
+                      const orderId = button.getAttribute('data-order-id');
 
-                    button.disabled = true;
+                      button.disabled = true;
 
-                    if (confirm('Are you sure you would like to resend this order??')) {
-                      try {
-                        const response = await fetch('/sms/resend', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({ orderId })
-                        });
-                        const result = await response.json();
+                      if (confirm('Are you sure you would like to resend this order??')) {
+                        try {
+                          const response = await fetch('/sms/resend', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ orderId })
+                          });
+                          const result = await response.json();
 
-                        if (result.success === true) {
-                          location.reload();
-                          toastr.success(`Refund success: ${result.message}`);
-                        } else {
-                          toastr.error(`Refund failed: ${result.message}`);
+                          if (result.success === true) {
+                            location.reload();
+                            toastr.success(`Refund success: ${result.message}`);
+                          } else {
+                            toastr.error(`Refund failed: ${result.message}`);
+                          }
+                        } catch (error) {
+                          toastr.error('Error processing refund');
+                        } finally {
+                          setTimeout(() => {
+                            button.disabled = false;
+                          }, 60000);
                         }
-                      } catch (error) {
-                        toastr.error('Error processing refund');
-                      } finally {
-                        setTimeout(() => {
-                          button.disabled = false;
-                        }, 60000);
+                      } else {
+                        button.disabled = false;
                       }
-                    } else {
-                      button.disabled = false;
                     }
-                  }
-                });
+                  });
 
-                function getSvgLoader() {
-                  return `
+                  function getSvgLoader() {
+                    return `
        <svg viewbox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="inline-block h-5 w-5 shrink-0 animate-[spin_2s_linear_infinite] align-middle ltr:mr-2 rtl:ml-2">
           <line x1="12" y1="2" x2="12" y2="6"></line>
           <line x1="12" y1="18" x2="12" y2="22"></line>
@@ -1109,10 +1132,10 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
         </svg>
     `;
-                }
+                  }
 
-                function getRefundButton(orderId) {
-                  return `
+                  function getRefundButton(orderId) {
+                    return `
         <button type="button" class="refund-button" data-order-id="${orderId}">
             <span class="flex items-center"> Refund
                 <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-4 w-4">
@@ -1122,10 +1145,10 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
             </span>
         </button>
     `;
-                }
+                  }
 
-                function getResendButton(orderId) {
-                  return `
+                  function getResendButton(orderId) {
+                    return `
         <button type="button" class="resend-button" data-order-id="${orderId}">
             <span class="flex items-center"> Resend
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1134,555 +1157,684 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
             </span>
         </button>
     `;
-                }
-
-                fetchOrders();
-
-                setInterval(fetchOrders, 30000);
-
-
-                const showFullCode = (fullCode) => {
-                  alertContent.textContent = fullCode || 'No code available';
-                  alertBox.style.display = 'flex';
-                };
-
-
-                const select1 = document.getElementById('country-select');
-                const select2 = document.getElementById('service-select');
-                const priceInput = document.getElementById('charge');
-                const displaycharge = document.getElementById('displaycharge');
-                const displaycharge1 = document.getElementById('displaycharge1');
-                const successrate = document.getElementById('successrate');
-                const stock = document.getElementById('stock');
-
-                // Suppress console logs temporarily
-                const originalConsoleLog = console.log;
-                console.log = function () { };
-
-
-                NiceSelect.bind((select1), { searchable: true });
-                NiceSelect.bind((select2), { searchable: true });
-
-                const updatePrice = async () => {
-                  const value1 = select1.value;
-                  const value2 = select2.value;
-
-                  try {
-                    const response = await fetch('/smmpool/options', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        country: value1,
-                        service: value2,
-                      }),
-                    });
-
-                    if (!response.ok) {
-                      throw new Error('Failed to fetch options');
-                    }
-
-                    const data = await response.json();
-
-                    let exchangeRate = 1500;
-                    let smsprice = 2
-
-                    const rateResponse = await fetch('/api/exchange-rate');
-                    const smsPriceResponse = await fetch('/api/sms-price');
-
-                    if (rateResponse.ok) {
-                      const rateData = await rateResponse.json();
-                      if (rateData.rate) {
-                        exchangeRate = rateData.rate;
-                      }
-                    } else {
-                      console.warn('Failed to fetch exchange rate, using default rate');
-                    }
-
-
-                    if (smsPriceResponse.ok) {
-                      const rateData = await smsPriceResponse.json();
-                      if (rateData.smsprice) {
-                        smsprice = Number(rateData.smsprice);
-                      }
-                    } else {
-                      console.warn('Failed to fetch exchange rate, using default rate');
-                    }
-
-                    if (data.price) {
-                      const fetchPrice = data.price * exchangeRate;
-                      const high_price = data.high_price * exchangeRate;
-                      const price1 = fetchPrice + smsprice
-                      const price = Math.floor(price1)
-                      const high_price1 = high_price + smsprice
-                      const highPrice = Math.floor(high_price1)
-                      successrate.value = `${data.success_rate} %`
-                      displaycharge.value = `₦ ${price} - ₦ ${highPrice}`;
-                      displaycharge1.value = price;
-                      priceInput.value = data.price;
-                      purchaseBTN.disabled = false;
-                    } else {
-                      displaycharge.value = 'Invalid';
-                      purchaseBTN.disabled = false;
-                    }
-                  } catch (error) {
-                    console.error('Error updating price:', error);
                   }
-                };
 
-                const updateStock = async () => {
-                  const value1 = select1.value;
-                  const value2 = select2.value;
+                  fetchOrders();
 
-                  console.log(value1)
-                  console.log(value2)
+                  setInterval(fetchOrders, 30000);
 
-                  try {
-                    const response = await fetch('/sms/all_stock', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        country: value1,
-                        service: value2,
-                      }),
-                    });
 
-                    if (!response.ok) {
-                      throw new Error('Failed to fetch options');
+                  const showFullCode = (fullCode) => {
+                    alertContent.textContent = fullCode || 'No code available';
+                    alertBox.style.display = 'flex';
+                  };
+
+
+                  const select1 = document.getElementById('country-select');
+                  const select2 = document.getElementById('service-select');
+                  const priceInput = document.getElementById('charge');
+                  const displaycharge = document.getElementById('displaycharge');
+                  const displaycharge1 = document.getElementById('displaycharge1');
+                  const successrate = document.getElementById('successrate');
+                  const stock = document.getElementById('stock');
+
+                  // Suppress console logs temporarily
+                  const originalConsoleLog = console.log;
+                  console.log = function () { };
+
+
+                  NiceSelect.bind((select1), { searchable: true });
+                  NiceSelect.bind((select2), { searchable: true });
+
+                  const updatePrice = async () => {
+                    const value1 = select1.value;
+                    const value2 = select2.value;
+
+                    try {
+                      const response = await fetch('/smmpool/options', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          country: value1,
+                          service: value2,
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Failed to fetch options');
+                      }
+
+                      const data = await response.json();
+
+                      let exchangeRate = 1500;
+                      let smsprice = 2
+
+                      const rateResponse = await fetch('/api/exchange-rate');
+                      const smsPriceResponse = await fetch('/api/sms-price');
+
+                      if (rateResponse.ok) {
+                        const rateData = await rateResponse.json();
+                        if (rateData.rate) {
+                          exchangeRate = rateData.rate;
+                        }
+                      } else {
+                        console.warn('Failed to fetch exchange rate, using default rate');
+                      }
+
+
+                      if (smsPriceResponse.ok) {
+                        const rateData = await smsPriceResponse.json();
+                        if (rateData.smsprice) {
+                          smsprice = Number(rateData.smsprice);
+                        }
+                      } else {
+                        console.warn('Failed to fetch exchange rate, using default rate');
+                      }
+
+                      if (data.price) {
+                        const fetchPrice = data.price * exchangeRate;
+                        const high_price = data.high_price * exchangeRate;
+                        const price1 = fetchPrice + smsprice
+                        const price = Math.floor(price1)
+                        const high_price1 = high_price + smsprice
+                        const highPrice = Math.floor(high_price1)
+                        successrate.value = `${data.success_rate} %`
+                        displaycharge.value = `₦ ${price} - ₦ ${highPrice}`;
+                        displaycharge1.value = price;
+                        priceInput.value = data.price;
+                        purchaseBTN.disabled = false;
+                      } else {
+                        displaycharge.value = 'Invalid';
+                        purchaseBTN.disabled = false;
+                      }
+                    } catch (error) {
+                      console.error('Error updating price:', error);
                     }
+                  };
 
-                    const data = await response.json();
+                  const updateStock = async () => {
+                    const value1 = select1.value;
+                    const value2 = select2.value;
 
-                    const totalStock = data[0].reduce((sum, item) => sum + item.stock, 0);
+                    try {
+                      const response = await fetch('/sms/all_stock', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          country: value1,
+                          service: value2,
+                        }),
+                      });
 
-                    if (totalStock) {
-                      stock.value = totalStock;
-                    } else {
-                      stock.value = '0';
-                      console.warn('Failed to fetch stock, using default value');
+                      if (!response.ok) {
+                        throw new Error('Failed to fetch options');
+                      }
+
+                      const data = await response.json();
+
+                      const totalStock = data[0].reduce((sum, item) => sum + item.stock, 0);
+
+                      if (totalStock) {
+                        stock.value = totalStock;
+                      } else {
+                        stock.value = '0';
+                        console.warn('Failed to fetch stock, using default value');
+                      }
+
+                      const stockDisplay = document.getElementById('stockDisplay');
+                      stockDisplay.innerHTML = '';
+
+                      let exchangeRate = 1700;
+                      let smsprice = 1000;
+
+                      const rateResponse = await fetch('/api/exchange-rate');
+                      const smsPriceResponse = await fetch('/api/sms-price');
+
+                      if (rateResponse.ok) {
+                        const rateData = await rateResponse.json();
+                        if (rateData.rate) {
+                          exchangeRate = rateData.rate;
+                        }
+                      } else {
+                        console.warn('Failed to fetch exchange rate, using default rate');
+                      }
+
+
+                      if (smsPriceResponse.ok) {
+                        const rateData = await smsPriceResponse.json();
+                        if (rateData.smsprice) {
+                          smsprice = Number(rateData.smsprice);
+                        }
+                      } else {
+                        console.warn('Failed to fetch exchange rate, using default rate');
+                      }
+
+                      data[0].forEach((item) => {
+                        const fetchPrice = item.price * exchangeRate;
+                        const price1 = fetchPrice + smsprice;
+                        const price = Math.floor(price1)
+                        displayprice = `${price}`;
+                        const stockItem = document.createElement('div');
+
+                        stockItem.innerHTML = `
+                      <div class="panel">
+                        <div class="mb-5">
+                            <form id="purchaseForm" action="/purchase/sms" method="post" class="space-y-5">
+                                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                                    <div>
+                                        <label for="browserFname">Pool</label>
+                                        <input id="disPool" type="text"
+                                           class="form-input" disabled value="${item.pool_name}"/>
+                                    </div>
+
+                                    <div hidden>
+                                        <input id="poolcountry" type="text"
+                                            name="poolcountry" class="form-input" value="${item.country}" />
+
+                                            <input id="poolcharge" type="text"
+                                            name="charge" class="form-input" value="${item.price}" />
+
+                                            <input id="poolservice" type="text"
+                                            name="poolservice" class="form-input" value="${item.service}"/>
+
+                                            <input id="pool" type="text"
+                                            name="pool" class="form-input" value="${item.pool_name}"/>
+
+                                            <input id="quantity" type="number"
+                                            name="quantity" class="form-input" value="1"/>
+
+                                            <input id="price" type="number" placeholder=""
+                                        class="form-input" value="${displayprice}" name="displaycharge1"/>
+
+                                    </div>
+                                    <div>
+                                        <label for="browserLname">Stock</label>
+                                        <input id="success-rate" type="text" placeholder=""
+                                            class="form-input" disabled value="${item.stock}" />
+                                    </div>
+                                    <div>
+                                        <label for="browserEmail">Price</label>
+                                        <input id="display-price" type="text" placeholder=""
+                                        class="form-input" disabled value="₦ ${displayprice}"/>
+                                    </div>
+                                </div>
+                                <button id="purchasePoolBTN" type="submit" class="btn btn-primary !mt-6">
+                                    Purchase
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    `;
+
+                        stockDisplay.appendChild(stockItem);
+                      });
+
+                      document.querySelectorAll('#purchaseForm').forEach((form) => {
+                        form.addEventListener('submit', async function (event) {
+                          event.preventDefault();
+
+                          const purchasePoolBTN = form.querySelector('#purchasePoolBTN');
+                          purchasePoolBTN.disabled = true;
+                          purchasePoolBTN.textContent = 'Processing...';
+
+                          try {
+                            const response = await fetch('/purchase/sms', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                poolcountry: form.querySelector('#poolcountry').value,
+                                poolservice: form.querySelector('#poolservice').value,
+                                quantity: form.querySelector('#quantity').value,
+                                pool: form.querySelector('#pool').value,
+                                displaycharge1: form.querySelector('#price').value,
+                                charge: form.querySelector('#poolcharge').value,
+                              })
+                            });
+
+                            const result = await response.json();
+
+                            if (response.ok) {
+                              toastr.success(result.message || 'Purchase successful', 'Success');
+
+                              setTimeout(() => {
+                                window.location.reload();
+                              }, 1000);
+                            } else {
+                              toastr.error(result.error || 'An error occurred', 'Error');
+                            }
+                          } catch (error) {
+                            toastr.error('A network error occurred, please try again later.', 'Network Error');
+                          } finally {
+                            purchasePoolBTN.disabled = false;
+                            purchasePoolBTN.textContent = 'Purchase';
+                          }
+                        });
+                      });
+
+                    } catch (error) {
+                      console.error('Error updating stock:', error);
                     }
+                  };
 
-                  } catch (error) {
-                    console.error('Error updating stock:', error);
-                  }
-                };
+                  const handleSelectChange = () => {
+                    updatePrice();
+                    updateStock();
+                  };
 
-                const handleSelectChange = () => {
+                  select1.addEventListener('change', handleSelectChange);
+                  select2.addEventListener('change', handleSelectChange);
+
                   updatePrice();
                   updateStock();
-                };
+                });
+              </script>
 
-                select1.addEventListener('change', handleSelectChange);
-                select2.addEventListener('change', handleSelectChange);
+              <script>
+                document.addEventListener('alpine:init', () => {
+                  // main section
+                  Alpine.data('scrollToTop', () => ({
+                    showTopButton: false,
+                    init() {
+                      window.onscroll = () => {
+                        this.scrollFunction();
+                      };
+                    },
 
-                updatePrice();
-                updateStock();
-              });
-            </script>
-
-            <script>
-              document.addEventListener('alpine:init', () => {
-                // main section
-                Alpine.data('scrollToTop', () => ({
-                  showTopButton: false,
-                  init() {
-                    window.onscroll = () => {
-                      this.scrollFunction();
-                    };
-                  },
-
-                  scrollFunction() {
-                    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-                      this.showTopButton = true;
-                    } else {
-                      this.showTopButton = false;
-                    }
-                  },
-
-                  goToTop() {
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
-                  },
-                }));
-
-                // theme customization
-                Alpine.data('customizer', () => ({
-                  showCustomizer: false,
-                }));
-
-                // sidebar section
-                Alpine.data('sidebar', () => ({
-                  init() {
-                    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
-                    if (selector) {
-                      selector.classList.add('active');
-                      const ul = selector.closest('ul.sub-menu');
-                      if (ul) {
-                        let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
-                        if (ele) {
-                          ele = ele[0];
-                          setTimeout(() => {
-                            ele.click();
-                          });
-                        }
-                      }
-                    }
-                  },
-                }));
-
-                // header section
-                Alpine.data('header', () => ({
-                  init() {
-                    const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
-                    if (selector) {
-                      selector.classList.add('active');
-                      const ul = selector.closest('ul.sub-menu');
-                      if (ul) {
-                        let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
-                        if (ele) {
-                          ele = ele[0];
-                          setTimeout(() => {
-                            ele.classList.add('active');
-                          });
-                        }
-                      }
-                    }
-                  },
-
-                  notifications: [
-                    {
-                      id: 1,
-                      profile: 'user-profile.jpeg',
-                      message: '<strong class="text-sm mr-1">StarCode Kh</strong>invite you to <strong>Prototyping</strong>',
-                      time: '45 min ago',
-                    },
-                    {
-                      id: 2,
-                      profile: 'profile-34.jpeg',
-                      message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-                      time: '9h Ago',
-                    },
-                    {
-                      id: 3,
-                      profile: 'profile-16.jpeg',
-                      message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
-                      time: '9h Ago',
-                    },
-                  ],
-
-                  messages: [
-                    {
-                      id: 1,
-                      image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-success-light dark:bg-success text-success dark:text-success-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>',
-                      title: 'Congratulations!',
-                      message: 'Your OS has been updated.',
-                      time: '1hr',
-                    },
-                    {
-                      id: 2,
-                      image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-info-light dark:bg-info text-info dark:text-info-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>',
-                      title: 'Did you know?',
-                      message: 'You can switch between artboards.',
-                      time: '2hr',
-                    },
-                    {
-                      id: 3,
-                      image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-danger-light dark:bg-danger text-danger dark:text-danger-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>',
-                      title: 'Something went wrong!',
-                      message: 'Send Reposrt',
-                      time: '2days',
-                    },
-                    {
-                      id: 4,
-                      image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-warning-light dark:bg-warning text-warning dark:text-warning-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">    <circle cx="12" cy="12" r="10"></circle>    <line x1="12" y1="8" x2="12" y2="12"></line>    <line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>',
-                      title: 'Warning',
-                      message: 'Your password strength is low.',
-                      time: '5days',
-                    },
-                  ],
-
-                  languages: [
-                    {
-                      id: 1,
-                      key: 'Khmer',
-                      value: 'kh',
-                    },
-                    {
-                      id: 2,
-                      key: 'Danish',
-                      value: 'da',
-                    },
-                    {
-                      id: 3,
-                      key: 'English',
-                      value: 'en',
-                    },
-                    {
-                      id: 4,
-                      key: 'French',
-                      value: 'fr',
-                    },
-                    {
-                      id: 5,
-                      key: 'German',
-                      value: 'de',
-                    },
-                    {
-                      id: 6,
-                      key: 'Greek',
-                      value: 'el',
-                    },
-                    {
-                      id: 7,
-                      key: 'Hungarian',
-                      value: 'hu',
-                    },
-                    {
-                      id: 8,
-                      key: 'Italian',
-                      value: 'it',
-                    },
-                    {
-                      id: 9,
-                      key: 'Japanese',
-                      value: 'ja',
-                    },
-                    {
-                      id: 10,
-                      key: 'Polish',
-                      value: 'pl',
-                    },
-                    {
-                      id: 11,
-                      key: 'Portuguese',
-                      value: 'pt',
-                    },
-                    {
-                      id: 12,
-                      key: 'Russian',
-                      value: 'ru',
-                    },
-                    {
-                      id: 13,
-                      key: 'Spanish',
-                      value: 'es',
-                    },
-                    {
-                      id: 14,
-                      key: 'Swedish',
-                      value: 'sv',
-                    },
-                    {
-                      id: 15,
-                      key: 'Turkish',
-                      value: 'tr',
-                    },
-                    {
-                      id: 16,
-                      key: 'Arabic',
-                      value: 'ae',
-                    },
-                  ],
-
-                  removeNotification(value) {
-                    this.notifications = this.notifications.filter((d) => d.id !== value);
-                  },
-
-                  removeMessage(value) {
-                    this.messages = this.messages.filter((d) => d.id !== value);
-                  },
-                }));
-
-                //invoice list
-                Alpine.data('invoiceList', () => ({
-                  selectedRows: [],
-                  items: [
-                    {
-                      id: 1,
-                      invoice: '081451',
-                      name: 'Laurie Fox',
-                      email: 'lauriefox@company.com',
-                      date: '15 Dec 2020',
-                      amount: '2275.45',
-                      status: 'Paid',
-                      action: 1,
-                    },
-                    {
-                      id: 2,
-                      invoice: '081452',
-                      name: 'Alexander Gray',
-                      email: 'alexGray3188@gmail.com',
-                      date: '20 Dec 2020',
-                      amount: '1044.00',
-                      status: 'Paid',
-                      action: 2,
-                    },
-                    {
-                      id: 3,
-                      invoice: '081681',
-                      name: 'James Taylor',
-                      email: 'jamestaylor468@gmail.com',
-                      date: '27 Dec 2020',
-                      amount: '20.00',
-                      status: 'Pending',
-                      action: 3,
-                    },
-                    {
-                      id: 4,
-                      invoice: '082693',
-                      name: 'Grace Roberts',
-                      email: 'graceRoberts@company.com',
-                      date: '31 Dec 2020',
-                      amount: '344.00',
-                      status: 'Paid',
-                      action: 4,
-                    },
-                    {
-                      id: 5,
-                      invoice: '084743',
-                      name: 'Donna Rogers',
-                      email: 'donnaRogers@hotmail.com',
-                      date: '03 Jan 2021',
-                      amount: '405.15',
-                      status: 'Paid',
-                      action: 5,
-                    },
-                    {
-                      id: 6,
-                      invoice: '086643',
-                      name: 'Amy Diaz',
-                      email: 'amy968@gmail.com',
-                      date: '14 Jan 2020',
-                      amount: '100.00',
-                      status: 'Paid',
-                      action: 6,
-                    },
-                    {
-                      id: 7,
-                      invoice: '086773',
-                      name: 'Nia Hillyer',
-                      email: 'niahillyer666@comapny.com',
-                      date: '20 Jan 2021',
-                      amount: '59.21',
-                      status: 'Pending',
-                      action: 7,
-                    },
-                    {
-                      id: 8,
-                      invoice: '087916',
-                      name: 'Mary McDonald',
-                      email: 'maryDonald007@gamil.com',
-                      date: '25 Jan 2021',
-                      amount: '79.00',
-                      status: 'Pending',
-                      action: 8,
-                    },
-                    {
-                      id: 9,
-                      invoice: '089472',
-                      name: 'Andy King',
-                      email: 'kingandy07@company.com',
-                      date: '28 Jan 2021',
-                      amount: '149.00',
-                      status: 'Paid',
-                      action: 9,
-                    },
-                    {
-                      id: 10,
-                      invoice: '091768',
-                      name: 'Vincent Carpenter',
-                      email: 'vincentcarpenter@gmail.com',
-                      date: '30 Jan 2021',
-                      amount: '400',
-                      status: 'Paid',
-                      action: 10,
-                    },
-                    {
-                      id: 11,
-                      invoice: '095841',
-                      name: 'Kelly Young',
-                      email: 'youngkelly@hotmail.com',
-                      date: '06 Feb 2021',
-                      amount: '49.00',
-                      status: 'Pending',
-                      action: 11,
-                    },
-                    {
-                      id: 12,
-                      invoice: '098424',
-                      name: 'Alma Clarke',
-                      email: 'alma.clarke@gmail.com',
-                      date: '10 Feb 2021',
-                      amount: '234.40',
-                      status: 'Paid',
-                      action: 12,
-                    },
-                  ],
-                  searchText: '',
-                  datatable: null,
-                  dataArr: [],
-
-
-
-                  checkAllCheckbox() {
-                    if (this.items.length && this.selectedRows.length === this.items.length) {
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  },
-
-                  checkAll(isChecked) {
-                    if (isChecked) {
-                      this.selectedRows = this.items.map((d) => {
-                        return d.id;
-                      });
-                    } else {
-                      this.selectedRows = [];
-                    }
-                  },
-
-                  setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                      this.dataArr[i] = [];
-                      for (let p in this.items[i]) {
-                        if (this.items[i].hasOwnProperty(p)) {
-                          this.dataArr[i].push(this.items[i][p]);
-                        }
-                      }
-                    }
-                  },
-
-                  searchInvoice() {
-                    return this.items.filter(
-                      (d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
-                    );
-                  },
-
-                  deleteRow(item) {
-                    if (confirm('Are you sure want to delete selected row ?')) {
-                      if (item) {
-                        this.items = this.items.filter((d) => d.id != item);
-                        this.selectedRows = [];
+                    scrollFunction() {
+                      if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                        this.showTopButton = true;
                       } else {
-                        this.items = this.items.filter((d) => !this.selectedRows.includes(d.id));
+                        this.showTopButton = false;
+                      }
+                    },
+
+                    goToTop() {
+                      document.body.scrollTop = 0;
+                      document.documentElement.scrollTop = 0;
+                    },
+                  }));
+
+                  // theme customization
+                  Alpine.data('customizer', () => ({
+                    showCustomizer: false,
+                  }));
+
+                  // sidebar section
+                  Alpine.data('sidebar', () => ({
+                    init() {
+                      const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
+                      if (selector) {
+                        selector.classList.add('active');
+                        const ul = selector.closest('ul.sub-menu');
+                        if (ul) {
+                          let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
+                          if (ele) {
+                            ele = ele[0];
+                            setTimeout(() => {
+                              ele.click();
+                            });
+                          }
+                        }
+                      }
+                    },
+                  }));
+
+                  // header section
+                  Alpine.data('header', () => ({
+                    init() {
+                      const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
+                      if (selector) {
+                        selector.classList.add('active');
+                        const ul = selector.closest('ul.sub-menu');
+                        if (ul) {
+                          let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
+                          if (ele) {
+                            ele = ele[0];
+                            setTimeout(() => {
+                              ele.classList.add('active');
+                            });
+                          }
+                        }
+                      }
+                    },
+
+                    notifications: [
+                      {
+                        id: 1,
+                        profile: 'user-profile.jpeg',
+                        message: '<strong class="text-sm mr-1">StarCode Kh</strong>invite you to <strong>Prototyping</strong>',
+                        time: '45 min ago',
+                      },
+                      {
+                        id: 2,
+                        profile: 'profile-34.jpeg',
+                        message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
+                        time: '9h Ago',
+                      },
+                      {
+                        id: 3,
+                        profile: 'profile-16.jpeg',
+                        message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
+                        time: '9h Ago',
+                      },
+                    ],
+
+                    messages: [
+                      {
+                        id: 1,
+                        image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-success-light dark:bg-success text-success dark:text-success-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>',
+                        title: 'Congratulations!',
+                        message: 'Your OS has been updated.',
+                        time: '1hr',
+                      },
+                      {
+                        id: 2,
+                        image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-info-light dark:bg-info text-info dark:text-info-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>',
+                        title: 'Did you know?',
+                        message: 'You can switch between artboards.',
+                        time: '2hr',
+                      },
+                      {
+                        id: 3,
+                        image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-danger-light dark:bg-danger text-danger dark:text-danger-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>',
+                        title: 'Something went wrong!',
+                        message: 'Send Reposrt',
+                        time: '2days',
+                      },
+                      {
+                        id: 4,
+                        image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-warning-light dark:bg-warning text-warning dark:text-warning-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">    <circle cx="12" cy="12" r="10"></circle>    <line x1="12" y1="8" x2="12" y2="12"></line>    <line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>',
+                        title: 'Warning',
+                        message: 'Your password strength is low.',
+                        time: '5days',
+                      },
+                    ],
+
+                    languages: [
+                      {
+                        id: 1,
+                        key: 'Khmer',
+                        value: 'kh',
+                      },
+                      {
+                        id: 2,
+                        key: 'Danish',
+                        value: 'da',
+                      },
+                      {
+                        id: 3,
+                        key: 'English',
+                        value: 'en',
+                      },
+                      {
+                        id: 4,
+                        key: 'French',
+                        value: 'fr',
+                      },
+                      {
+                        id: 5,
+                        key: 'German',
+                        value: 'de',
+                      },
+                      {
+                        id: 6,
+                        key: 'Greek',
+                        value: 'el',
+                      },
+                      {
+                        id: 7,
+                        key: 'Hungarian',
+                        value: 'hu',
+                      },
+                      {
+                        id: 8,
+                        key: 'Italian',
+                        value: 'it',
+                      },
+                      {
+                        id: 9,
+                        key: 'Japanese',
+                        value: 'ja',
+                      },
+                      {
+                        id: 10,
+                        key: 'Polish',
+                        value: 'pl',
+                      },
+                      {
+                        id: 11,
+                        key: 'Portuguese',
+                        value: 'pt',
+                      },
+                      {
+                        id: 12,
+                        key: 'Russian',
+                        value: 'ru',
+                      },
+                      {
+                        id: 13,
+                        key: 'Spanish',
+                        value: 'es',
+                      },
+                      {
+                        id: 14,
+                        key: 'Swedish',
+                        value: 'sv',
+                      },
+                      {
+                        id: 15,
+                        key: 'Turkish',
+                        value: 'tr',
+                      },
+                      {
+                        id: 16,
+                        key: 'Arabic',
+                        value: 'ae',
+                      },
+                    ],
+
+                    removeNotification(value) {
+                      this.notifications = this.notifications.filter((d) => d.id !== value);
+                    },
+
+                    removeMessage(value) {
+                      this.messages = this.messages.filter((d) => d.id !== value);
+                    },
+                  }));
+
+                  //invoice list
+                  Alpine.data('invoiceList', () => ({
+                    selectedRows: [],
+                    items: [
+                      {
+                        id: 1,
+                        invoice: '081451',
+                        name: 'Laurie Fox',
+                        email: 'lauriefox@company.com',
+                        date: '15 Dec 2020',
+                        amount: '2275.45',
+                        status: 'Paid',
+                        action: 1,
+                      },
+                      {
+                        id: 2,
+                        invoice: '081452',
+                        name: 'Alexander Gray',
+                        email: 'alexGray3188@gmail.com',
+                        date: '20 Dec 2020',
+                        amount: '1044.00',
+                        status: 'Paid',
+                        action: 2,
+                      },
+                      {
+                        id: 3,
+                        invoice: '081681',
+                        name: 'James Taylor',
+                        email: 'jamestaylor468@gmail.com',
+                        date: '27 Dec 2020',
+                        amount: '20.00',
+                        status: 'Pending',
+                        action: 3,
+                      },
+                      {
+                        id: 4,
+                        invoice: '082693',
+                        name: 'Grace Roberts',
+                        email: 'graceRoberts@company.com',
+                        date: '31 Dec 2020',
+                        amount: '344.00',
+                        status: 'Paid',
+                        action: 4,
+                      },
+                      {
+                        id: 5,
+                        invoice: '084743',
+                        name: 'Donna Rogers',
+                        email: 'donnaRogers@hotmail.com',
+                        date: '03 Jan 2021',
+                        amount: '405.15',
+                        status: 'Paid',
+                        action: 5,
+                      },
+                      {
+                        id: 6,
+                        invoice: '086643',
+                        name: 'Amy Diaz',
+                        email: 'amy968@gmail.com',
+                        date: '14 Jan 2020',
+                        amount: '100.00',
+                        status: 'Paid',
+                        action: 6,
+                      },
+                      {
+                        id: 7,
+                        invoice: '086773',
+                        name: 'Nia Hillyer',
+                        email: 'niahillyer666@comapny.com',
+                        date: '20 Jan 2021',
+                        amount: '59.21',
+                        status: 'Pending',
+                        action: 7,
+                      },
+                      {
+                        id: 8,
+                        invoice: '087916',
+                        name: 'Mary McDonald',
+                        email: 'maryDonald007@gamil.com',
+                        date: '25 Jan 2021',
+                        amount: '79.00',
+                        status: 'Pending',
+                        action: 8,
+                      },
+                      {
+                        id: 9,
+                        invoice: '089472',
+                        name: 'Andy King',
+                        email: 'kingandy07@company.com',
+                        date: '28 Jan 2021',
+                        amount: '149.00',
+                        status: 'Paid',
+                        action: 9,
+                      },
+                      {
+                        id: 10,
+                        invoice: '091768',
+                        name: 'Vincent Carpenter',
+                        email: 'vincentcarpenter@gmail.com',
+                        date: '30 Jan 2021',
+                        amount: '400',
+                        status: 'Paid',
+                        action: 10,
+                      },
+                      {
+                        id: 11,
+                        invoice: '095841',
+                        name: 'Kelly Young',
+                        email: 'youngkelly@hotmail.com',
+                        date: '06 Feb 2021',
+                        amount: '49.00',
+                        status: 'Pending',
+                        action: 11,
+                      },
+                      {
+                        id: 12,
+                        invoice: '098424',
+                        name: 'Alma Clarke',
+                        email: 'alma.clarke@gmail.com',
+                        date: '10 Feb 2021',
+                        amount: '234.40',
+                        status: 'Paid',
+                        action: 12,
+                      },
+                    ],
+                    searchText: '',
+                    datatable: null,
+                    dataArr: [],
+
+
+
+                    checkAllCheckbox() {
+                      if (this.items.length && this.selectedRows.length === this.items.length) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    },
+
+                    checkAll(isChecked) {
+                      if (isChecked) {
+                        this.selectedRows = this.items.map((d) => {
+                          return d.id;
+                        });
+                      } else {
                         this.selectedRows = [];
                       }
-                    }
-                  },
-                }));
-              });
-            </script>
+                    },
+
+                    setTableData() {
+                      this.dataArr = [];
+                      for (let i = 0; i < this.items.length; i++) {
+                        this.dataArr[i] = [];
+                        for (let p in this.items[i]) {
+                          if (this.items[i].hasOwnProperty(p)) {
+                            this.dataArr[i].push(this.items[i][p]);
+                          }
+                        }
+                      }
+                    },
+
+                    searchInvoice() {
+                      return this.items.filter(
+                        (d) =>
+                          (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
+                          (d.name && d.name.toLowerCase().includes(this.searchText)) ||
+                          (d.email && d.email.toLowerCase().includes(this.searchText)) ||
+                          (d.date && d.date.toLowerCase().includes(this.searchText)) ||
+                          (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
+                          (d.status && d.status.toLowerCase().includes(this.searchText))
+                      );
+                    },
+
+                    deleteRow(item) {
+                      if (confirm('Are you sure want to delete selected row ?')) {
+                        if (item) {
+                          this.items = this.items.filter((d) => d.id != item);
+                          this.selectedRows = [];
+                        } else {
+                          this.items = this.items.filter((d) => !this.selectedRows.includes(d.id));
+                          this.selectedRows = [];
+                        }
+                      }
+                    },
+                  }));
+                });
+              </script>
 
 </body>
 

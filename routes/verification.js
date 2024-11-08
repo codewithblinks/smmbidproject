@@ -509,5 +509,83 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const { poolcountry, poolservice, pool, quantity, charge } = req.body;
+  const displaycharge1 = Number(req.body.displaycharge1);
+
+  try {
+    await db.query('BEGIN');
+
+    const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
+    const user = result.rows[0];
+
+    if (!user || user.balance < displaycharge1) {
+      await db.query("ROLLBACK");
+      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
+    }
+
+      const form = new FormData();
+      form.append('country', poolcountry);
+      form.append('service', poolservice);
+      form.append('pool', pool);
+      form.append('quantity', quantity);
+
+      const headers = {
+        ...form.getHeaders(),  
+        'Authorization': `Bearer ${BEARER_TOKEN}`
+
+      };
+
+      const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
+      const data = response.data;
+
+      const orderResult = await db.query("INSERT INTO sms_order (user_id, phone_number, order_id, country, service, cost, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        [userId, data.phonenumber, data.order_id, data.country, data.service, charge, displaycharge1])
+
+        if (orderResult.rowCount === 0) {
+          await db.query('ROLLBACK');
+          return res.status(500).json({ error: 'Failed to record the order.' });
+        }
+
+        await db.query(`
+          INSERT INTO notifications (user_id, type, message) 
+          VALUES ($1, $2, $3)`, 
+          [userId, 'purchase', 
+            `You purchase a Phone Number for ${data.service} Verification with the order id ${data.order_id} Amount: ₦${displaycharge1}` 
+          ])
+
+      await db.query('UPDATE userprofile SET balance = balance - $1 WHERE id = $2', [displaycharge1, userId]);
+
+      await db.query('COMMIT');
+
+      return res.json({ message: data.message});
+
+  } catch (error) {
+    await db.query('ROLLBACK');
+    console.error('Error processing order:', error);
+
+    if (error.response) {
+      const errType = error.response.data.type;
+
+    if (errType === "BALANCE_ERROR") {
+      return res.status(400).json({ error: 'Service currently unavailable, try later or contact support' });
+    } else if (errType === "OUT_OF_STOCK") {
+      return res.status(400).json({ error: error.response.data.errors?.message || 'Out of stock' });
+    } else if (errType === "PRICE_NOT_FOUND") {
+      return res.status(400).json({ error: error.response.data[0]?.message || 'Price not found' });
+    } else {
+      return res.status(400).json({ error: error.response.data?.message || 'Unknown error' });
+    }
+    } else if (error.request) {
+      console.error('No response received from API:', error.request);
+      return res.status(500).json({ error: 'Network error, try again later' });
+    } else {
+      console.error('Error setting up request:', error.message);
+      return res.status(500).json({ error: 'Error setting up request' });
+    }
+  }
+});
+
 
 export default router;
