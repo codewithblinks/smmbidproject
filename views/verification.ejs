@@ -1220,7 +1220,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           exchangeRate = rateData.rate;
                         }
                       } else {
-                        console.warn('Failed to fetch exchange rate, using default rate');
                       }
 
 
@@ -1230,7 +1229,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           smsprice = Number(rateData.smsprice);
                         }
                       } else {
-                        console.warn('Failed to fetch exchange rate, using default rate');
                       }
 
                       if (data.price) {
@@ -1282,7 +1280,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         stock.value = totalStock;
                       } else {
                         stock.value = '0';
-                        console.warn('Failed to fetch stock, using default value');
                       }
 
                       const stockDisplay = document.getElementById('stockDisplay');
@@ -1300,7 +1297,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           exchangeRate = rateData.rate;
                         }
                       } else {
-                        console.warn('Failed to fetch exchange rate, using default rate');
                       }
 
 
@@ -1310,7 +1306,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           smsprice = Number(rateData.smsprice);
                         }
                       } else {
-                        console.warn('Failed to fetch exchange rate, using default rate');
                       }
 
                       data[0].forEach((item) => {

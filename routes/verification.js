@@ -58,7 +58,7 @@ router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
     form.append('service', service);
 
     const headers = {
-      ...form.getHeaders(),  // Include form data headers
+      ...form.getHeaders(),
       'Authorization': `Bearer ${BEARER_TOKEN}`
 
     };
@@ -71,7 +71,6 @@ router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
 
   } catch (err) {
     console.error(err.message);
-    console.log(err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -87,9 +86,7 @@ router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
     form.append('service', service);
 
     const headers = {
-      ...form.getHeaders(),  
-      'Authorization': `Bearer ${BEARER_TOKEN}`
-
+      ...form.getHeaders(),
     };
 
     const response = await axios.post('https://api.smspool.net/sms/all_stock', form, { headers });
@@ -116,7 +113,7 @@ router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res
     form.append('web', web);
 
     const headers = {
-      ...form.getHeaders(),  // Include form data headers
+      ...form.getHeaders(),
       'Authorization': `Bearer ${BEARER_TOKEN}`
 
     };
@@ -129,7 +126,6 @@ router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res
 
   } catch (err) {
     console.error(err.message);
-    console.log(err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -154,8 +150,6 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
 
     const headers = {
       ...form.getHeaders(),
-      'Authorization': `Bearer ${BEARER_TOKEN}`
-
     };
 
     const response = await axios.post('https://api.smspool.net/request/active', form, { headers });
@@ -201,11 +195,10 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
 
     const headers = {
       ...form.getHeaders(),
-      'Authorization': `Bearer ${BEARER_TOKEN}`,
     };
 
     const response = await axios.post('https://api.smspool.net/request/history', form, { headers });
-    const orders = response.data; // Ensure this matches the actual response format from the API
+    const orders = response.data; 
 
     for (const order of orders) {
       if (orderCodes.includes(order.order_code)) {
@@ -252,7 +245,15 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
   }
 };
 
+let isRunning = false;
+
 cron.schedule('* * * * *', async () => {
+  if (isRunning) {
+    console.log('Previous job still running. Skipping this minute.');
+    return;
+  }
+
+  isRunning = true;
 
   try {
     const userIds = await fetchAllUserIds();
@@ -262,8 +263,9 @@ cron.schedule('* * * * *', async () => {
       await fetchAndFilterExpiredOrders(orderCodes);
     }
   } catch (error) {
-    console.log(error);
     console.error('Error during scheduled task:', error);
+  } finally {
+    isRunning = false;
   }
 });
 
@@ -338,11 +340,10 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
 
     const form = new FormData();
     form.append('orderid', orderId);
+    form.append('key', BEARER_TOKEN);
 
     const headers = {
       ...form.getHeaders(),
-      'Authorization': `Bearer ${BEARER_TOKEN}`
-
     };
 
     const response = await axios.post('https://api.smspool.net/sms/cancel', form, { headers });
@@ -394,11 +395,10 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
 
     const form = new FormData();
     form.append('orderid', orderId);
+    form.append('key', BEARER_TOKEN);
 
     const headers = {
       ...form.getHeaders(),
-      'Authorization': `Bearer ${BEARER_TOKEN}`
-
     };
 
     const response = await axios.post('https://api.smspool.net/sms/resend', form, { headers });
@@ -448,15 +448,14 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
     }
 
       const form = new FormData();
+      form.append('key', BEARER_TOKEN);
       form.append('country', country);
       form.append('service', service);
       form.append('pricing_option', pricing_option);
       form.append('quantity', quantity);
 
       const headers = {
-        ...form.getHeaders(),  
-        'Authorization': `Bearer ${BEARER_TOKEN}`
-
+        ...form.getHeaders(),
       };
 
       const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
@@ -526,15 +525,14 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
     }
 
       const form = new FormData();
+      form.append('key', BEARER_TOKEN);
       form.append('country', poolcountry);
       form.append('service', poolservice);
       form.append('pool', pool);
       form.append('quantity', quantity);
 
       const headers = {
-        ...form.getHeaders(),  
-        'Authorization': `Bearer ${BEARER_TOKEN}`
-
+        ...form.getHeaders(),
       };
 
       const response = await axios.post('https://api.smspool.net/purchase/sms', form, { headers });
