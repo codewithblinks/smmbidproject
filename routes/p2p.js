@@ -17,7 +17,6 @@ function generateTransferId() {
   return `${prefix}_${base64Id}`;
 }
 
-
 router.get("/product/adminorderhistory", ensureAuthenticated, userRole, async (req, res) => {
   const buyer_id = req.user.id;
 
@@ -100,7 +99,7 @@ const totalOrders = parseInt(countResult.rows[0].total_count, 10);
       totalPages: Math.ceil(totalOrders / limit),
     });
   } catch (error) {
-    console.log(error);
+    console.error("error fetching product history", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -143,7 +142,7 @@ router.get('/searchAdminProducts', ensureAuthenticated, async (req, res) => {
 
       res.json(processedProducts);
   } catch (error) {
-     console.log(error);
+     console.error("error searching products:", error);
       res.status(500).json({ error: 'An error occurred while searching for products' });
   }
 });
@@ -200,7 +199,7 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
       user, timeSince, notifications
     });
   } catch (error) {
-    console.log(error);
+    console.error("error get account puurchase page:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -280,7 +279,7 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
       return res.redirect("/all/accounts");
     }
   } catch (error) {
-    console.log(error);
+    console.error("error prchasing accouunt:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -337,7 +336,7 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
         } 
     }
   } catch (err) {
-    console.log(error);
+    console.error("error fetching purchased account",err);
     res.status(500).send("Server error");
   }
 }

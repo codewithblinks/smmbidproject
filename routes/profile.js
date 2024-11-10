@@ -10,8 +10,8 @@ const router = express.Router();
 
 function generateTransferId() {
   const prefix = "trans_ref";
-  const uniqueId = uuidv4(); // Generate a unique UUID
-  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
+  const uniqueId = uuidv4();
+  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex');
   const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
   return `${prefix}_${base64Id}`;
 }
@@ -57,7 +57,7 @@ function generateTransferId() {
           referralLink, totals
          });
       } catch (error) {
-        console.log(error);
+        console.error("error getting profile", error);
         res.status(500).json({ error: 'Internal server error' });
       }
   });
@@ -122,7 +122,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
         totalPages: Math.ceil(totalcommissions / limit), messages: req.flash()
       })
     } catch (error) {
-        console.log(error);
+        console.error("error getting referral", error);
         res.status(500).json({ error: 'Internal server error' });
     }
   })

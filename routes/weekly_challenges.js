@@ -65,7 +65,6 @@ async function calculateUserProgress(userId) {
     return { totalSuccessfulTransaction, progress };
     
   } catch (error) {
-    console.log(error);
     console.error('Error calculating user progress:', error);
   }
 }
@@ -80,7 +79,7 @@ try {
         progress
        });
 } catch (error) {
-  console.log(error);
+  console.error("error at weekly-progress", error);
 }
 
 });
@@ -95,7 +94,7 @@ async function resetChallenges() {
     WHERE week_start < $1 AND challenge_complete = FALSE;
   `, [startOfWeek]);
   } catch (error) {
-    console.log(error);
+    console.error("error at resetChallenges", error);
     console.error('Error fetching completed challenges:', error.message);
   }
 }
@@ -143,7 +142,6 @@ async function awardPrizes() {
   
     console.log('Prizes awarded to all users who completed the challenge.');
   } catch (error) {
-    console.log(error)
     console.error('Error fetching completed challenges:', error.message);
   }
 }

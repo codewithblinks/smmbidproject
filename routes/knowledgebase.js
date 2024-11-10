@@ -8,8 +8,8 @@ const router = express.Router();
 
 function generateTransferId() {
     const prefix = "ticket";
-    const uniqueId = uuidv4(); // Generate a unique UUID
-    const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
+    const uniqueId = uuidv4();
+    const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex');
     const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 6);
     return `${prefix}${base64Id}`;
   }

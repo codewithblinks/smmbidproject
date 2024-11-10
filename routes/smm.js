@@ -117,7 +117,6 @@ router.get("/exchange-rate", async (req, res) => {
     const rates = await getExchangeRate();
     res.json({ rate: rates.NGN });
   } catch (error) {
-    console.log(error);
     console.error("Error fetching exchange rate:", error);
     res.status(500).json({ error: "Unable to fetch exchange rate" });
   }
@@ -169,8 +168,7 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       filteredData, notifications, timeSince
     });
   } catch (error) {
-    console.log(error);
-    console.error(error.message);
+    console.error("error at smm route", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -185,8 +183,7 @@ router.get("/smm/options", ensureAuthenticated, async (req, res) => {
     const data = response.data;
     res.json(data);
   } catch (error) {
-    console.log(error);
-    console.error(error.message);
+    console.error("error getting smm options", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });

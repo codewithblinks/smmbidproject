@@ -188,7 +188,7 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
     return res.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' });
 
   } catch (error) {
-    console.log(error);
+    console.error("error registering user", error);
     return res.status(500).json({ success: false, errors: ['An error occurred. Please try again.'] });
   }
 });
@@ -236,7 +236,6 @@ router.post("/register-admin", async (req, res) => {
               return res.redirect('/login/admin');
             } else {
               req.flash('success', 'Registration successful! Please log in.');
-              console.log("success");
               res.redirect("/login/admin");
             }
           });
@@ -244,7 +243,7 @@ router.post("/register-admin", async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.error("error with admin registration", err);
     req.flash('error', 'An error occurred. Please try again.');
     res.redirect('/register-admin');
   }
@@ -283,7 +282,7 @@ router.post('/verify-email', async (req, res) => {
       res.redirect('/login');
 
   } catch (err) {
-      console.log(err);
+      console.log("error verifying email", err);
       req.flash('error', 'An error occurred. Please try again.');
       res.redirect('/verifyemail');
   }
@@ -334,7 +333,6 @@ router.post('/resend-verification-code', async (req, res) => {
       return res.redirect('/verifyemail');
 
   } catch (err) {
-      console.log(err);
       req.flash('error', 'An error occurred. Please try again.');
       res.redirect('/resend-verification-code');
   }

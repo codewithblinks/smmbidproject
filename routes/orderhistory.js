@@ -47,7 +47,7 @@ const router = express.Router();
         notifications, timeSince
       })
     } catch (error) {
-        console.log(error);;
+        console.error("error fetching order history:", error);;
         res.status(500).json({ error: 'Internal Server Error' });
     }
   });

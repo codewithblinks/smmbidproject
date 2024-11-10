@@ -27,8 +27,15 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
         'Authorization': `Bearer ${BEARER_TOKEN}`
       }
     });
+
+    const poolResponse = await axios.post('https://api.smspool.net/pool/retrieve_all', {
+      headers: {
+        'Authorization': `Bearer ${BEARER_TOKEN}`
+      }
+    });
     const countries = countryResponse.data;
     const services = serviceResponse.data;
+    const pools = poolResponse.data;
 
     const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
     const userDetails = userResult.rows[0];
@@ -39,38 +46,76 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
   );
 
   const notifications = notificationsResult.rows;
-      res.render('verification', { messages: req.flash(), user: userDetails, countries, services, notifications, timeSince });
+      res.render('verification', { messages: req.flash(), user: userDetails, countries, services, pools, notifications, timeSince });
 
   } catch (error) {
-    console.log(error);
-    console.error(error.message);
+    console.error("error at verification", error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
+// router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
+
+//   const { country, service} = req.body;
+
+//   try {
+//     const form = new FormData();
+//     form.append('country', country);
+//     form.append('service', service);
+
+//     const headers = {
+//       ...form.getHeaders(),
+//       'Authorization': `Bearer ${BEARER_TOKEN}`
+
+//     };
+
+//     const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
+
+//     const data = response.data;
+
+//     res.json(data)
+
+//   } catch (err) {
+//     console.error("erro at smmpool/options", err.message);
+//     res.status(500).json({ err: 'Internal server error' });
+//   }
+// });
+
+router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) => {
 
   const { country, service} = req.body;
 
   try {
     const form = new FormData();
+    form.append('key', BEARER_TOKEN);
     form.append('country', country);
     form.append('service', service);
 
     const headers = {
       ...form.getHeaders(),
-      'Authorization': `Bearer ${BEARER_TOKEN}`
-
     };
 
-    const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
+    const response = await axios.post('https://api.smspool.net/sms/all_stock', form, { headers });
 
-    const data = response.data;
+    const dataRes = response.data;
+    const data = dataRes.flat();
 
-    res.json(data)
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'No data found' });
+    }
+
+    const prices = data.map(item => Number(item.price));
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    res.json({
+      minPriceRange: `${minPrice.toFixed(2)}`,
+      maxPriceRange: `${maxPrice.toFixed(2)}`,
+      pools: data // Send the entire pool data
+    });
 
   } catch (err) {
-    console.error(err.message);
+    console.error("error at all_stock", err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -96,7 +141,7 @@ router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
     res.json(data)
 
   } catch (err) {
-    console.error(err.message);
+    console.error("error at all_stock", err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -125,7 +170,7 @@ router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res
     res.json(data)
 
   } catch (err) {
-    console.error(err.message);
+    console.error("error at pool/retrieve_valid", err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -291,7 +336,6 @@ const getPhoneNumbersByStatus = async (userId) => {
       expiredNumbers: expiredResult.rows
     };
   } catch (error) {
-    console.log(error);
     console.error('Error fetching phone numbers by status:', error);
     return { pendingNumbers: [], completedNumbers: [],  expiredNumbers: []};
   }
@@ -310,7 +354,6 @@ router.get("/sms/check", ensureAuthenticated, async (req, res) => {
     res.json({ filteredOrders, allNumbers });
 
   } catch (error) {
-    console.log(error);
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -433,16 +476,19 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
 
 router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
-  const { country, service, pricing_option, quantity, charge } = req.body;
+  const { country, service, pricing_option, quantity, pool } = req.body;
   const displaycharge1 = Number(req.body.displaycharge1);
+  const charge = Number(req.body.charge);
+
 
   try {
     await db.query('BEGIN');
 
     const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
     const user = result.rows[0];
+    const userBalance = Number(user.balance)
 
-    if (!user || user.balance < displaycharge1) {
+    if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
       return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
     }
@@ -451,6 +497,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
       form.append('key', BEARER_TOKEN);
       form.append('country', country);
       form.append('service', service);
+      form.append('pool', pool);
       form.append('pricing_option', pricing_option);
       form.append('quantity', quantity);
 
@@ -518,8 +565,9 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
 
     const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
     const user = result.rows[0];
+    const userBalance = Number(user.balance)
 
-    if (!user || user.balance < displaycharge1) {
+    if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
       return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
     }

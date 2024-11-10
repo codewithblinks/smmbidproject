@@ -799,7 +799,13 @@
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="text" name="displaycharge1" class="form-input" required>
+                        <input id="displaycharge1" type="number" name="displaycharge1" class="form-input" required>
+                      </div>
+                    </div>
+                    <div class="mt-4" hidden>
+                      <div>
+                        <label for="charge">Price range</label>
+                        <input name="pool" id="pools" type="number" class="form-input" required>
                       </div>
                     </div>
                   </div>
@@ -953,9 +959,10 @@
                         country: document.getElementById('country-select').value,
                         service: document.getElementById('service-select').value,
                         quantity: document.getElementById('quantity').value,
-                        pricing_option: document.getElementById('pricing_option').value,
+                        pool: document.getElementById('pools').value,
                         displaycharge1: document.getElementById('displaycharge1').value,
-                        charge: document.getElementById('charge').value
+                        charge: document.getElementById('charge').value,
+                        pricing_option: document.getElementById('pricing_option').value,
                       })
                     });
 
@@ -1177,6 +1184,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const displaycharge1 = document.getElementById('displaycharge1');
                   const successrate = document.getElementById('successrate');
                   const stock = document.getElementById('stock');
+                  const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
                   const originalConsoleLog = console.log;
@@ -1191,7 +1199,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     const value2 = select2.value;
 
                     try {
-                      const response = await fetch('/smmpool/options', {
+                      const response = await fetch('/smmpool/retrieve_prices', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1209,44 +1217,74 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                       const data = await response.json();
 
                       let exchangeRate = 1500;
-                      let smsprice = 2
+                      let smsprice = 1000;
+                      let availablePools = [];
+                      let cheapestPool = null;
 
                       const rateResponse = await fetch('/api/exchange-rate');
-                      const smsPriceResponse = await fetch('/api/sms-price');
-
                       if (rateResponse.ok) {
-                        const rateData = await rateResponse.json();
-                        if (rateData.rate) {
-                          exchangeRate = rateData.rate;
-                        }
-                      } else {
+                      const rateData = await rateResponse.json();
+                      if (rateData.rate) exchangeRate = rateData.rate;
                       }
 
-
+                      const smsPriceResponse = await fetch('/api/sms-price');
                       if (smsPriceResponse.ok) {
-                        const rateData = await smsPriceResponse.json();
-                        if (rateData.smsprice) {
-                          smsprice = Number(rateData.smsprice);
+                        const smsPriceData = await smsPriceResponse.json();
+                        if (smsPriceData.smsprice) smsprice = Number(smsPriceData.smsprice);
                         }
-                      } else {
-                      }
 
-                      if (data.price) {
-                        const fetchPrice = data.price * exchangeRate;
-                        const high_price = data.high_price * exchangeRate;
-                        const price1 = fetchPrice + smsprice
-                        const price = Math.floor(price1)
-                        const high_price1 = high_price + smsprice
-                        const highPrice = Math.floor(high_price1)
-                        successrate.value = `${data.success_rate} %`
-                        displaycharge.value = `₦ ${price} - ₦ ${highPrice}`;
-                        displaycharge1.value = price;
-                        priceInput.value = data.price;
-                        purchaseBTN.disabled = false;
-                      } else {
+                      if (!data.pools || data.pools.length === 0) {
                         displaycharge.value = 'Invalid';
                         purchaseBTN.disabled = false;
+                        return;
                       }
+
+                      availablePools = data.pools.filter(pool => parseFloat(pool.stock) > 0);
+
+                      if (availablePools.length > 0) {
+                      cheapestPool = availablePools.reduce((cheapest, current) => 
+                        parseFloat(current.price) < parseFloat(cheapest.price) ? current : cheapest
+                      );
+                      } else {
+                      displaycharge.value = 'No pools with stock available';
+                      return;
+                      }
+
+                      const minPrice = Number(data.minPriceRange) * exchangeRate + smsprice;
+                      const maxPrice = Number(data.maxPriceRange) * exchangeRate + smsprice;
+                      const finalMinPrice = Math.floor(minPrice);
+                      const finalMaxPrice = Math.floor(maxPrice);
+
+                      successrate.value = `${data.success_rate} %`;
+                      displaycharge.value = `₦ ${finalMinPrice} - ₦ ${finalMaxPrice}`;
+
+                      const finalCheapestPrice = Math.floor((parseFloat(cheapestPool.price) * exchangeRate) + smsprice);
+                      displaycharge1.value = finalCheapestPrice;
+                      pools.value = cheapestPool.pool;
+                      priceInput.value = Number(cheapestPool.price);
+                      purchaseBTN.disabled = false;
+
+                      // if (data.pools) {
+                      //   const minPrice = Number(data.minPriceRange)
+                      //   const maxPrice = Number(data.maxPriceRange)
+                      //   const fetchPrice = minPrice * exchangeRate;
+                      //   const high_price = maxPrice * exchangeRate;
+                      //   const price1 = fetchPrice + smsprice;
+                      //   const price = Math.floor(price1);
+                      //   const high_price1 = high_price + smsprice;
+                      //   const highPrice = Math.floor(high_price1);
+                      //   successrate.value = `${data.success_rate} %`;
+                      //   displaycharge.value = `₦ ${price} - ₦ ${highPrice}`;
+                      //   const finalPrice = Number(cheapestPool.price) * exchangeRate;
+                      //   const poolPriceResult = finalPrice + smsprice;
+                      //   displaycharge1.value = Math.floor(poolPriceResult);
+                      //   pools.value = cheapestPool.pool;
+                      //   priceInput.value = Number(cheapestPool.price);
+                      //   purchaseBTN.disabled = false;
+                      // } else {
+                      //   displaycharge.value = 'Invalid';
+                      //   purchaseBTN.disabled = false;
+                      // }
                     } catch (error) {
                       console.error('Error updating price:', error);
                     }

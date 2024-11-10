@@ -10,7 +10,7 @@ const router = express.Router();
           const { rows } = await db.query('SELECT * FROM notifications WHERE user_id = $1', [userId]);
           res.json(rows);
     } catch (error) {
-      console.log(error);
+      console.error("error getting user notifications", error);
     }
   });
 
