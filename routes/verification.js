@@ -54,32 +54,32 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
   }
 });
 
-// router.post("/smmpool/options", ensureAuthenticated, async (req, res) => {
+router.post("/smmpool/SuccessRate", ensureAuthenticated, async (req, res) => {
 
-//   const { country, service} = req.body;
+  const { country, service} = req.body;
 
-//   try {
-//     const form = new FormData();
-//     form.append('country', country);
-//     form.append('service', service);
+  try {
+    const form = new FormData();
+    form.append('country', country);
+    form.append('service', service);
 
-//     const headers = {
-//       ...form.getHeaders(),
-//       'Authorization': `Bearer ${BEARER_TOKEN}`
+    const headers = {
+      ...form.getHeaders(),
+      'Authorization': `Bearer ${BEARER_TOKEN}`
 
-//     };
+    };
 
-//     const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
+    const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
 
-//     const data = response.data;
+    const data = response.data;
 
-//     res.json(data)
+    res.json(data)
 
-//   } catch (err) {
-//     console.error("erro at smmpool/options", err.message);
-//     res.status(500).json({ err: 'Internal server error' });
-//   }
-// });
+  } catch (err) {
+    console.error("erro at smmpool/options", err.message);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
 
 router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) => {
 
@@ -369,7 +369,6 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
   }
 
   try {
-    // Check if the order exists and is eligible for refund
     const orderResult = await db.query('SELECT * FROM sms_order WHERE order_id = $1', [orderId]);
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Order not found' });
