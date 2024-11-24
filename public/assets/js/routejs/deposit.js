@@ -1,7 +1,6 @@
 // cryptomus deposit
  const cryptomusDepositForm = document.getElementById('cryptomus-depositForm');
   const cryptomusSubmitBTN = document.getElementById('cryptomus-submitBtn');
-  const userCurrency = "<%= user.currency %>";
 
   cryptomusDepositForm.addEventListener('submit', async (e) => {
     e.preventDefault();

@@ -229,8 +229,6 @@ CREATE TABLE pending_deposits (
 );
 
 -- remember to add
-ALTER TABLE userprofile ADD COLUMN currency VARCHAR(3) DEFAULT 'NGN';
-ALTER TABLE transactions ADD COLUMN currency VARCHAR(3) DEFAULT 'NGN';
 
 
 
