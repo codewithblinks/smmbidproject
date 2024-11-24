@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../../db/index.js";
 import ensureAuthenticated, {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js";
+import getExchangeRate from "../../controller/exchangeRateService.js";
 
 const router = express.Router();
 
@@ -104,6 +105,32 @@ router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res
     } catch (error) {
        console.error("Error fetching sms price", error);
       res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  router.get('/api/api/exchange-rate', ensureAuthenticated, async (req, res) => {
+    const userId = req.user.id;
+    try {
+      const rate = await getExchangeRate();
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
+      const userDetails = userResult.rows[0];
+
+      if (!userDetails) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+     
+      res.json({
+        rate, userDetails
+      }
+        );
+    } catch (err) {
+      console.error('Error fetching exchange rate:', err.message);
+      res.status(500).json({ error: 'Failed to fetch exchange rate' });
     }
   });
   

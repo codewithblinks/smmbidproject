@@ -1070,9 +1070,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           });
                           const result = await response.json();
 
-                          console.log("result", result)
-                          console.log("result type", result.success)
-
                           if (result.success === true) {
                             location.reload();
                             toastr.success(`The order has been cancelled, and you have been refunded`);
@@ -1187,8 +1184,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  const originalConsoleLog = console.log;
-                  console.log = function () { };
+                  // const originalConsoleLog = console.log;
+                  // console.log = function () { };
 
 
                   NiceSelect.bind((select1), { searchable: true });
@@ -1252,11 +1249,14 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   // Calculate and update price range
                   let exchangeRate = 1500; // Default rate
                   let smsprice = 1000; // Default SMS price
+                  let exchangeRateApi = 1500;
+                  let userCurrency = 'NGN';
 
                   try {
-                    const [rateResponse, smsPriceResponse] = await Promise.all([
+                    const [rateResponse, smsPriceResponse, getUserResponses] = await Promise.all([
                       fetch('/api/exchange-rate'),
                       fetch('/api/sms-price'),
+                      fetch('/api/api/exchange-rate'),
                     ]);
 
                     if (rateResponse.ok) {
@@ -1268,15 +1268,25 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                       const smsPriceData = await smsPriceResponse.json();
                       smsprice = Number(smsPriceData.smsprice) || smsprice;
                     }
+
+                    if (smsPriceResponse.ok) {
+                      const userData = await getUserResponses.json();
+                      exchangeRateApi = userData.rate.NGN;
+                      userCurrency = userData.userDetails.currency;
+                    }
                   } catch (error) {
                     console.warn('Error fetching exchange rate or SMS price:', error);
                   }
 
                   const minPrice = Math.floor(priceData.minPriceRange * exchangeRate + smsprice);
                   const maxPrice = Math.floor(priceData.maxPriceRange * exchangeRate + smsprice);
+                  const convertedMinPrice = (minPrice / exchangeRateApi).toFixed(3)
+                  const convertedMaxPrice = (maxPrice / exchangeRateApi).toFixed(3)
 
-                  displaycharge.value = `₦ ${minPrice} - ₦ ${maxPrice}`;
-
+                  displaycharge.value = userCurrency === 'USD' 
+                  ? `$${convertedMinPrice} - $${convertedMaxPrice}` 
+                  : `₦${minPrice} - ₦${maxPrice}`;
+                  
                   // Update cheapest pool price
                   const availablePools = priceData.pools?.filter(pool => parseFloat(pool.stock) > 0) || [];
                   if (availablePools.length > 0) {
@@ -1285,9 +1295,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     );
 
                     const cheapestPrice = Math.floor(parseFloat(cheapestPool.price) * exchangeRate + smsprice);
-
-                    console.log(cheapestPrice)
-                    console.log(typeof cheapestPrice)
 
                     displaycharge1.value = cheapestPrice;
                     pools.value = cheapestPool.pool;
@@ -1306,6 +1313,13 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   stockData[0]?.forEach(item => {
                     const stockItem = document.createElement('div');
+                    const itemPrice = Math.floor(item.price * exchangeRate + smsprice);
+                    const displayPrice =
+                    userCurrency === 'USD'
+                    ? (itemPrice / exchangeRateApi).toFixed(3)
+                    : itemPrice;
+                    console.log(userCurrency)
+
                     stockItem.innerHTML = `
                          <div class="panel">
                         <div class="mb-5">
@@ -1345,7 +1359,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                                     <div>
                                         <label for="browserEmail">Price</label>
                                         <input id="display-price" type="text" placeholder=""
-                                        class="form-input" disabled value="₦ ${Math.floor(item.price * exchangeRate + smsprice)}"/>
+                                        class="form-input" disabled value="₦ ${displayPrice.toLocaleString()}"/>
                                     </div>
                                 </div>
                                 <button id="purchasePoolBTN" type="submit" class="btn btn-primary !mt-6">

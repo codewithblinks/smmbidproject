@@ -338,37 +338,41 @@
                 </svg>
               </a>
             </div>
+            <!-- cu -->
+
+            <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
+              <a href="javascript:;"
+                class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                @click="toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+              </a>
+              <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark currency-list">
+                <% if (user.currency === "USD") { %>
+                  <li data-currency="NGN">
+                     <a href="javascript:;" class="hover:text-primary">
+                       <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
+                     </a>
+                   </li>
+                   <% } else { %>
+                     <li data-currency="USD">
+                     <a href="javascript:;" class="hover:text-primary">
+                       <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
+                     </a>
+                   </li>
+                <% } %>
+
+              </ul>
+            </div>
             <div x-data="header"
               class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
               <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
-                <form
-                  class="absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0"
-                  :class="{'!block' : search}" @submit.prevent="search = false">
-                  <div class="relative">
-                    <input type="text"
-                      class="peer form-input bg-gray-100 placeholder:tracking-widest ltr:pl-9 ltr:pr-9 rtl:pr-9 rtl:pl-9 sm:bg-transparent ltr:sm:pr-4 rtl:sm:pl-4"
-                      placeholder="Search..." />
-                    <button type="button"
-                      class="absolute inset-0 h-9 w-9 appearance-none peer-focus:text-primary ltr:right-auto rtl:left-auto">
-                      <svg class="mx-auto" width="16" height="16" viewbox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5">
-                        </circle>
-                        <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                        </path>
-                      </svg>
-                    </button>
-                    <button type="button"
-                      class="absolute top-1/2 block -translate-y-1/2 hover:opacity-80 ltr:right-2 rtl:left-2 sm:hidden"
-                      @click="search = false">
-                      <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </form>
+               
                 <button type="button"
                   class="search_btn rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 dark:bg-dark/40 dark:hover:bg-dark/60 sm:hidden"
                   @click="search = ! search">
@@ -732,7 +736,7 @@
                   <h5 class="text-lg font-semibold">Total Balance</h5>
 
                   <div class="relative whitespace-nowrap text-xl">
-                    ₦ <%= user.balance %>
+                   <%= user.currency === 'NGN' ? '₦' : '$'%><%= convertedPrice %>
                       <span class="mt-1 table rounded bg-[#4361ee] p-1 text-xs text-[#d3d3d3] ltr:ml-auto rtl:mr-auto">+
                         2453</span>
                   </div>
@@ -805,7 +809,7 @@
                     <div>
                       <div>Total Deposit</div>
                       <div class="text-lg text-[#009688]">
-                        ₦ <%= totalDeposit %>
+                        <%= user.currency === 'NGN' ? '₦' : '$'%><%= totalDeposit %>
                       </div>
                     </div>
                     <div x-ref="totalVisit" class="overflow-hidden"></div>
@@ -813,9 +817,9 @@
 
                   <div>
                     <div>
-                      <div>Total withdrawal</div>
+                      <div>Total Spent</div>
                       <div class="text-lg text-[#f8538d]">
-                        ₦ <%= totalWithdrawal %>
+                        <%= user.currency === 'NGN' ? '₦' : '$'%><%= userTotalSpent %>
                       </div>
                     </div>
                     <div x-ref="paidVisit" class="overflow-hidden"></div>
@@ -826,11 +830,11 @@
               <div class="panel h-full">
                 <div class="mb-5 items-center justify-between dark:text-white-light">
                   <h5 class="text-lg font-semibold">Weekly Transaction Challenge</h5>
-                  <p id="show"><small>Complete transactions totaling ₦20,000 to win a prize!</small></p>
+                  <p id="show"><small>Complete transactions totaling <%= user.currency === 'USD' ? '$11.947' : '₦20,000'%> to win a prize!</small></p>
                   <p style="display: none;" id="win"><small>Congratulations you have completed this week Challenge</small></p>
                 </div>
                 <div class="my-10 text-3xl font-bold text-[#e95f2b]">
-                  <small><span id="progress-text">₦ 0 / ₦ 20,000</span></small>
+                  <small><span id="progress-text"></span></small>
                   <span class="text-sm text-black ltr:mr-1 rtl:ml-1 dark:text-white-light">this week
                   </span>
                   <svg class="inline h-5 w-5 text-success" viewbox="0 0 24 24" fill="none"
@@ -981,11 +985,11 @@
                                 <i
                                   class="<%= getIconClass(products.account_type) %> h-4 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"></i>
                                 <p class="whitespace-nowrap">
-                                  <%= products.account_type%> <span class="block text-xs text-primary">Digital</span>
+                                  <%= products.account_type%> <span class="block text-xs text-primary">Account</span>
                                 </p>
                               </div>
                             </td>
-                            <td>₦<%= products.amount%>
+                            <td><%= user.currency === 'NGN' ? '₦' : '$'%><%= products.convertedProductPrice%>
                             </td>
                             <td>
                               <%= products.years%>
@@ -1062,6 +1066,7 @@
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
           <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
           <script src="../assets/js/notification.js"></script>
+          <script src="../assets/js/routejs/userDasboard.js"></script>
 
 
           <script>
@@ -1080,88 +1085,25 @@
           </script>
 
           <script>
-            async function fetchWeeklyProgress() {
-              try {
-                const response = await fetch('/weekly-progress');
-                const data = await response.json();
-
-                if (response.ok) {
-                  document.getElementById('progress-bar').style.width = data.progress + '%';
-                  document.getElementById('progress-bar-count').innerText = Math.floor(data.progress) + '%';
-                  document.getElementById('progress-text').innerText = ` ₦ ${data.totalSuccessfulTransaction} / ₦ 20,000.00`;
-
-                  const number = parseFloat(data.totalSuccessfulTransaction.replace(/,/g, ''));
-
-                  if (number  >= 20000 ) {
-                    document.getElementById('win').style.display = 'block';
-                    document.getElementById('show').style.display = 'none';
-
-                  }
-
-                } else {
-                  console.error('Error fetching progress:', data.error);
+            async function confirmOrder(detailsId) {
+              new window.Swal({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                showCancelButton: true,
+                confirmButtonText: 'Buy',
+                padding: '2em',
+              }).then((result) => {
+                if (result.value) {
+                  document.getElementById(`orderForm-${detailsId}`).submit();
                 }
-              } catch (error) {
-                console.error('Error fetching progress:', error);
-              }
-            }
-
-            window.onload = fetchWeeklyProgress;
-          </script>
-
-          <script>
-            document.addEventListener('DOMContentLoaded', () => {
-              const logEntries = document.querySelectorAll('.log-entry');
-
-              logEntries.forEach(logEntry => {
-                logEntry.addEventListener('click', async function () {
-
-                  const activityId = this.getAttribute('data-id');
-
-                  const confirmDelete = confirm('Are you sure you want to delete this activity?');
-                  if (!confirmDelete) {
-                    return; 
-                  }
-
-                  try {
-                    const response = await fetch(`/delete/activity-log/${activityId}`, {
-                      method: 'DELETE',
-                      headers: {
-                        'Content-Type': 'application/json'
-                      }
-                    });
-
-                    if (response.ok) {
-                      this.remove();
-                    } else {
-                      console.error('Failed to delete activity:', activityId);
-                    }
-                  } catch (error) {
-                    console.error('Error deleting activity:', error);
-                  }
-                });
               });
-            });
+            }
           </script>
-
-<script>
-  async function confirmOrder(detailsId) {
-    new window.Swal({
-      icon: 'warning',
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      showCancelButton: true,
-      confirmButtonText: 'Buy',
-      padding: '2em',
-    }).then((result) => {
-      if (result.value) {
-        document.getElementById(`orderForm-${detailsId}`).submit();
-      }
-    });
-  }
-</script>
-
-
+          <script>
+            const userCurrency = "<%= user.currency %>";
+          </script>
+           
           <script>
             // main section
             document.addEventListener('alpine:init', () => {

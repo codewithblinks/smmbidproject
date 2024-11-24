@@ -732,7 +732,7 @@
                                   </svg>
                                   </button>
                               </div>
-                              <form action="/transfer/referral/balance" method="post">
+                              <form action="/transfer/referral/balance" method="post" id="transferForm">
                               <div class="p-5">
                                 <div class="grid grid-cols-1 sm:flex justify-between gap-5">
                                   <div>
@@ -741,12 +741,12 @@
                                 </div>
                                   <div>
                                      <label for="">Amount to Transfer</label>
-                                  <input type="number" placeholder="Enter Amount To Transfer" name="transferAmount" class="form-input" required/>
+                                  <input type="number" placeholder="Enter Amount To Transfer" id="transferAmount" name="transferAmount" class="form-input" required/>
                                   </div>
                               </div>
                                   <div class="flex justify-end items-center mt-8">
                                       <button type="button" class="btn btn-outline-danger" @click="toggle">Discard</button>
-                                      <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
+                                      <button type="submit" id="transferBTN" class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
                                   </div>
                                   <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b] mt-7"></div>
                                   
@@ -846,6 +846,7 @@
           <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
           <script src="../assets/js/notification.js"></script>
+          <script src="../assets/js/routejs/referral.js"></script>
           
           <script>
             $(function () {

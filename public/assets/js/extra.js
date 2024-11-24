@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const qantityLimitSelect = document.getElementById('qantityLimit');
   const displayAmountSelect = document.getElementById('displayAmount');
   
-displayAmountSelect.value = '₦ 0';
+displayAmountSelect.value = '';
 let exchangeRate = 1500;
+let exchangeRateApi = 1500;
+let userCurrency = 'NGN';
 
 
   let allOptions = [];
@@ -170,7 +172,6 @@ let exchangeRate = 1500;
     }
   };
 
-  // Fetch data once and store it
   const fetchOptionsData = async () => {
     try {
       const response = await fetch('/smm/options');
@@ -180,31 +181,46 @@ let exchangeRate = 1500;
     }
   };
 
-  // Filter options based on the selected category
+  async function fetchExchangeRateApi() {
+    try {
+      const response = await fetch('/api/api/exchange-rate');
+      if (!response.ok) {
+        throw new Error('Failed to fetch exchange rate');
+      }
+      const data = await response.json();
+      exchangeRateApi = data.rate.NGN;
+      userCurrency = data.userDetails.currency;
+    } catch (error) {
+      console.error('Error fetching exchange rate from api and user currency from db:', error.message);
+    }
+  }
+
   const filterOptions = (category) => {
     return allOptions.filter(item => item.category.toLowerCase().includes(category.toLowerCase()));
   };
 
-  // Function to populate the second select dropdown
   const populateSecondSelect = (options) => {
     // Clear previous options
     secondSelect.innerHTML = '';
     secondSelect1.innerHTML = '';
     quantitySelect.value = '';
     amountSelect.value = '';
-    displayAmountSelect.value = '₦ 0';
 
     // Create a document fragment to append all options in one go
     const fragment = document.createDocumentFragment();
     const fragment1 = document.createDocumentFragment();
 
     options.forEach(option => {
+
       const priceRate = (exchangeRate * option.rate) * 20 / 100;
-      const rates = Math.floor(exchangeRate * option.rate + priceRate)
+      const rates = Math.floor(exchangeRate * option.rate + priceRate);
+
+      const convertedPrice = userCurrency === 'USD' ? rates / exchangeRateApi : rates;
+      let sign = userCurrency === 'USD' ? 'USD' : 'NGN';
 
       const optionElement = document.createElement('option');
       optionElement.value = option.service;
-      optionElement.textContent = `${option.name} - NGN ${rates} per 1000`;
+      optionElement.textContent = `${option.name} - ${sign} ${convertedPrice.toLocaleString()} per 1000`;
       optionElement.dataset.rate = option.rate;
       optionElement.dataset.min = option.min;
       optionElement.dataset.max = option.max;
@@ -270,11 +286,12 @@ let exchangeRate = 1500;
     const rate = selectedOption ? selectedOption.dataset.rate : '';
     const min = selectedOption ? selectedOption.dataset.min : '';
     const max = selectedOption ? selectedOption.dataset.max : '';
-    
+    let disAmout = userCurrency === 'USD' ? '$0' : '₦0';
+
     // Reset the input fields
     quantitySelect.value = '';
     amountSelect.value = '';
-    displayAmountSelect.value = '₦ 0';
+    displayAmountSelect.value = disAmout;
     rateSelect.value = rate;
     qantityLimitSelect.innerHTML = `min: ${min} - max: ${max}`;
 
@@ -288,7 +305,11 @@ let exchangeRate = 1500;
     const price = (exchangeRate * secondPrice) * 20 / 100;
     const totalPrice = Math.floor((exchangeRate * secondPrice) + price);
 
-    displayAmountSelect.value = `₦ ${totalPrice}`;
+    let convertedPrices = userCurrency === 'USD' ? totalPrice / exchangeRateApi : totalPrice;
+    const convertedPrice = (convertedPrices).toFixed(2);
+    let disAmout = userCurrency === 'USD' ? '$' : '₦';
+
+    displayAmountSelect.value = `${disAmout}${convertedPrice}`;
     amountSelect.value = totalPrice;
   });
 
@@ -297,6 +318,7 @@ let exchangeRate = 1500;
   secondSelect.addEventListener('change', updateRateInput);
 
   await fetchExchangeRate();
+  await fetchExchangeRateApi()
   // Fetch data once and populate the second select on page load
   await fetchOptionsData();
   updateSecondSelect(); // Populate based on default selection

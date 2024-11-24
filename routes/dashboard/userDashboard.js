@@ -4,15 +4,53 @@ import ensureAuthenticated, {userRole} from "../../authMiddleware/authMiddleware
 import numeral from "numeral";
 import moment from "moment";
 import timeSince from "../../controller/timeSince.js";
+import getExchangeRate from "../../controller/exchangeRateService.js";
+import { calculateUserTotalDeposit } from "../../middlewares/totalUserSpent.js";
+import { convertPriceForProducts } from "../../middlewares/convertUserProductPrice.js";
 
 const router = express.Router();
+
+async function convertPrice(rate, userCurrency, userBalance) {
+  if (userCurrency === 'USD') {
+      return userBalance / rate;
+    } else if (userCurrency === 'NGN') {
+      return userBalance;
+    }
+  return userBalance;
+}
+
+export async function convertedTotalDeposit(rate, totalDeposit, userCurrency, userTotalSpent) {
+  if (userCurrency === 'USD') {
+    return {
+      convertedDeposit: totalDeposit / rate,
+      convertedSpent: userTotalSpent / rate
+    };
+  } else if (userCurrency === 'NGN') {
+    return {
+      convertedDeposit: totalDeposit,
+      convertedSpent: userTotalSpent
+    };
+  }
+  return {
+    convertedDeposit: totalDeposit,
+    convertedSpent: userTotalSpent
+  };
+}
 
 router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
 
   try {
+
+    const rate = await getExchangeRate();
+    let userTotalSpent = await calculateUserTotalDeposit(userId);
+
     const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
     const userDetails = userResult.rows[0];
+
+    const userBalance = Number(userDetails.balance);
+
+    let convertedPrice = await convertPrice(rate.NGN, userDetails.currency, userBalance)
 
     const userRecentOrders = await db.query(`
       SELECT purchases_admin_product.status AS purchases_status, 
@@ -35,7 +73,7 @@ router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
       ORDER BY created_at DESC`, 
       ['not sold']);
 
-    const product =productResult.rows;
+    const product = productResult.rows;
 
     const notificationsResult = await db.query(
       'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
@@ -76,21 +114,28 @@ router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
 
   const totals = result.rows[0];
 
+    const convertedResult = await convertedTotalDeposit(rate.NGN, totals.total_deposit, userDetails.currency, userTotalSpent.totalSuccessfulTransaction);
+    let convertedDeposit = convertedResult.convertedDeposit;
+    let convertedSpent = convertedResult.convertedSpent;
+
+   let products = await convertPriceForProducts(rate.NGN, product, userDetails.currency)
+
     transaction.forEach(transaction => {
       transaction.formattedDate = moment(transaction.created_at).format('D MMM h:mmA');
       transaction.amount = numeral(transaction.amount).format('0,0.00');
+      products.convertedProductPrice = numeral(products.convertedProductPrice).format('0,0.00');
   });
 
+    convertedPrice = numeral(convertedPrice).format('0,0.00');
     userDetails.balance = numeral(userDetails.balance).format('0,0.00');
-    totals.total_deposit = numeral(totals.total_deposit).format('0,0.00');
-    totals.total_withdrawal = numeral(totals.total_withdrawal).format('0,0.00');
+    convertedDeposit = numeral(convertedDeposit).format('0,0.00');
+    convertedSpent = numeral(convertedSpent).format('0,0.00');
 
       res.render('userDashboard', { messages: req.flash(),
-         user: userDetails, 
-         getIconClass, userId, product, 
-         transactions: transaction, totalDeposit: totals.total_deposit,
-          totalWithdrawal: totals.total_withdrawal, notifications, timeSince,
-          activity, recentOrders });
+         user: userDetails, convertedPrice, 
+         getIconClass, userId, product: products, 
+         transactions: transaction, totalDeposit: convertedDeposit, notifications, timeSince,
+          activity, recentOrders, userTotalSpent: convertedSpent });
 
   } catch (err) {
     console.error(err.message);

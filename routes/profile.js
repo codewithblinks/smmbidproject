@@ -5,6 +5,9 @@ import timeSince from "../controller/timeSince.js";
 import { v4 as uuidv4 } from 'uuid';
 import numeral from "numeral";
 import moment from "moment";
+import { calculateUserTotalDeposit } from "../middlewares/totalUserSpent.js";
+import { convertedTotalDeposit } from "./dashboard/userDashboard.js";
+import getExchangeRate from "../controller/exchangeRateService.js";
 
 const router = express.Router();
 
@@ -19,6 +22,10 @@ function generateTransferId() {
   router.get("/profile", ensureAuthenticated, userRole, async(req, res) => {
     const userId = req.user.id;
     try {
+      const rate = await getExchangeRate();
+
+       let userTotalSpent = await calculateUserTotalDeposit(userId);
+
         const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
         const userDetails = userResult.rows[0];
 
@@ -48,13 +55,18 @@ function generateTransferId() {
     
       const totals = result.rows[0];
 
-      totals.total_deposit = numeral(totals.total_deposit).format('0,0.00');
+      const convertedResult = await convertedTotalDeposit(rate.NGN, totals.total_deposit, userDetails.currency, userTotalSpent.totalSuccessfulTransaction);
+      let convertedDeposit = convertedResult.convertedDeposit;
+      let convertedSpent = convertedResult.convertedSpent;
+
+      convertedDeposit = numeral(convertedDeposit).format('0,0.00');
+      convertedSpent = numeral(convertedSpent).format('0,0.00');
     
         res.render('profile', { 
           user: userDetails, 
           messages: req.flash(),
           timeSince, notifications,
-          referralLink, totals
+          referralLink, convertedDeposit, userTotalSpent: convertedSpent
          });
       } catch (error) {
         console.error("error getting profile", error);
@@ -156,22 +168,26 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
   router.post("/transfer/referral/balance", ensureAuthenticated, userRole, async (req, res) => {
     const userId = req.user.id;
     const transferAmount = Number(req.body.transferAmount);
+    const minWithdrawalAmount = 1500;
+
+    const referralBalance = await getReferralBalance(userId);
   
     if (!Number.isInteger(transferAmount) || transferAmount <= 0) {
-      req.flash("error", "Invalid transfer amount");
-      return res.redirect("/referrals");
+      return res.status(200).json({ error: 'Invalid transfer amount' });
+    }
+
+    if (transferAmount < minWithdrawalAmount) {
+      return res.status(200).json({ error: `minimum referral withdrawal amount is ₦${minWithdrawalAmount} and your current referral balance is ₦${referralBalance}`});
     }
   
     const transferId = generateTransferId();
+    const formattedAmount = new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(transferAmount);
   
     try {
       await db.query('BEGIN');
   
-      const referralBalance = await getReferralBalance(userId);
-  
       if (referralBalance < transferAmount) {
-        req.flash("error", "Insufficient referral balance");
-        return res.redirect("/referrals");
+        return res.status(200).json({ error: 'Insufficient referral balance' });
       }
   
       await insertWithdrawalRecord(userId, transferAmount);
@@ -183,7 +199,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
       await db.query(`
         INSERT INTO notifications (user_id, type, message) 
         VALUES ($1, 'transfer', $2)
-      `, [userId, `Your transfer of ₦${transferAmount} was successful and the amount credited into your total balance`]);
+      `, [userId, `Your transfer of ₦${formattedAmount} was successful and the amount credited into your total balance`]);
   
       await db.query(`
         INSERT INTO transactions (user_id, type, amount, reference, status)
@@ -193,7 +209,7 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
       await db.query('COMMIT');
   
       req.flash("success", `Your transfer of ₦${transferAmount} was successful and the amount credited into your total balance`);
-      res.redirect("/referrals");
+      return res.json({ message: `Your transfer of ${formattedAmount} was successful and credited to your total balance.` });
   
     } catch (error) {
       await db.query('ROLLBACK');

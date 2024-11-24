@@ -37,7 +37,13 @@ async function calculateUserProgress(userId) {
 
         SELECT user_id, purchase_history.charge AS amount, order_date AS date
         FROM purchase_history
-        WHERE status = 'Completed'
+        WHERE status = 'Completed' AND user_id = $1
+
+        UNION ALL
+  
+        SELECT user_id, purchase_history.refund_amount AS amount, order_date AS date
+        FROM purchase_history
+        WHERE status = 'Partial' AND user_id = $1
     )
     SELECT COALESCE(SUM(amount), 0) AS total_transactions
     FROM successful_transactions

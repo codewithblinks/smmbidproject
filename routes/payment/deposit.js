@@ -6,8 +6,9 @@ import bodyParser from "body-parser";
 import crypto from "crypto"
 import ensureAuthenticated, {userRole} from "../../authMiddleware/authMiddleware.js";
 import timeSince from "../../controller/timeSince.js";
-import {cryptomusService} from "../../api/cryptomusService.js"; 
+import {createTransaction, updateTransactionStatus} from "../../api/cryptomusService.js"; 
 import { sendDepositPendingEmail, sendDepositPendingAdminEmail } from "../../config/emailMessages.js";
+import getExchangeRate, { getExchangeRateCryptomus } from "../../controller/exchangeRateService.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -28,12 +29,27 @@ const upload = multer({
   }
 });
 
-const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
-const FLW_WEBHOOK_SECRET = process.env.FLW_WEBHOOK_SECRET
+const { CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, CRYPTOMUS_WHITELISTED_IPS} = process.env;
 
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
-const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
+function isIpWhitelisted(ip) {
+  return CRYPTOMUS_WHITELISTED_IPS.includes(ip);
+}
 
+
+function generateSignature(data) {
+  const jsonData = JSON.stringify(data); // Convert request body to JSON
+  const base64Data = Buffer.from(jsonData).toString('base64'); // Base64 encode
+  const combined = base64Data + CRYPTOMUS_API_KEY; // Append API key
+  return crypto.createHash('md5').update(combined).digest('hex'); // MD5 hash
+}
+
+function verifySignature(req, apiKey) {
+  const rawBody = JSON.stringify(req.body);
+  const bodyHash = crypto.createHash('md5').update(rawBody).digest('base64');
+  const combinedString = bodyHash + apiKey;
+  const computedSignature = crypto.createHash('md5').update(combinedString).digest('hex');
+  return computedSignature === req.body.sign;
+}
 
 router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
   const userId = req.user.id;
@@ -50,7 +66,7 @@ router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
    res.render('deposit', {user, notifications, timeSince, messages: req.flash()});
     
   } catch (error) {
-    console.log(error);
+    console.error("Error getting deposit page:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
   });
@@ -65,15 +81,16 @@ router.post('/deposit/bank', ensureAuthenticated, upload.single('paymentProof'),
   const {transaction_reference } = req.body;
 
   if (!req.file) {
-    return res.status(400).json({ message: 'Image upload required' });
+    return res.status(200).json({ message: 'Image upload required' });
   }
 
   const proofImage = req.file.buffer;
+
   
     try {
       const bank_amount  = Number(req.body.bank_amount);
       if (isNaN(bank_amount) || bank_amount < 500) {
-        return res.status(400).json({ error: "Please enter a valid number, minimum deposit amount is ₦500." });
+        return res.status(200).json({ error: "Please enter a valid number, minimum deposit amount is ₦500." });
       }
 
       const adminEmailQuery = await db.query(`
@@ -106,8 +123,7 @@ router.post('/deposit/bank', ensureAuthenticated, upload.single('paymentProof'),
     );
 
     req.flash("success", "Your deposit has been sent successfully, waiting for confirmation");
-    
-    res.redirect('/transactions');
+    return res.json({ message: `Your deposit has been sent successfully, waiting for confirmation` });
 
     } catch (error) {
       console.error('Error processing deposit:', error);
@@ -115,31 +131,118 @@ router.post('/deposit/bank', ensureAuthenticated, upload.single('paymentProof'),
     }
   });
 
-router.post('/create-cryptomus-payment', async (req, res) => {
-    const { amount, currency, orderId, successUrl, cancelUrl } = req.body;
-  
+router.post('/create-cryptomus-payment', ensureAuthenticated, async (req, res) => {
+  let userId = req.user.id;
+  const { cryptomus_amount, currency, userCurrency} = req.body;
+  const order_id = generateTransactionReference();
+  const minAmount = userCurrency === "USD" ? 3 : 1500;
+  const sign = userCurrency === "USD" ? '$' : '₦';
+
+
+  if (isNaN(cryptomus_amount) || cryptomus_amount < minAmount) {
+    return res.status(200).json({ error: `Please enter a valid number, minimum deposit amount is ${sign}${minAmount}.` });
+  }
+
+  let amount = cryptomus_amount.toString();
+
+  try {
+    const urlCallback = `${process.env.BASE_URL}/cryptomus-webhook`;
+    const url_success = `${process.env.BASE_URL}/transactions`;
+    const url_return = `${process.env.BASE_URL}/deposit`;
+
+    const payload = {
+      amount: amount,
+      currency,
+      order_id,
+      url_callback: urlCallback,
+      url_success: url_success,
+      url_return: url_return,
+      is_payment_multiple: false,
+      course_source: 'BinanceP2P',
+    };
+
+    const signature = generateSignature(payload);
+
+    const response = await axios.post('https://api.cryptomus.com/v1/payment', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'merchant': CRYPTOMUS_MERCHANT_ID, // Set your merchant ID from environment
+        'sign': signature, // Add the generated signature
+      },
+    });
+
+    const paymentData = response.data.result;
+
+    // Save transaction in the database
+    await createTransaction({
+      amount: paymentData.amount,
+      status: paymentData.status,
+      order_id: paymentData.order_id,
+      userId,
+      currency: paymentData.currency,
+      type: 'deposit',
+    });
+
+    const paymentUrl = response.data.result.url;
+
+    res.status(200).json({ success: true, paymentUrl});
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    res.status(500).json({ success: false, error: 'Failed to create payment' });
+  }
+  });
+
+  router.post('/cryptomus-webhook', async (req, res) => {
     try {
-      const paymentResponse = await cryptomusService.createPayment(amount, currency, orderId, successUrl, cancelUrl);
-      res.json(paymentResponse);
-    } catch (error) {
-      res.status(500).json({ message: 'Error creating payment' });
-    }
-  });
-  
-router.post('/cryptomus-webhook', (req, res) => {
-    const signature = req.headers['x-signature'];
-    const data = req.body;
-  
-    if (cryptomusService.verifyWebhookSignature(data, signature)) {
-      // Process the payment confirmation
-      if (data.status === 'paid') {
-        console.log(`Payment received for Order ID: ${data.order_id}`);
-        // TODO: Update order status in your database here
+
+      const exchangeRates = await getExchangeRateCryptomus();
+
+      const incomingIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      if (!isIpWhitelisted(incomingIp)) {
+        console.error('Unauthorized IP address:', incomingIp);
+        return res.status(403).json({ success: false, message: 'Unauthorized IP address' });
       }
-      res.status(200).send('OK');
-    } else {
-      res.status(400).send('Invalid signature');
+  
+      const requestBody = req.body;
+      const receivedSign = requestBody.sign; 
+      delete requestBody.sign;
+  
+      const jsonBody = JSON.stringify(requestBody, null, 0).replace(/\//g, '\\/');
+      const base64Body = Buffer.from(jsonBody).toString('base64');
+      const expectedSign = crypto
+        .createHash('md5')
+        .update(base64Body + CRYPTOMUS_API_KEY)
+        .digest('hex');
+  
+      if (!crypto.timingSafeEqual(Buffer.from(receivedSign), Buffer.from(expectedSign))) {
+        console.error('Invalid signature:', { receivedSign, expectedSign });
+        return res.status(401).json({ success: false, message: 'Invalid signature' });
+      }
+  
+      const { amount, currency, status, order_id, uuid } = requestBody;
+      console.log('Valid webhook received:', { amount, currency, status, order_id, uuid });
+  
+      const currentStatus = await updateTransactionStatus(order_id, status);
+
+      if (currentStatus === 'already_paid') {
+          console.log('Transaction already processed, skipping balance crediting.');
+          return res.status(200).json({ success: true });
+      }
+      
+
+      if (status === 'paid') {
+        const rate = (exchangeRates.course).toFixed(2)
+        await creditUserBalance(amount, order_id, currency, rate);
+        console.log(`User balance credited: ${amount} ${currency}`);
+      }
+  
+      // Respond to Cryptomus with a success status
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Error processing webhook:', error.message);
+      res.status(500).json({ success: false, error: 'Failed to process webhook' });
     }
   });
+
 
 export default router;

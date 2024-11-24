@@ -17,22 +17,6 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
   <style>
-
-    .depositBody {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      height: 50vh;
-    }
-
-    .container1 {
-      padding: 40px;
-      text-align: center;
-      width: 600px;
-      margin-top: 40px;
-    }
-
     .progress-indicator {
       display: flex;
       justify-content: center;
@@ -822,9 +806,9 @@
 
         <div class="main-body">
           <!-- Deposit -->
-          <div class="depositBody" style="display: flex; justify-content: center; align-items: center; height: 60vh;">
+          <div class="depositBody" style="display: flex; justify-content: center; align-items: center; text-align: center">
             <div class="container1" >
-              <div id="step1">
+              <div id="step1" class="mt-8">
 
                 <div class="mb-8 items-center">
                   <h4 class="text-xl font-semibold dark:text-white-light mb-4">Deposit Funds</h4>
@@ -841,6 +825,13 @@
                         <input type="radio" name="payment" value="bankaccount">
                         <span class="radio-custom"></span>
                         <span class="payment-text">Our Account</span>
+                        <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
+                      </label>
+
+                      <label class="payment-option mt-8" id="cryptomus-gateway" style="height: 50px; ">
+                        <input type="radio" name="payment" value="cryptomus">
+                        <span class="radio-custom"></span>
+                        <span class="payment-text">Cryptomus</span>
                         <div class="wallet-icon"> <i data-feather="credit-card" class="iconpaystack"></i></div>
                       </label>
 
@@ -867,7 +858,14 @@
 
 
               </div>
-              <div id="bankaccount-form" class="payment-form panel mt-8" style="display: none;">
+              <div id="bankaccount-form" class="panel mt-8" style="display: none;">
+                <div style="display: flex; align-items: end;">
+                  <h4 onclick="goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;">
+                      <path opacity="0.5" d="M20 12.75C20.4142 12.75 20.75 12.4142 20.75 12C20.75 11.5858 20.4142 11.25 20 11.25V12.75ZM20 11.25H4V12.75H20V11.25Z" fill="currentColor"/>
+                      <path d="M10 6L4 12L10 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg></h4>
+                </div>
                 <h4 class="text-xl font-semibold dark:text-white-light mb-4">Enter Deposit Amount</h4>
                 <p class="font-semibold dark:text-white-light">via Our Bank</p>
                 <p class="subtext">Add funds direct to main balance.</p>
@@ -906,29 +904,29 @@
                     </svg>
                       I've sent the money
                   </button>
-<!-- 
-                  <button type="button" class="btn btn-info w-full gap-2" onclick="goBack()">
-                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 ltr:mr-2 rtl:ml-2">
-                        <path d="M17.4975 18.4851L20.6281 9.09373C21.8764 5.34874 22.5006 3.47624 21.5122 2.48782C20.5237 1.49939 18.6511 2.12356 14.906 3.37189L5.57477 6.48218C3.49295 7.1761 2.45203 7.52305 2.13608 8.28637C2.06182 8.46577 2.01692 8.65596 2.00311 8.84963C1.94433 9.67365 2.72018 10.4495 4.27188 12.0011L4.55451 12.2837C4.80921 12.5384 4.93655 12.6658 5.03282 12.8075C5.22269 13.0871 5.33046 13.4143 5.34393 13.7519C5.35076 13.9232 5.32403 14.1013 5.27057 14.4574C5.07488 15.7612 4.97703 16.4131 5.0923 16.9147C5.32205 17.9146 6.09599 18.6995 7.09257 18.9433C7.59255 19.0656 8.24576 18.977 9.5522 18.7997L9.62363 18.79C9.99191 18.74 10.1761 18.715 10.3529 18.7257C10.6738 18.745 10.9838 18.8496 11.251 19.0285C11.3981 19.1271 11.5295 19.2585 11.7923 19.5213L12.0436 19.7725C13.5539 21.2828 14.309 22.0379 15.1101 21.9985C15.3309 21.9877 15.5479 21.9365 15.7503 21.8474C16.4844 21.5244 16.8221 20.5113 17.4975 18.4851Z" stroke="currentColor" stroke-width="1.5"></path>
-                        <path opacity="0.5" d="M6 18L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    </svg>
-                    Return to depsoit
-                </button> -->
                   </div>
                 </form>
               </div>
 
-              <div id="paystack-form" class="payment-form" style="display: none;">
+              <div id="cryptomus-form" class="panel mt-8" style="display: none;">
                 <h4 class="text-xl font-semibold dark:text-white-light mb-4">Enter Deposit Amount</h4>
-                <p>via Paystack</p>
+                <p>via Cryptomus</p>
                 <p class="subtext">Add funds direct to main balance.</p>
-                <form action="/deposit" method="post" class="mt-8">
+                <form id="cryptomus-depositForm" action="/create-cryptomus-payment" method="post" class="mt-8">
                   <label for="amount">Amount to Deposit:</label>
-                  <input type="number" id="paystack-amount" placeholder="0.00" name="paystack_amount"
-                    style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
-                  <div class="flex justify-between" style="gap: 155px;">
+                  <input type="text" id="cryptomus_amount" placeholder="0.00" name="cryptomus_amount"
+                    style="height: 50px; width: 300px;" step="0.01" required class="form-input" oninput="checkMinAmountCrytomus(this)">
+
+                    <label for="currency">Currency:</label>
+                    <input type="text" id="displayCurrency" value="<%= user.currency %>"
+                    style="height: 50px; width: 300px;" disabled class="form-input">
+
+                  <input type="hidden" id="currency" name="currency" value="<%= user.currency %>"
+                    style="height: 50px; width: 300px;" required class="form-input">
+
+                  <div class="flex justify-between mt-5" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
-                    <button class="btn btn-primary" type="submit">Pay</button>
+                    <button class="btn btn-primary" type="submit" id="cryptomus-submitBtn">Pay</button>
                   </div>
                 </form>
               </div>
@@ -942,7 +940,7 @@
                     style="height: 50px; width: 300px;" min="500" step="0.01" required class="form-input">
                   <div class="flex justify-between" style="gap: 155px;">
                     <button type="button" class="btn btn-dark" onclick="goBack()">Back</button>
-                    <button type="submit" class="btn btn-primary">Pay</button>
+                    <button type="submit" class="btn btn-primary" id="cryptomus-submitBTN">Pay</button>
                   </div>
                 </form>
               </div>
@@ -981,6 +979,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script src="../assets/js/notification.js"></script>
+  <script src="../assets/js/routejs/deposit.js"></script>
 
   <script>
     $(function () {
@@ -1007,22 +1006,22 @@
       }
       document.getElementById('step1').style.display = 'none';
 
-      if (selectedPayment.value === 'paystack') {
-        document.getElementById('paystack-form').style.display = 'block';
+      if (selectedPayment.value === 'cryptomus') {
+        document.getElementById('cryptomus-form').style.display = 'block';
       } else if (selectedPayment.value === 'flutterWave') {
         document.getElementById('flutterWave-form').style.display = 'block';
       } else if (selectedPayment.value === 'bankaccount') {
         document.getElementById('bankaccount-form').style.display = 'block';
-      }
+      } 
     }
 
     function goBack() {
-      document.getElementById('paystack-form').style.display = 'none';
       document.getElementById('flutterWave-form').style.display = 'none';
       document.getElementById('bankaccount-form').style.display = 'none';
+      document.getElementById('cryptomus-form').style.display = 'none';
       document.getElementById('step1').style.display = 'block';
       document.getElementById('bank-amount').value = "";
-      document.getElementById('paystack-amount').value = "";
+      document.getElementById('cryptomus_amount').value = "";
       document.getElementById('flutterWave-amount').value = "";
       document.getElementById('transaction_reference').value = "";
     }
@@ -1043,135 +1042,6 @@
     });
 
   </script>
-
-  <!-- <script>
-    async function loadPaymentGateways() {
-      const response = await fetch('/api/payment-gateways');
-      const gateways = await response.json();
-      const depositBTN = document.getElementById('depositBTN')
-      
-      if (gateways.length < 0) {
-        depositBTN.disabled = true;
-      }
-
-
-      gateways.forEach(gateway => {
-        const gatewayDiv = document.getElementById(`${gateway.gateway_name}-gateway`);
-        if (gateway.is_enabled) {
-          gatewayDiv.style.display = 'flex';
-        } else {
-          gatewayDiv.style.display = 'none';
-        }
-      });
-    }
-
-    loadPaymentGateways();
-
-  </script> -->
-
-  <!-- <script>
-    async function loadPaymentGatewaysCheck() {
-      const response = await fetch('/api/payment-gateways/check');
-      const gatewaysCheck = await response.json();
-      const depositBTN = document.getElementById('depositBTN')
-
-      if (gatewaysCheck.length === 0) {
-        depositBTN.disabled = true;
-      }
-
-    }
-
-    loadPaymentGatewaysCheck();
-
-  </script> -->
-
-<script>
-  const depositForm = document.getElementById('depositForm');
-  const submitBtn = document.getElementById('submitBtn');
-
-  depositForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); 
-
-    const bankAmountInput = document.getElementById('bank-amount');
-    const bankAmountValue = parseFloat(bankAmountInput.value);
-
-    if (
-      !bankAmountValue ||
-      isNaN(bankAmountValue) || 
-      bankAmountValue < 500 || 
-      !document.getElementById('transaction_reference').value || 
-      !document.getElementById('paymentProof').files.length
-    ) {
-      toastr.error("Please fill in all fields with a valid deposit amount (minimum ₦500) and upload a payment proof.");
-      return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Processing...';
-
-    const formData = new FormData(depositForm);
-
-    try {
-      const response = await fetch('/deposit/bank', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        toastr.success("Deposit submitted successfully. Awaiting approval.");
-        const redirectUrl = '/transactions';
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 2000);
-      } else {
-        const errorData = await response.json();
-        toastr.error(errorData.error || "Error submitting deposit. Please try again.");
-      }
-    } catch (error) {
-      toastr.error("An error occurred while processing the deposit.");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "I've sent the money";
-    }
-  });
-  function checkMinAmount(input) {
-    const minAmount = 500;
-    const value = parseFloat(input.value);
-
-    if (isNaN(value) || value < minAmount) {
-      input.setCustomValidity(`Minimum deposit is ₦${minAmount}`);
-    } else {
-      input.setCustomValidity('');
-    }
-  }
-</script>
-
-<script>
-  function checkMinAmount(input) {
-    const minAmount = 500;
-    const value = parseInt(input.value, 10);
-
-    if (isNaN(value)) {
-      input.setCustomValidity("Please enter a valid number.");
-    } else if (value < minAmount) {
-      input.setCustomValidity(`Minimum deposit is ₦${minAmount}`);
-    } else {
-      input.setCustomValidity(''); 
-    }
-  }
-
-  function validateDepositAmount() {
-    const amountInput = document.getElementById("amount");
-    const minAmount = 500;
-    const value = parseInt(amountInput.value, 10);
-
-    if (isNaN(value) || value < minAmount) {
-      alert(isNaN(value) ? "Please enter a valid number." : `Minimum deposit amount is ₦${minAmount}.`);
-      return false;
-    }
-    return true;
-  }
-</script>
 
   <script>
     // main section

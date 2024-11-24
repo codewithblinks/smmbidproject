@@ -5,6 +5,8 @@ import moment from "moment";
 import timeSince from "../controller/timeSince.js";
 import { v4 as uuidv4 } from 'uuid';
 import { sendOrderCompleteEmail } from "../config/emailMessages.js";
+import getExchangeRate from "../controller/exchangeRateService.js";
+import { convertPriceForProducts } from "../middlewares/convertUserProductPrice.js";
 
 
 const router = express.Router();
@@ -151,6 +153,8 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
 
   try {
+    const rate = await getExchangeRate();
+
     const usersResult = await db.query(
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]
@@ -165,7 +169,9 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
   ['not sold']
     );
 
-    const products = result.rows;
+    const product = result.rows;
+
+    let products = await convertPriceForProducts(rate.NGN, product, user.currency)
 
     const notificationsResult = await db.query(
       'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',

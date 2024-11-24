@@ -115,7 +115,7 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
     });
 
   } catch (err) {
-    console.error("error at all_stock", err.message);
+    console.error("error at retrieve prices:", err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });
@@ -224,7 +224,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
       && orderCodes.includes(order.order_code));
     return filteredOrders;
   } catch (error) {
-    console.error('Error fetching and filtering data:', error);
+    console.error('Error fetching and filtering data 1:', error);
     return [];
   }
 };
@@ -286,7 +286,7 @@ const fetchAndFilterExpiredOrders = async (orderCodes) => {
       }
     }
   } catch (error) {
-    console.error('Error fetching and filtering data:', error.response?.data || error.message);
+    console.error('Error fetching and filtering data 2:', error.response?.data || error.message);
   }
 };
 
@@ -358,7 +358,6 @@ router.get("/sms/check", ensureAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 })
-
 
 router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;

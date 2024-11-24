@@ -251,6 +251,27 @@ router.post('/account/delete', ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.post('/set-currency', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const { currency } = req.body; 
+
+  console.log(userId)
+
+
+  if (!['USD', 'NGN'].includes(currency)) {
+      return res.status(400).json({ error: 'Invalid currency' });
+  }
+
+  try {
+      await db.query('UPDATE userprofile SET currency = $1 WHERE id = $2', [currency, userId]);
+      res.json({ success: true, message: 'Currency preference updated' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Database error' });
+  }
+});
+
+
 
 
 export default router;
