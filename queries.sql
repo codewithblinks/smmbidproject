@@ -230,8 +230,6 @@ CREATE TABLE pending_deposits (
 
 -- remember to add
 
-
-
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
     status_name VARCHAR(50) NOT NULL

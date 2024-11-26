@@ -1184,8 +1184,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  // const originalConsoleLog = console.log;
-                  // console.log = function () { };
+                  const originalConsoleLog = console.log;
+                  console.log = function () { };
 
 
                   NiceSelect.bind((select1), { searchable: true });
