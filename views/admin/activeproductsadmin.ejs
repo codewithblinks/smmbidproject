@@ -674,6 +674,7 @@
                         <th>Amount</th>
                         <th>Status</th>
                         <th class="text-center">Created Date</th>
+                        <th class="text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -692,6 +693,24 @@
                           <td class="text-center">
                             <%= details.created_at %>
                           </td>
+                          <td class="text-center">
+                            <div x-data="dropdown" @click.outside="open = false" class="dropdown">
+                                <a href="javascript:;" class="inline-block" @click="toggle">
+                                  <svg class="m-auto h-5 w-5 opacity-70" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                                    <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                                    <circle cx="19" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                                </svg>
+                                </a>
+                                <ul x-cloak x-show="open" x-transition x-transition.duration.300ms class="ltr:right-0 rtl:left-0">
+                                    <li><a href="javascript:;" @click="showProductModal(<%= details.id%>, <%= details.years %>, '<%= details.profile_link %>', '<%= details.account_type %>', '<%= details.country %>', '<%= details.description %>', '<%= details.amount %>', '<%= details.loginusername %>', '<%= details.loginemail %>', '<%= details.loginpassword %>', '<%= details.logindetails %>')">Edit</a></li>
+                                    <form id="deleteProduct" action="/product/delete/active/account/<%= details.id%>" method="post">
+                                      <li onclick="deleteProduct()"><a href="javascript:;" @click="toggle">Delete</a></li>
+                                    </form>
+                                    
+                                </ul>
+                            </div>
+                        </td>
                         </tr>
                         <% }); %>
                     </tbody>
@@ -715,6 +734,80 @@
             </div>
         </div>
 
+        <div class="mb-5" x-data="modal">
+
+          <!-- modal -->
+          <div class="fixed w-100 inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="modalOpen && '!block'"
+            x-data="modal"
+            @show-product-modal.window="modalOpen = true; productId = $event.detail.id; productYear = $event.detail.years; productProfileLink = $event.detail.profile_link; productAccountType = $event.detail.account_type; productAccountCountry = $event.detail.account_country; productDescription = $event.detail.description; productAmount = $event.detail.amount; productLoginUsername = $event.detail.loginusername; productLoginEmail = $event.detail.loginemail; productLoginPassword = $event.detail.loginpassword; productLoginDetails = $event.detail.logindetails;">
+            <div class="flex items-center justify-center min-h-screen px-4" @click.self="modalOpen = false">
+              <div x-show="modalOpen" x-transition x-transition.duration.300
+                class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
+                <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                  <h5 class="font-bold text-lg">Preview product</h5>
+                  <button type="button" class="text-white-dark hover:text-dark" @click="modalOpen = false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                      class="h-6 w-6">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+                <div class="p-5">
+                  <form @submit.prevent="saveTask">
+                      <div class="mb-5">
+                          <label for="loginemail">Login Email</label>
+                          <input id="loginemail" type="text" class="form-input" :value="productLoginEmail">
+                      </div>
+                      <div class="mb-5">
+                          <label for="assignee">Assignee</label>
+                          <select id="assignee" class="form-select">
+                              <option value="">Select Assignee</option>
+                              <option value="John Smith">John Smith</option>
+                              <option value="Kia Vega">Kia Vega</option>
+                              <option value="Sandy Doe">Sandy Doe</option>
+                              <option value="Jane Foster">Jane Foster</option>
+                              <option value="Donna Frank">Donna Frank</option>
+                          </select>
+                      </div>
+                      <div class="mb-5 flex justify-between gap-4">
+                          <div class="flex-1">
+                              <label for="amount">Amount</label>
+                              <input id="amount" type="text" class="form-input" :value="productAmount">
+                          </div>
+                          <div class="flex-1">
+                              <label for="year">Year</label>
+                                <input id="year" type="text" class="form-input" :value="productYear">
+                          </div>
+                      </div>
+                      <div class="mb-5 flex justify-between gap-4">
+                        <div class="flex-1">
+                            <label for="password">Login Password</label>
+                            <input id="password" type="text" class="form-input" :value="productLoginPassword">
+                        </div>
+                        <div class="flex-1">
+                            <label for="loginusername">Login Username</label>
+                              <input id="loginusername" type="text" class="form-input" :value="productLoginUsername">
+                        </div>
+                    </div>
+                      <div class="mb-5">
+                          <label>Description</label>
+                          <div x-ref="editor"></div>
+                      </div>
+                      <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
+                          <button type="button" class="btn btn-outline-danger" @click="addTaskModal = false">Cancel</button>
+                          <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4" >
+                              Add
+                          </button>
+                      </div>
+                  </form>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- end main content section -->
       </div>
 
@@ -733,6 +826,78 @@
   <script defer="" src="../assets/js/alpine.min.js"></script>
   <script src="../assets/js/custom.js"></script>
   <script defer="" src="../assets/js/apexcharts.js"></script>
+
+
+  <script>
+    async function deleteProduct() {
+      new window.Swal({
+        icon: 'warning',
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        padding: '2em',
+      }).then((result) => {
+        if (result.value) {
+          document.getElementById('deleteProduct').submit();
+        }
+      });
+    }
+  </script>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('modal', () => ({
+        modalOpen: false,
+        productId: '',
+        productYear: '',
+        productProfileLink: '',
+        productAccountType: '',
+        productAccountCountry: '',
+        productDescription: '',
+        productAmount: '',
+        productLoginUsername: '',
+        productLoginEmail: '',
+        productLoginPassword: '',
+        productLoginDetails: '',
+        showProductModal(
+          id, years, profile_link, 
+          account_type, country, description, 
+          amount, loginusername, loginemail, 
+          loginpassword, logindetails) {
+
+          this.productId = id;
+          this.productYear = years;
+          this.productProfileLink = profile_link;
+          this.productAccountType = account_type;
+          this.productAccountCountry = country;
+          this.productDescription = description;
+          this.productAmount = amount;
+          this.productLoginUsername = loginusername;
+          this.productLoginEmail = loginemail;
+          this.productLoginPassword = loginpassword;
+          this.productLoginDetails = logindetails;
+          this.modalOpen = true;
+        }
+      }));
+    });
+
+    function showProductModal(id, years, profile_link, 
+          account_type, country, description, 
+          amount, loginusername, loginemail, 
+          loginpassword, logindetails
+    ) {
+      const event = new CustomEvent('show-product-modal', {
+        detail: {
+          id, years, profile_link, 
+          account_type, country, description, 
+          amount, loginusername, loginemail, 
+          loginpassword, logindetails
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  </script>
 
   <script>
     // main section

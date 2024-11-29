@@ -17,10 +17,10 @@
       // === logo change
       if (ud_header.classList.contains("sticky")) {
         document.querySelector(".header-logo").src =
-          "assets/images/logo/logoDark.png"
+          "assets/images/logo/Smartechblue.svg"
       } else {
         document.querySelector(".header-logo").src =
-          "assets/images/logo/logoWhite.png"
+          "assets/images/logo/Smartech.svg"
       }
     }
 
@@ -29,7 +29,7 @@
         // === logo change
         if (ud_header.classList.contains("sticky")) {
           document.querySelector(".header-logo").src =
-            "assets/images/logo/logoWhite.png"
+            "assets/images/logo/Smartechblue.svg"
         } 
       }
     } 

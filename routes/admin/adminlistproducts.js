@@ -187,4 +187,19 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
         }
       });
 
+router.post("/product/delete/active/account/:id", adminEnsureAuthenticated, adminRole, 
+        async (req, res) => {
+          const { id } = req.params;
+          const productId = Number(id);
+
+            try {
+                 const result = await db.query('DELETE FROM admin_products WHERE id = $1', [productId]);
+                // req.flash("success", "Product has been deleted");
+                res.redirect("/admin/active/products");
+            } catch (error) {
+                console.log("Error deleting product:", error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+    })
+
 export default router;
