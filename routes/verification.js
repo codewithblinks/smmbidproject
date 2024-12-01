@@ -175,6 +175,34 @@ router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res
   }
 });
 
+router.post("/request/areacodes", ensureAuthenticated, async (req, res) => {
+
+  const { country, service, pool} = req.body;
+
+  try {
+    const form = new FormData();
+    form.append('country', country);
+    form.append('service', service);
+    form.append('pool', pool);
+
+    const headers = {
+      ...form.getHeaders(),
+      'Authorization': `Bearer ${BEARER_TOKEN}`
+
+    };
+
+    const response = await axios.post('https://api.smspool.net/request/areacodes', form, { headers });
+
+    const data = response.data;
+
+    res.json(data)
+
+  } catch (err) {
+    console.error("error at pool/retrieve_valid", err.message);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
+
 // fetch orderid
 const fetchOrderCodesForUser = async (userId) => {
   const result = await db.query('SELECT order_id FROM sms_order WHERE user_id = $1', [userId]);
@@ -364,7 +392,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
   const orderId = req.body.orderId;
 
   if (!orderId) {
-    return res.status(400).json({ success: false, message: 'Order ID is required' });
+    return res.status(200).json({ success: false, message: 'Order ID is required' });
   }
 
   try {
@@ -376,7 +404,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const order = orderResult.rows[0];
     
     if (order.status !== 'pending' && order.status !== 'expired') {
-      return res.status(400).json({ success: false, message: 'Order is not eligible for refund' });
+      return res.status(200).json({ success: false, message: 'Order is not eligible for refund' });
     }
 
     const form = new FormData();
@@ -392,7 +420,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const cancelOrders = response.data;
 
     if (cancelOrders.success !== 1) {
-      return res.status(400).json({ success: false, message: 'Your order cannot be cancelled yet, please try again later.' });
+      return res.status(200).json({ success: false, message: 'Your order cannot be cancelled yet, please try again later.' });
     }
 
     await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', orderId]);
@@ -424,7 +452,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
 
 
   if (!orderId) {
-    return res.status(400).json({ success: false, message: 'Order ID is required' });
+    return res.status(200).json({ success: false, message: 'Order ID is required' });
   }
 
   try {
@@ -447,7 +475,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     const resend = response.data;
 
     if ( resend.success !== 1) {
-      return res.status(400).json({ success: false, message: `${resend.message}` });
+      return res.status(200).json({ success: false, message: `${resend.message}` });
     }
 
     const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
@@ -468,7 +496,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     return res.json({ success: true, message: `${resend.message}` });
 
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.response ? error.response.data.message : error.message });
+    return res.status(200).json({ success: false, message: error.response ? error.response.data.message : error.message });
   }
 })
 
@@ -488,7 +516,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
 
     if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
-      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
+      return res.status(200).json({ error: 'Insufficient balance, please top up your balance' });
     }
 
       const form = new FormData();
@@ -537,7 +565,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
     if (errType === "BALANCE_ERROR") {
       return res.status(400).json({ error: 'Service currently unavailable, try later or contact support' });
     } else if (errType === "OUT_OF_STOCK") {
-      return res.status(400).json({ error: error.response.data.errors?.message || 'Out of stock' });
+      return res.status(400).json({ error: error.response.data?.message || 'Out of stock' });
     } else if (errType === "PRICE_NOT_FOUND") {
       return res.status(400).json({ error: error.response.data[0]?.message || 'Price not found' });
     } else {
@@ -555,8 +583,10 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
 
 router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
-  const { poolcountry, poolservice, pool, quantity, charge } = req.body;
+  const { poolcountry, poolservice, pool, quantity, charge, areacode } = req.body;
   const displaycharge1 = Number(req.body.displaycharge1);
+
+  console.log(areacode)
 
   try {
     await db.query('BEGIN');
@@ -567,7 +597,7 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
 
     if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
-      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
+      return res.status(200).json({ error: 'Insufficient balance, please top up your balance' });
     }
 
       const form = new FormData();
@@ -576,6 +606,7 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
       form.append('service', poolservice);
       form.append('pool', pool);
       form.append('quantity', quantity);
+      form.append('areacode', areacode);
 
       const headers = {
         ...form.getHeaders(),
@@ -603,6 +634,8 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
 
       await db.query('COMMIT');
 
+      console.log(data.message)
+
       return res.json({ message: data.message});
 
   } catch (error) {
@@ -613,13 +646,13 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
       const errType = error.response.data.type;
 
     if (errType === "BALANCE_ERROR") {
-      return res.status(400).json({ error: 'Service currently unavailable, try later or contact support' });
+      return res.status(200).json({ error: 'Service currently unavailable, try later or contact support' });
     } else if (errType === "OUT_OF_STOCK") {
-      return res.status(400).json({ error: error.response.data.errors?.message || 'Out of stock' });
+      return res.status(200).json({ error: error.response.data?.message || 'Out of stock' });
     } else if (errType === "PRICE_NOT_FOUND") {
-      return res.status(400).json({ error: error.response.data[0]?.message || 'Price not found' });
+      return res.status(200).json({ error: error.response.data[0]?.message || 'Price not found' });
     } else {
-      return res.status(400).json({ error: error.response.data?.message || 'Unknown error' });
+      return res.status(200).json({ error: error.response.data?.message || 'Unknown error' });
     }
     } else if (error.request) {
       console.error('No response received from API:', error.request);

@@ -799,7 +799,7 @@
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="number" name="displaycharge1" class="form-input" required>
+                        <input id="displaycharge1" type="number" name="displaycharge1" class="form-input" >
                       </div>
                     </div>
                     <div class="mt-4" hidden>
@@ -1057,8 +1057,13 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   document.addEventListener('click', async (event) => {
                     if (event.target.closest('.refund-button')) {
-                      const button = event.target.closest('.refund-button')
-                      const orderId = button.getAttribute('data-order-id');
+                      const refundButton = event.target.closest('.refund-button')
+
+                      const orderId = refundButton.getAttribute('data-order-id');
+
+                      refundButton.disabled = true;
+
+
                       if (confirm('Are you sure you want to cancel and refund this order?')) {
                         try {
                           const response = await fetch('/sms/cancel', {
@@ -1080,7 +1085,13 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         } catch (error) {
                           console.error('Error processing refund:', error);
                           alert('Error processing refund');
+                        } finally {
+                          setTimeout(() => {
+                            refundButton.disabled = false;
+                          }, 60000);
                         }
+                      } else {
+                        refundButton.disabled = false;
                       }
                     }
                   });
@@ -1089,6 +1100,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   document.addEventListener('click', async (event) => {
                     if (event.target.closest('.resend-button')) {
                       const button = event.target.closest('.resend-button')
+
                       const orderId = button.getAttribute('data-order-id');
 
                       button.disabled = true;
@@ -1140,15 +1152,15 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   function getRefundButton(orderId) {
                     return `
-        <button type="button" class="refund-button" data-order-id="${orderId}">
-            <span class="flex items-center"> Refund
-                <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-4 w-4">
-                    <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                    <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                </svg>
-            </span>
-        </button>
-    `;
+                      <button id="refundBTN" type="button" class="refund-button" data-order-id="${orderId}">
+                          <span class="flex items-center"> Refund
+                              <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-4 w-4">
+                                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
+                                  <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                              </svg>
+                          </span>
+                      </button>
+                  `;
                   }
 
                   function getResendButton(orderId) {
@@ -1184,8 +1196,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  const originalConsoleLog = console.log;
-                  console.log = function () { };
+                  // const originalConsoleLog = console.log;
+                  // console.log = function () { };
 
 
                   NiceSelect.bind((select1), { searchable: true });
@@ -1311,20 +1323,26 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const stockDisplay = document.getElementById('stockDisplay');
                   stockDisplay.innerHTML = ''; // Clear previous stock display
 
-                  stockData[0]?.forEach(item => {
+                  stockData[0]?.forEach(async item => {
                     const stockItem = document.createElement('div');
                     const itemPrice = Math.floor(item.price * exchangeRate + smsprice);
                     const displayPrice =
                     userCurrency === 'USD'
                     ? (itemPrice / exchangeRateApi).toFixed(3)
                     : itemPrice;
-                    console.log(userCurrency)
+
+                  let sign = userCurrency === 'USD'
+                    ? '$'
+                    : '₦';
+
+                    const uniqueAreaCodeContainerId = `areaCodesContainer-${item.pool_name}`;
+                    
 
                     stockItem.innerHTML = `
                          <div class="panel">
                         <div class="mb-5">
-                            <form id="purchaseForm" action="/purchase/sms" method="post" class="space-y-5">
-                                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                            <form class="purchaseForm" id="purchaseForm-${item.pool_name}" action="/purchase/sms" method="post" class="space-y-5">
+                                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                                     <div>
                                         <label for="browserFname">Pool</label>
                                         <input id="disPool" type="text"
@@ -1359,7 +1377,9 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                                     <div>
                                         <label for="browserEmail">Price</label>
                                         <input id="display-price" type="text" placeholder=""
-                                        class="form-input" disabled value="₦ ${displayPrice.toLocaleString()}"/>
+                                        class="form-input" disabled value="${sign}${displayPrice.toLocaleString()}"/>
+                                    </div>
+                                     <div id="${uniqueAreaCodeContainerId}">
                                     </div>
                                 </div>
                                 <button id="purchasePoolBTN" type="submit" class="btn btn-primary !mt-6">
@@ -1370,9 +1390,58 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     </div>
                     `;
                     stockDisplay.appendChild(stockItem);
+
+                    try {
+                          const response = await fetch('/request/areacodes', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ 
+                              country, 
+                              service, 
+                              pool: item.pool_name })
+                          });
+
+                          const areaCodesContainer = document.getElementById(uniqueAreaCodeContainerId);
+                          if (response.ok) {
+                            const data = await response.json();
+                            let areaCodes = [];
+                            
+                           if (Array.isArray(data)) {
+                                      areaCodes = data;
+                                  } else if (typeof data === 'object') {
+                                      if (data.success === 0 && data.message) {
+                                          areaCodesContainer.innerHTML = ``;
+                                          return;
+                                      } else if (Object.keys(data).every((key) => !isNaN(key))) {
+                                          areaCodes = Object.values(data);
+                                      }
+                                  }
+                            if (areaCodes.length > 0) {
+                              areaCodesContainer.innerHTML = `
+                              <label for="areaCodes">Custom areacode</label>
+                                <select id="areaCodes-${item.pool_name}" class="form-select text-white-dark">
+                                  <option value="">none</option>
+                                  ${areaCodes.map(code => `<option value="${code}">${code}</option>`).join('')}
+                                </select>
+                              `;
+                            } else {
+                              // Show message if no area codes are available
+                              areaCodesContainer.innerHTML = ``;
+                            }
+                          } else {
+                            console.error('Failed to fetch area codes:', response.statusText);
+                            areaCodesContainer.innerHTML = ``;
+                          }
+                        } catch (error) {
+                          console.error('Error during area codes API call:', error);
+                          const areaCodesContainer = document.getElementById(uniqueAreaCodeContainerId);
+                          areaCodesContainer.innerHTML = ``;
+                        }
                   });
 
-                  document.querySelectorAll('#purchaseForm').forEach((form) => {
+                  document.querySelectorAll('.purchaseForm').forEach((form) => {
                       form.addEventListener('submit', async function (event) {
                         event.preventDefault();
 
@@ -1381,6 +1450,19 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         purchasePoolBTN.textContent = 'Processing...';
 
                         try {
+
+                          const areaCodeDropdown = form.querySelector(`#areaCodes-${form.querySelector('#pool').value}`);
+                          const selectedAreaCode = areaCodeDropdown ? areaCodeDropdown.value : null;
+
+                          if (selectedAreaCode === '') {
+                          toastr.error('Please select an area code.', 'Error');
+                          purchasePoolBTN.disabled = false;
+                          purchasePoolBTN.textContent = 'Purchase';
+                          return;
+                           }
+
+                           const formattedAreaCode = `[${selectedAreaCode}]`;
+
                           const response = await fetch('/purchase/sms', {
                             method: 'POST',
                             headers: {
@@ -1393,12 +1475,15 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                               pool: form.querySelector('#pool').value,
                               displaycharge1: form.querySelector('#price').value,
                               charge: form.querySelector('#poolcharge').value,
+                              areacode: formattedAreaCode,
                             })
                           });
 
                           const result = await response.json();
 
-                          if (response.ok) {
+                          console.log(result)
+
+                          if (response.ok && result.message) {
                             toastr.success(result.message || 'Purchase successful', 'Success');
                             setTimeout(() => {
                               window.location.reload();
