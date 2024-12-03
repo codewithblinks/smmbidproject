@@ -193,13 +193,53 @@ router.post("/product/delete/active/account/:id", adminEnsureAuthenticated, admi
           const productId = Number(id);
 
             try {
-                 const result = await db.query('DELETE FROM admin_products WHERE id = $1', [productId]);
-                // req.flash("success", "Product has been deleted");
+
+              if (!productId) {
+                req.flash("error", "Invalid or missing data.");
+                return res.redirect("/admin/active/products");
+              }
+                await db.query('DELETE FROM admin_products WHERE id = $1', [productId]);
+
+                req.flash("success", "Product has been deleted");
                 res.redirect("/admin/active/products");
             } catch (error) {
                 console.log("Error deleting product:", error);
                 res.status(500).json({ error: 'Internal server error' });
             }
     })
+
+router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole, 
+      async (req, res) => {
+        const {productid, productLoginEmail, productAmount, productYear, productAccountCountry, productAccountType, productLoginPassword, 
+          productLoginUsername, productDescription, productLoginDetails
+        } = req.body;
+
+        const amount = parseFloat(productAmount.replace(/,/g, ''));
+
+
+        if (!productid || isNaN(amount) || !productLoginEmail) {
+          req.flash("error", "Invalid or missing data.");
+          return res.redirect("/admin/active/products");
+        }    
+
+          try {
+            const result = await db.query(`
+              UPDATE admin_products 
+              SET years = $1,
+              account_type = $2, country = $3,
+              description = $4, amount = $5,
+              loginusername = $6, loginemail = $7, 
+              loginpassword = $8, logindetails = $9 WHERE id = $10`, 
+              [productYear, productAccountType, productAccountCountry, productDescription, 
+               amount, productLoginUsername, productLoginEmail, 
+               productLoginPassword, productLoginDetails, productid]);
+
+               req.flash("success", "Account updated successfully");
+              res.redirect("/admin/active/products");
+          } catch (error) {
+              console.log("Error updating product:", error);
+              res.status(500).json({ error: 'Internal server error' });
+          }
+  })
 
 export default router;

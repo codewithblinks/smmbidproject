@@ -107,7 +107,14 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
         }
 
         const {reference, user_id} = pendingTransQuery.rows[0];
-        const amount = Number(pendingTransQuery.rows[0].amount);
+        const rawAmount = pendingTransQuery.rows[0].amount;
+        const amount = Number(rawAmount);
+
+        if (isNaN(amount)) {
+          console.error('Invalid amount:', rawAmount);
+          await db.query('ROLLBACK');
+          return res.status(400).send('Invalid deposit amount.');
+        }
 
         const transactionUpdate = await db.query(`
           UPDATE transactions 

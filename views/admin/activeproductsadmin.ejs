@@ -16,6 +16,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="../assets/css/animate.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link
   rel="shortcut icon"
   href="../assets/images/favicon.png"
@@ -703,7 +704,7 @@
                                 </svg>
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms class="ltr:right-0 rtl:left-0">
-                                    <li><a href="javascript:;" @click="showProductModal(<%= details.id%>, <%= details.years %>, '<%= details.profile_link %>', '<%= details.account_type %>', '<%= details.country %>', '<%= details.description %>', '<%= details.amount %>', '<%= details.loginusername %>', '<%= details.loginemail %>', '<%= details.loginpassword %>', '<%= details.logindetails %>')">Edit</a></li>
+                                    <li><a href="javascript:;" @click="showProductModal(<%= details.id%>, '<%= details.years %>', '<%= details.profile_link %>', '<%= details.account_type %>', '<%= details.country %>', `<%= details.description %>`, '<%= details.amount %>', '<%= details.loginusername %>', '<%= details.loginemail %>', '<%= details.loginpassword %>', `<%= details.logindetails %>`)">Edit</a></li>
                                     <form id="deleteProduct" action="/product/delete/active/account/<%= details.id%>" method="post">
                                       <li onclick="deleteProduct()"><a href="javascript:;" @click="toggle">Delete</a></li>
                                     </form>
@@ -739,7 +740,7 @@
           <!-- modal -->
           <div class="fixed w-100 inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="modalOpen && '!block'"
             x-data="modal"
-            @show-product-modal.window="modalOpen = true; productId = $event.detail.id; productYear = $event.detail.years; productProfileLink = $event.detail.profile_link; productAccountType = $event.detail.account_type; productAccountCountry = $event.detail.account_country; productDescription = $event.detail.description; productAmount = $event.detail.amount; productLoginUsername = $event.detail.loginusername; productLoginEmail = $event.detail.loginemail; productLoginPassword = $event.detail.loginpassword; productLoginDetails = $event.detail.logindetails;">
+            @show-product-modal.window="modalOpen = true; productId = $event.detail.id; productYear = $event.detail.years; productProfileLink = $event.detail.profile_link; productAccountType = $event.detail.account_type; productAccountCountry = $event.detail.country; productDescription = $event.detail.description; productAmount = $event.detail.amount; productLoginUsername = $event.detail.loginusername; productLoginEmail = $event.detail.loginemail; productLoginPassword = $event.detail.loginpassword; productLoginDetails = $event.detail.logindetails;">
             <div class="flex items-center justify-center min-h-screen px-4" @click.self="modalOpen = false">
               <div x-show="modalOpen" x-transition x-transition.duration.300
                 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
@@ -755,50 +756,54 @@
                   </button>
                 </div>
                 <div class="p-5">
-                  <form @submit.prevent="saveTask">
+                  <form action="/product/edit/active/account" method="post">
                       <div class="mb-5">
                           <label for="loginemail">Login Email</label>
-                          <input id="loginemail" type="text" class="form-input" :value="productLoginEmail">
-                      </div>
-                      <div class="mb-5">
-                          <label for="assignee">Assignee</label>
-                          <select id="assignee" class="form-select">
-                              <option value="">Select Assignee</option>
-                              <option value="John Smith">John Smith</option>
-                              <option value="Kia Vega">Kia Vega</option>
-                              <option value="Sandy Doe">Sandy Doe</option>
-                              <option value="Jane Foster">Jane Foster</option>
-                              <option value="Donna Frank">Donna Frank</option>
-                          </select>
+                          <input id="loginemail" type="text" class="form-input" name="productLoginEmail" :value="productLoginEmail">
+                          <input type="hidden" name="productid" id="productid" :value="productId">
                       </div>
                       <div class="mb-5 flex justify-between gap-4">
                           <div class="flex-1">
                               <label for="amount">Amount</label>
-                              <input id="amount" type="text" class="form-input" :value="productAmount">
+                              <input id="productAmount" name="productAmount" type="text" class="form-input" :value="productAmount">
                           </div>
                           <div class="flex-1">
                               <label for="year">Year</label>
-                                <input id="year" type="text" class="form-input" :value="productYear">
+                                <input id="productYear" name="productYear" type="text" class="form-input" :value="productYear">
                           </div>
                       </div>
                       <div class="mb-5 flex justify-between gap-4">
                         <div class="flex-1">
+                            <label for="productAccountCountry">Country</label>
+                            <input id="productAccountCountry" name="productAccountCountry" type="text" class="form-input" :value="productAccountCountry">
+                        </div>
+                        <div class="flex-1">
+                            <label for="productAccountType">Account Type</label>
+                              <input id="productAccountType" name="productAccountType" type="text" class="form-input" :value="productAccountType">
+                        </div>
+                    </div>
+                      <div class="mb-5 flex justify-between gap-4">
+                        <div class="flex-1">
                             <label for="password">Login Password</label>
-                            <input id="password" type="text" class="form-input" :value="productLoginPassword">
+                            <input id="productLoginPassword" name="productLoginPassword" type="text" class="form-input" :value="productLoginPassword">
                         </div>
                         <div class="flex-1">
                             <label for="loginusername">Login Username</label>
-                              <input id="loginusername" type="text" class="form-input" :value="productLoginUsername">
+                              <input id="productLoginUsername" name="productLoginUsername" type="text" class="form-input" :value="productLoginUsername">
                         </div>
                     </div>
                       <div class="mb-5">
                           <label>Description</label>
-                          <div x-ref="editor"></div>
+                          <textarea id="ctnTextarea" name="productDescription" rows="3" class="form-textarea" :value="productDescription"></textarea>
                       </div>
+                      <div class="mb-5">
+                        <label>Login Details</label>
+                        <textarea id="productLoginDetails" name="productLoginDetails" rows="3" class="form-textarea" :value="productLoginDetails"></textarea>
+                    </div>
                       <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
                           <button type="button" class="btn btn-outline-danger" @click="addTaskModal = false">Cancel</button>
                           <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4" >
-                              Add
+                              Update
                           </button>
                       </div>
                   </form>
@@ -819,6 +824,17 @@
     </div>
   </div>
 
+  <% if (messages.error) { %>
+    <div id="error-message">
+      <%= messages.error %>
+    </div>
+    <% } %>
+      <% if (messages.success) { %>
+        <div id="success-message">
+          <%= messages.success %>
+        </div>
+        <% } %>
+
   <script src="../assets/js/alpine-collaspe.min.js"></script>
   <script src="../assets/js/alpine-persist.min.js"></script>
   <script defer="" src="../assets/js/alpine-ui.min.js"></script>
@@ -826,6 +842,23 @@
   <script defer="" src="../assets/js/alpine.min.js"></script>
   <script src="../assets/js/custom.js"></script>
   <script defer="" src="../assets/js/apexcharts.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script>
+    $(function () {
+      var errorMessage = $('#error-message').text();
+      var successMessage = $('#success-message').text();
+
+      if (errorMessage) {
+        toastr.error(errorMessage);
+      }
+
+      if (successMessage) {
+        toastr.success(successMessage);
+      }
+    });
+  </script>
 
 
   <script>

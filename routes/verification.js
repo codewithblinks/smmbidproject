@@ -586,6 +586,10 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
   const { poolcountry, poolservice, pool, quantity, charge, areacode } = req.body;
   const displaycharge1 = Number(req.body.displaycharge1);
 
+  if (areacode === '[NULL]') {
+    areacode = '';
+  }
+
   console.log(areacode)
 
   try {

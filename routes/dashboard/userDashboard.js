@@ -70,7 +70,7 @@ router.get("/dashboard", ensureAuthenticated, userRole, async (req, res) => {
     const productResult = await db.query(`
       SELECT * FROM admin_products 
       WHERE payment_status = $1 
-      ORDER BY created_at DESC`, 
+      ORDER BY created_at DESC LIMIT 5`, 
       ['not sold']);
 
     const product = productResult.rows;

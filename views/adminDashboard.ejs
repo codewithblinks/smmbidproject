@@ -715,7 +715,7 @@
               <!-- Sessions -->
               <div class="panel bg-gradient-to-r from-violet-500 to-violet-400">
                 <div class="flex justify-between">
-                  <div class="text-md font-semibold ltr:mr-1 rtl:ml-1">Total Withdraw</div>
+                  <div class="text-md font-semibold ltr:mr-1 rtl:ml-1">Total Accounts Sold</div>
                   <div x-data="dropdown" @click.outside="open = false" class="dropdown">
                     <a href="javascript:;" @click="toggle">
                       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -834,6 +834,54 @@
 
             <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
               <div class="grid gap-6 xl:grid-flow-row">
+
+                 <!-- Current Statement -->
+                 <div class="panel overflow-hidden">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-lg font-bold">Product Market Statement</div>
+                    </div>
+                    <div x-data="dropdown" @click.outside="open = false" class="dropdown">
+                      <a href="javascript:;" @click="toggle">
+                        <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                          class="h-5 w-5 opacity-70 hover:opacity-80">
+                          <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                          <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                          <circle cx="19" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
+                        </svg>
+                      </a>
+                      <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                        class="ltr:right-0 rtl:left-0">
+                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('today')">Today</a></li>
+                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('week')">This Week</a></li>
+                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('month')">This Month</a></li>
+                        <li><a href="javascript:;" onclick="overAllAdminProduct()">Overall</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="relative mt-10">
+                    <div class="absolute -bottom-12 h-24 w-24 ltr:-right-12 rtl:-left-12">
+                      <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="h-full w-24 text-danger opacity-20">
+                        <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
+                        <path d="M12 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+                      </svg>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
+                      <div>
+                        <div class="text-primary">Total Sold Accounts</div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalAdminProductsSold"> <%= adminSold.length %></div>
+                      </div>
+                      <div>
+                        <div class="text-primary">Total Sold Amount</div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalAdminSoldAmount">₦ <%= totalAdminSoldp2p %></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Previous Statement -->
                 <div class="panel overflow-hidden">
                   <div class="flex items-center justify-between">
@@ -883,53 +931,6 @@
                         <div class="text-primary">Profits</div>
                         <div class="mt-2 text-2xl font-semibold" id="totalProfitAmount">₦ DDDD
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Current Statement -->
-                <div class="panel overflow-hidden">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <div class="text-lg font-bold">Product Market Statement</div>
-                    </div>
-                    <div x-data="dropdown" @click.outside="open = false" class="dropdown">
-                      <a href="javascript:;" @click="toggle">
-                        <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5 opacity-70 hover:opacity-80">
-                          <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                          <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                          <circle cx="19" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                        </svg>
-                      </a>
-                      <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                        class="ltr:right-0 rtl:left-0">
-                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('today')">Today</a></li>
-                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('week')">This Week</a></li>
-                        <li><a href="javascript:;" onclick="getTotalAdminSoldAndProfit('month')">This Month</a></li>
-                        <li><a href="javascript:;" onclick="overAllAdminProduct()">Overall</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="relative mt-10">
-                    <div class="absolute -bottom-12 h-24 w-24 ltr:-right-12 rtl:-left-12">
-                      <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        class="h-full w-24 text-danger opacity-20">
-                        <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                        <path d="M12 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
-                      </svg>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
-                      <div>
-                        <div class="text-primary">Total Sold Accounts</div>
-                        <div class="mt-2 text-2xl font-semibold" id="totalAdminProductsSold"> <%= adminSold.length %></div>
-                      </div>
-                      <div>
-                        <div class="text-primary">Total Sold Amount</div>
-                        <div class="mt-2 text-2xl font-semibold" id="totalAdminSoldAmount">₦ <%= totalAdminSoldp2p %></div>
                       </div>
                     </div>
                   </div>
