@@ -224,25 +224,6 @@ CREATE TABLE pending_deposits (
     ALTER TABLE pending_deposits ADD COLUMN proof_image BYTEA
 );
 
--- remember to add
-
-DROP TABLE IF EXISTS admin_products;
-CREATE TABLE IF NOT EXISTS admin_products (
-	id SERIAL PRIMARY KEY,
-	admin_id INT REFERENCES admins(id) ON DELETE CASCADE,
-	years INT NOT NULL,
-	profile_link TEXT NOT NULL,
-	account_type TEXT NOT NULL,
-	country TEXT NOT NULL,
-	description TEXT NOT NULL,
-	amount numeric(10,2) NOT NULL,
-    payment_status TEXT DEFAULT 'not sold',
-    logindetails TEXT,
-	created_at TIMESTAMPTZ DEFAULT NOW(),
-    sold_at TIMESTAMPTZ,
-    statustype text
-);
-
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
     status_name VARCHAR(50) NOT NULL
@@ -295,6 +276,9 @@ CREATE TABLE ticket_responses (
 	seen BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- remember to add
+
 
 
 

@@ -104,6 +104,12 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
       return res.status(404).json({ error: 'No data found' });
     }
 
+    const validData = data.filter(item => item.price !== null);
+
+    if (validData.length === 0) {
+      return res.status(404).json({ error: 'No valid data found' });
+    }
+
     const prices = data.map(item => Number(item.price));
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
@@ -111,7 +117,7 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
     res.json({
       minPriceRange: `${minPrice.toFixed(2)}`,
       maxPriceRange: `${maxPrice.toFixed(2)}`,
-      pools: data // Send the entire pool data
+      pools: validData
     });
 
   } catch (err) {
@@ -138,7 +144,15 @@ router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
 
     const data = response.data;
 
-    res.json(data)
+    const validData = data.flat().filter(item => item.price !== null);
+
+    if (!validData || validData.length === 0) {
+      return res.status(404).json({ error: 'No valid data found' });
+    }
+
+    console.log(validData)
+
+    res.json(validData);
 
   } catch (err) {
     console.error("error at all_stock", err.message);

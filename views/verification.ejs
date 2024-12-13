@@ -1196,9 +1196,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  // const originalConsoleLog = console.log;
-                  // console.log = function () { };
-
+                  const originalConsoleLog = console.log;
+                  console.log = function () { };
 
                   NiceSelect.bind((select1), { searchable: true });
                   NiceSelect.bind((select2), { searchable: true });
@@ -1255,12 +1254,10 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   const { priceData, successRateData, stockData } = data;
 
-                  // Update success rate
                   successrate.value = `${successRateData.success_rate || 'N/A'} %`;
 
-                  // Calculate and update price range
-                  let exchangeRate = 1500; // Default rate
-                  let smsprice = 1000; // Default SMS price
+                  let exchangeRate = 1500;
+                  let smsprice = 1000;
                   let exchangeRateApi = 1500;
                   let userCurrency = 'NGN';
 
@@ -1316,14 +1313,17 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   }
 
                   // Update stock
-                  const totalStock = stockData[0]?.reduce((sum, item) => sum + item.stock, 0) || 0;
-                  stock.value = totalStock || '0';
+                  const totalStock = Array.isArray(stockData)
+                  ? stockData.reduce((sum, item) => sum + (item.stock || 0), 0)
+                  : 0;
 
-                  // Optional: Update stock display (if required)
+                   stock.value = totalStock || '0';
+
                   const stockDisplay = document.getElementById('stockDisplay');
-                  stockDisplay.innerHTML = ''; // Clear previous stock display
+                  stockDisplay.innerHTML = '';
 
-                  stockData[0]?.forEach(async item => {
+                  if (Array.isArray(stockData)) {
+                  stockData.forEach(async item => {
                     const stockItem = document.createElement('div');
                     const itemPrice = Math.floor(item.price * exchangeRate + smsprice);
                     const displayPrice =
@@ -1404,6 +1404,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           });
 
                           const areaCodesContainer = document.getElementById(uniqueAreaCodeContainerId);
+
                           if (response.ok) {
                             const data = await response.json();
                             let areaCodes = [];
@@ -1440,6 +1441,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           areaCodesContainer.innerHTML = ``;
                         }
                   });
+                }
 
                   document.querySelectorAll('.purchaseForm').forEach((form) => {
                       form.addEventListener('submit', async function (event) {
