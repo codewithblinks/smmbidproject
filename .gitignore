@@ -8,10 +8,6 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 #pages
-# views/tickets.ejs
-# views/admin/admintickets.ejs
-# routes/admin/admintickets.js
-# routes/ticket.js
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
