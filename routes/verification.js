@@ -90,7 +90,7 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
     if (!country || !service) {
       return res.status(400).json({ error: 'Country and service are required' });
     }
-    
+
     const form = new FormData();
     form.append('key', BEARER_TOKEN);
     form.append('country', country);
@@ -154,8 +154,6 @@ router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
     if (!validData || validData.length === 0) {
       return res.status(404).json({ error: 'No valid data found' });
     }
-
-    console.log(validData)
 
     res.json(validData);
 
@@ -241,8 +239,6 @@ router.post("/pool/successRate", ensureAuthenticated, async (req, res) => {
     const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
 
     const data = response.data;
-
-    console.log(data)
 
     res.json(data)
 
@@ -639,8 +635,6 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
     areacode = '';
   }
 
-  console.log(areacode)
-
   try {
     await db.query('BEGIN');
 
@@ -686,8 +680,6 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
       await db.query('UPDATE userprofile SET balance = balance - $1 WHERE id = $2', [displaycharge1, userId]);
 
       await db.query('COMMIT');
-
-      console.log(data.message)
 
       return res.json({ message: data.message});
 

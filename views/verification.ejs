@@ -1361,7 +1361,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                                             class="form-input" disabled value="${item.stock}" />
                                     </div>
                                     <div>
-                                        <label for="browserEmail">Success Rate</label>
+                                        <label for="browserEmail">Price</label>
                                         <input id="display-price" type="text" placeholder=""
                                         class="form-input" disabled value="${sign}${displayPrice.toLocaleString()}"/>
                                     </div>
@@ -1420,7 +1420,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                           if (poolStock && poolStock.success_rate !== undefined) {
                             poolStocksContainer.innerHTML = `
-                            <label for="Stock">Stock</label>
+                            <label for="Stock">Success Rate</label>
                             <input id="pool-stock" type="text" placeholder="" 
                                   class="form-input" disabled value="${poolStock.success_rate || 'N/A'} %" />
                           `;
