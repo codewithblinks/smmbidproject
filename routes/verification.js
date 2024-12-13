@@ -86,6 +86,11 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
   const { country, service} = req.body;
 
   try {
+
+    if (!country || !service) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+    
     const form = new FormData();
     form.append('key', BEARER_TOKEN);
     form.append('country', country);
@@ -110,7 +115,7 @@ router.post("/smmpool/retrieve_prices", ensureAuthenticated, async (req, res) =>
       return res.status(404).json({ error: 'No valid data found' });
     }
 
-    const prices = data.map(item => Number(item.price));
+    const prices = validData.map(item => Number(item.price));
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
 
@@ -213,6 +218,36 @@ router.post("/request/areacodes", ensureAuthenticated, async (req, res) => {
 
   } catch (err) {
     console.error("error at pool/retrieve_valid", err.message);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
+
+router.post("/pool/successRate", ensureAuthenticated, async (req, res) => {
+
+  const { country, service, pool} = req.body;
+
+  try {
+    const form = new FormData();
+    form.append('country', country);
+    form.append('service', service);
+    form.append('pool', pool);
+
+    const headers = {
+      ...form.getHeaders(),
+      'Authorization': `Bearer ${BEARER_TOKEN}`
+
+    };
+
+    const response = await axios.post('https://api.smspool.net/request/price', form, { headers });
+
+    const data = response.data;
+
+    console.log(data)
+
+    res.json(data)
+
+  } catch (err) {
+    console.error("erro at smmpool/options", err.message);
     res.status(500).json({ err: 'Internal server error' });
   }
 });

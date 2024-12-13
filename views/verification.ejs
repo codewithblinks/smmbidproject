@@ -786,12 +786,6 @@
                     </div>
                     <div class="mt-4">
                       <div>
-                        <label for="charge">Success Rate</label>
-                        <input id="successrate" disabled type="text" name="successrate" class="form-input">
-                      </div>
-                    </div>
-                    <div class="mt-4">
-                      <div>
                         <label for="charge">Price range</label>
                         <input id="displaycharge" disabled type="text" class="form-input" required>
                       </div>
@@ -799,7 +793,7 @@
                     <div class="mt-4" hidden>
                       <div>
                         <label for="charge">Price range</label>
-                        <input id="displaycharge1" type="number" name="displaycharge1" class="form-input" >
+                        <input id="displaycharge1" type="number" name="displaycharge1" class="form-input">
                       </div>
                     </div>
                     <div class="mt-4" hidden>
@@ -1191,7 +1185,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const priceInput = document.getElementById('charge');
                   const displaycharge = document.getElementById('displaycharge');
                   const displaycharge1 = document.getElementById('displaycharge1');
-                  const successrate = document.getElementById('successrate');
                   const stock = document.getElementById('stock');
                   const pools = document.getElementById('pools');
 
@@ -1203,142 +1196,135 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   NiceSelect.bind((select2), { searchable: true });
 
                   const debounce = (func, delay) => {
-                  let timeout;
-                  return (...args) => {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func(...args), delay);
+                    let timeout;
+                    return (...args) => {
+                      clearTimeout(timeout);
+                      timeout = setTimeout(() => func(...args), delay);
+                    };
                   };
-                };
 
-                const fetchData = async (country, service) => {
-                  try {
-                    const [priceResponse, successRateResponse, stockResponse] = await Promise.all([
-                      fetch('/smmpool/retrieve_prices', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ country, service }),
-                      }),
-                      fetch('/smmpool/SuccessRate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ country, service }),
-                      }),
-                      fetch('/sms/all_stock', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ country, service }),
-                      }),
-                    ]);
+                  const fetchData = async (country, service) => {
+                    try {
+                      const [priceResponse, stockResponse] = await Promise.all([
+                        fetch('/smmpool/retrieve_prices', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ country, service }),
+                        }),
+                        fetch('/sms/all_stock', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ country, service }),
+                        }),
+                      ]);
 
-                    if (!priceResponse.ok || !successRateResponse.ok || !stockResponse.ok) {
-                      throw new Error('Failed to fetch data');
+                      if (!priceResponse.ok || !stockResponse.ok) {
+                        throw new Error('Failed to fetch data');
+                      }
+
+                      const priceData = await priceResponse.json();
+                      const stockData = await stockResponse.json();
+
+                      return { priceData, stockData };
+                    } catch (error) {
+                      console.error('Error fetching data:', error);
+                      return null;
+                    }
+                  };
+
+                  const updateUI = async () => {
+                    const country = select1.value;
+                    const service = select2.value;
+
+                    const data = await fetchData(country, service);
+                    if (!data) return;
+
+                    const { priceData, stockData } = data;
+
+                    let exchangeRate = 1500;
+                    let smsprice = 1000;
+                    let exchangeRateApi = 1500;
+                    let userCurrency = 'NGN';
+
+                    try {
+                      const [rateResponse, smsPriceResponse, getUserResponses] = await Promise.all([
+                        fetch('/api/exchange-rate'),
+                        fetch('/api/sms-price'),
+                        fetch('/api/api/exchange-rate'),
+                      ]);
+
+                      if (rateResponse.ok) {
+                        const rateData = await rateResponse.json();
+                        exchangeRate = rateData.rate || exchangeRate;
+                      }
+
+                      if (smsPriceResponse.ok) {
+                        const smsPriceData = await smsPriceResponse.json();
+                        smsprice = Number(smsPriceData.smsprice) || smsprice;
+                      }
+
+                      if (smsPriceResponse.ok) {
+                        const userData = await getUserResponses.json();
+                        exchangeRateApi = userData.rate.NGN;
+                        userCurrency = userData.userDetails.currency;
+                      }
+                    } catch (error) {
+                      console.warn('Error fetching exchange rate or SMS price:', error);
                     }
 
-                    const priceData = await priceResponse.json();
-                    const successRateData = await successRateResponse.json();
-                    const stockData = await stockResponse.json();
+                    const minPrice = Math.floor(priceData.minPriceRange * exchangeRate + smsprice);
+                    const maxPrice = Math.floor(priceData.maxPriceRange * exchangeRate + smsprice);
+                    const convertedMinPrice = (minPrice / exchangeRateApi).toFixed(3)
+                    const convertedMaxPrice = (maxPrice / exchangeRateApi).toFixed(3)
 
-                    return { priceData, successRateData, stockData };
-                  } catch (error) {
-                    console.error('Error fetching data:', error);
-                    return null;
-                  }
-                };
+                    displaycharge.value = userCurrency === 'USD'
+                      ? `$${convertedMinPrice} - $${convertedMaxPrice}`
+                      : `₦${minPrice} - ₦${maxPrice}`;
 
-                const updateUI = async () => {
-                  const country = select1.value;
-                  const service = select2.value;
+                    // Update cheapest pool price
+                    const availablePools = priceData.pools?.filter(pool => parseFloat(pool.stock) > 0) || [];
+                    if (availablePools.length > 0) {
+                      const cheapestPool = availablePools.reduce((a, b) =>
+                        parseFloat(a.price) < parseFloat(b.price) ? a : b
+                      );
 
-                  const data = await fetchData(country, service);
-                  if (!data) return;
+                      const cheapestPrice = Math.floor(parseFloat(cheapestPool.price) * exchangeRate + smsprice);
 
-                  const { priceData, successRateData, stockData } = data;
-
-                  successrate.value = `${successRateData.success_rate || 'N/A'} %`;
-
-                  let exchangeRate = 1500;
-                  let smsprice = 1000;
-                  let exchangeRateApi = 1500;
-                  let userCurrency = 'NGN';
-
-                  try {
-                    const [rateResponse, smsPriceResponse, getUserResponses] = await Promise.all([
-                      fetch('/api/exchange-rate'),
-                      fetch('/api/sms-price'),
-                      fetch('/api/api/exchange-rate'),
-                    ]);
-
-                    if (rateResponse.ok) {
-                      const rateData = await rateResponse.json();
-                      exchangeRate = rateData.rate || exchangeRate;
+                      displaycharge1.value = cheapestPrice;
+                      pools.value = cheapestPool.pool;
+                      priceInput.value = cheapestPool.price;
+                    } else {
+                      displaycharge1.value = 'No pools available';
                     }
 
-                    if (smsPriceResponse.ok) {
-                      const smsPriceData = await smsPriceResponse.json();
-                      smsprice = Number(smsPriceData.smsprice) || smsprice;
-                    }
+                    // Update stock
+                    const totalStock = Array.isArray(stockData)
+                      ? stockData.reduce((sum, item) => sum + (item.stock || 0), 0)
+                      : 0;
 
-                    if (smsPriceResponse.ok) {
-                      const userData = await getUserResponses.json();
-                      exchangeRateApi = userData.rate.NGN;
-                      userCurrency = userData.userDetails.currency;
-                    }
-                  } catch (error) {
-                    console.warn('Error fetching exchange rate or SMS price:', error);
-                  }
+                    stock.value = totalStock || '0';
 
-                  const minPrice = Math.floor(priceData.minPriceRange * exchangeRate + smsprice);
-                  const maxPrice = Math.floor(priceData.maxPriceRange * exchangeRate + smsprice);
-                  const convertedMinPrice = (minPrice / exchangeRateApi).toFixed(3)
-                  const convertedMaxPrice = (maxPrice / exchangeRateApi).toFixed(3)
+                    const stockDisplay = document.getElementById('stockDisplay');
+                    stockDisplay.innerHTML = '';
 
-                  displaycharge.value = userCurrency === 'USD' 
-                  ? `$${convertedMinPrice} - $${convertedMaxPrice}` 
-                  : `₦${minPrice} - ₦${maxPrice}`;
-                  
-                  // Update cheapest pool price
-                  const availablePools = priceData.pools?.filter(pool => parseFloat(pool.stock) > 0) || [];
-                  if (availablePools.length > 0) {
-                    const cheapestPool = availablePools.reduce((a, b) =>
-                      parseFloat(a.price) < parseFloat(b.price) ? a : b
-                    );
+                    if (Array.isArray(stockData)) {
+                      stockData.forEach(async item => {
+                        const stockItem = document.createElement('div');
+                        const itemPrice = Math.floor(item.price * exchangeRate + smsprice);
+                        const displayPrice =
+                          userCurrency === 'USD'
+                            ? (itemPrice / exchangeRateApi).toFixed(3)
+                            : itemPrice;
 
-                    const cheapestPrice = Math.floor(parseFloat(cheapestPool.price) * exchangeRate + smsprice);
+                        let sign = userCurrency === 'USD'
+                          ? '$'
+                          : '₦';
 
-                    displaycharge1.value = cheapestPrice;
-                    pools.value = cheapestPool.pool;
-                    priceInput.value = cheapestPool.price;
-                  } else {
-                    displaycharge1.value = 'No pools available';
-                  }
+                        const uniqueAreaCodeContainerId = `areaCodesContainer-${item.pool_name}`;
+                        const uniquePoolStocksContainerId = `poolStocksContainer-${item.pool_name}`;
 
-                  // Update stock
-                  const totalStock = Array.isArray(stockData)
-                  ? stockData.reduce((sum, item) => sum + (item.stock || 0), 0)
-                  : 0;
 
-                   stock.value = totalStock || '0';
-
-                  const stockDisplay = document.getElementById('stockDisplay');
-                  stockDisplay.innerHTML = '';
-
-                  if (Array.isArray(stockData)) {
-                  stockData.forEach(async item => {
-                    const stockItem = document.createElement('div');
-                    const itemPrice = Math.floor(item.price * exchangeRate + smsprice);
-                    const displayPrice =
-                    userCurrency === 'USD'
-                    ? (itemPrice / exchangeRateApi).toFixed(3)
-                    : itemPrice;
-
-                  let sign = userCurrency === 'USD'
-                    ? '$'
-                    : '₦';
-
-                    const uniqueAreaCodeContainerId = `areaCodesContainer-${item.pool_name}`;
-                    
-
-                    stockItem.innerHTML = `
+                        stockItem.innerHTML = `
                          <div class="panel">
                         <div class="mb-5">
                             <form class="purchaseForm" id="purchaseForm-${item.pool_name}" action="/purchase/sms" method="post" class="space-y-5">
@@ -1375,9 +1361,11 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                                             class="form-input" disabled value="${item.stock}" />
                                     </div>
                                     <div>
-                                        <label for="browserEmail">Price</label>
+                                        <label for="browserEmail">Success Rate</label>
                                         <input id="display-price" type="text" placeholder=""
                                         class="form-input" disabled value="${sign}${displayPrice.toLocaleString()}"/>
+                                    </div>
+                                    <div id="${uniquePoolStocksContainerId}">
                                     </div>
                                      <div id="${uniqueAreaCodeContainerId}">
                                     </div>
@@ -1389,50 +1377,79 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         </div>
                     </div>
                     `;
-                    stockDisplay.appendChild(stockItem);
+                        stockDisplay.appendChild(stockItem);
 
-                    try {
-                          const response = await fetch('/request/areacodes', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ 
-                              country, 
-                              service, 
-                              pool: item.pool_name })
-                          });
+                        try {
+                          const fetchDataPool = async (country, service, pool) => {
+                            try {
+                              const [areacodesResponse, poolStockResponse] = await Promise.all([
+                                fetch('/request/areacodes', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ country, service, pool }),
+                                }),
+                                fetch('/pool/successRate', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ country, service, pool }),
+                                }),
+                              ]);
+
+                              if (!areacodesResponse.ok || !poolStockResponse.ok) {
+                                throw new Error('Failed to fetch data');
+                              }
+
+                              const areacodes = await areacodesResponse.json();
+                              const poolStock = await poolStockResponse.json();
+
+                              return { areacodes, poolStock };
+
+                            } catch (error) {
+                              console.error('Error fetching data:', error);
+                              return null;
+                            }
+                          }
+
+                          const fetchPooldata = await fetchDataPool(country, service, item.pool_name);
+                          if (!fetchPooldata) return;
+
+                          const { areacodes, poolStock } = fetchPooldata;
 
                           const areaCodesContainer = document.getElementById(uniqueAreaCodeContainerId);
+                          const poolStocksContainer = document.getElementById(uniquePoolStocksContainerId);
 
-                          if (response.ok) {
-                            const data = await response.json();
-                            let areaCodes = [];
-                            
-                           if (Array.isArray(data)) {
-                                      areaCodes = data;
-                                  } else if (typeof data === 'object') {
-                                      if (data.success === 0 && data.message) {
-                                          areaCodesContainer.innerHTML = ``;
-                                          return;
-                                      } else if (Object.keys(data).every((key) => !isNaN(key))) {
-                                          areaCodes = Object.values(data);
-                                      }
-                                  }
-                            if (areaCodes.length > 0) {
-                              areaCodesContainer.innerHTML = `
+                          if (poolStock && poolStock.success_rate !== undefined) {
+                            poolStocksContainer.innerHTML = `
+                            <label for="Stock">Stock</label>
+                            <input id="pool-stock" type="text" placeholder="" 
+                                  class="form-input" disabled value="${poolStock.success_rate || 'N/A'} %" />
+                          `;
+                          } else {
+                            poolStocksContainer.innerHTML = '<p>No stock data available.</p>';
+                          }
+
+                          let areaCodes = [];
+
+                          if (Array.isArray(areacodes)) {
+                            areaCodes = areacodes;
+                          } else if (typeof areacodes === 'object') {
+                            if (areacodes.success === 0 && areacodes.message) {
+                              areaCodesContainer.innerHTML = ``;
+                              return;
+                            } else if (Object.keys(areacodes).every((key) => !isNaN(key))) {
+                              areaCodes = Object.values(areacodes);
+                            }
+                          }
+                          if (areaCodes.length > 0) {
+                            areaCodesContainer.innerHTML = `
                               <label for="areaCodes">Custom areacode</label>
                                 <select id="areaCodes-${item.pool_name}" class="form-select text-white-dark">
                                   <option value="">none</option>
                                   ${areaCodes.map(code => `<option value="${code}">${code}</option>`).join('')}
                                 </select>
                               `;
-                            } else {
-                              // Show message if no area codes are available
-                              areaCodesContainer.innerHTML = ``;
-                            }
                           } else {
-                            console.error('Failed to fetch area codes:', response.statusText);
+                            // Show message if no area codes are available
                             areaCodesContainer.innerHTML = ``;
                           }
                         } catch (error) {
@@ -1440,10 +1457,10 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           const areaCodesContainer = document.getElementById(uniqueAreaCodeContainerId);
                           areaCodesContainer.innerHTML = ``;
                         }
-                  });
-                }
+                      });
+                    }
 
-                  document.querySelectorAll('.purchaseForm').forEach((form) => {
+                    document.querySelectorAll('.purchaseForm').forEach((form) => {
                       form.addEventListener('submit', async function (event) {
                         event.preventDefault();
 
@@ -1457,13 +1474,13 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           const selectedAreaCode = areaCodeDropdown ? areaCodeDropdown.value : null;
 
                           if (selectedAreaCode === '') {
-                          toastr.error('Please select an area code.', 'Error');
-                          purchasePoolBTN.disabled = false;
-                          purchasePoolBTN.textContent = 'Purchase';
-                          return;
-                           }
+                            toastr.error('Please select an area code.', 'Error');
+                            purchasePoolBTN.disabled = false;
+                            purchasePoolBTN.textContent = 'Purchase';
+                            return;
+                          }
 
-                           const formattedAreaCode = `[${selectedAreaCode}]`;
+                          const formattedAreaCode = `[${selectedAreaCode}]`;
 
                           const response = await fetch('/purchase/sms', {
                             method: 'POST',
@@ -1483,8 +1500,6 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                           const result = await response.json();
 
-                          console.log(result)
-
                           if (response.ok && result.message) {
                             toastr.success(result.message || 'Purchase successful', 'Success');
                             setTimeout(() => {
@@ -1503,14 +1518,14 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                     });
                   };
 
-          
-                const handleSelectChange = debounce(updateUI, 300);
 
-                select1.addEventListener('change', handleSelectChange);
-                select2.addEventListener('change', handleSelectChange);
+                  const handleSelectChange = debounce(updateUI, 300);
 
-                // Initial load
-                updateUI();
+                  select1.addEventListener('change', handleSelectChange);
+                  select2.addEventListener('change', handleSelectChange);
+
+                  // Initial load
+                  updateUI();
                 });
               </script>
 
