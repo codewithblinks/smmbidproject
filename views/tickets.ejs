@@ -744,7 +744,7 @@
               :class="{'!block' : isShowMailMenu}">
               <div class="flex h-full flex-col pb-16">
                 <div class="pb-5">
-                  <button class="btn btn-primary w-full">Ticket History</button>
+                  <button class="btn btn-primary w-full" type="button" @click="openMail('add')">New Message</button>
                 </div>
                 <div class="perfect-scrollbar relative -mr-3.5 h-full grow pr-3.5">
                   <div class="space-y-1">
@@ -765,7 +765,8 @@
                         <div class="ltr:ml-3 rtl:mr-3">Active Tickets</div>
                       </div>
                       <div
-                        class="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]" id="activeTicketLength"></div>
+                        class="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]" id="activeTL"
+                        ></div>
                     </button>
 
                     <button type="button" id="solvedTicketBTN"
@@ -782,8 +783,10 @@
                         <div class="ltr:ml-3 rtl:mr-3">Solved Tikcets</div>
                       </div>
                       <div
-                        class="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]" id="solvedTicketLength"></div>
+                        class="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]" id="solvedTL"
+                        ></div>
                     </button>
+
                     <div class="h-px border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
                   </div>
                 </div>
@@ -830,74 +833,101 @@
                 <!-- Back button -->
                 <div class="flex flex-wrap items-center justify-between p-4" id="backheaderBTN" style="display: none;">
                   <div class="flex items-center">
-                      <button id="backBTN" type="button" class="hover:text-primary ltr:mr-2 rtl:ml-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 rtl:rotate-180">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
-                          </svg>
-                      </button>
-                      <h4 class="text-base font-medium ltr:mr-2 rtl:ml-2 md:text-lg" ></h4>
-                      <div class="badge bg-info hover:top-0" ></div>
+                    <button id="backBTN" type="button" class="hover:text-primary ltr:mr-2 rtl:ml-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="h-5 w-5 rtl:rotate-180">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18">
+                        </path>
+                      </svg>
+                    </button>
+                    <h4 class="text-base font-medium ltr:mr-2 rtl:ml-2 md:text-lg">Ticket ID</h4>
+                    <div class="badge bg-info hover:top-0" id="ticketIdDiv"></div>
                   </div>
-                  <ul class="flex grow items-center gap-4 sm:flex-none ltr:sm:mr-4 rtl:sm:ml-4">
-                    <li>
-                      <div x-data="dropdown" @click.outside="open = false" class="dropdown">
-                        <button type="button" class="flex items-center hover:text-primary" @click="toggle">
-                          <svg width="24" height="24" viewbox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-90 opacity-70">
-                            <circle cx="5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                            <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5">
-                            </circle>
-                            <circle cx="19" cy="12" r="2" stroke="currentColor" stroke-width="1.5"></circle>
-                          </svg>
-                        </button>
-                        <form id="closeTicketForm">
-                        <ul @click="toggle" x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                          class="whitespace-nowrap ltr:right-0 rtl:left-0">
-                          
-                          <% ticketStatus.forEach(e => { %>
-                              <li>
-                            <button type="submit" class="w-full close-ticket-btn" data-status-id="<%= e.id %>">
-                              Mark as <%= e.status_name %> <%= e.id %>
-                            </button>
-                          </li>
-                            <% }) %>
-                          
-                        </ul>
-                      </form>
-                      </div>
-                    </li>
-                  </ul>
-              </div>
-                 <!-- End back button -->
+                </div>
+                <!-- End back button -->
                 <div class="h-px border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
                 <div class="h-px border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
                 <div class="table-responsive min-h-[300px] grow overflow-y-auto" id="ticket-list">
                   <table>
                     <tbody id="ticketsTableBody">
-                        
+
                     </tbody>
                   </table>
                 </div>
-                <template x-if="!pagedMails.length">
-                  <div class="grid h-full min-h-[300px] place-content-center text-lg font-semibold">No data available
-                  </div>
-                </template>
                 <!-- hjff -->
-                 <div id="typeMSG" style="display: none;">
-               
+                <div id="typeMSG" style="display: none;">
+
                 </div>
 
                 <!-- hd7y -->
                 <!-- herer -->
-                  <div class="perfect-scrollbar relative h-full overflow-auto sm:h-[calc(100vh_-_300px)]">
-                    <div class="chat-conversation-box min-h-[400px] space-y-5 p-4 pb-[68px] sm:min-h-[300px] sm:pb-0"
-                      id="chatContainer">
-                      <!-- Messages will be dynamically rendered here -->
-                    </div>
+                <div class="perfect-scrollbar relative h-full overflow-auto sm:h-[calc(100vh_-_300px)]">
+                  <div class="chat-conversation-box min-h-[400px] space-y-5 p-4 pb-[68px] sm:min-h-[300px] sm:pb-0"
+                    id="chatContainer">
+                    <!-- Messages will be dynamically rendered here -->
                   </div>
+                </div>
 
                 <!-- end -->
               </div>
+              <template x-if="isEdit">
+                <div class="relative">
+                  <div class="flex items-center py-4 px-6">
+                    <button type="button" class="block hover:text-primary ltr:mr-3 rtl:ml-3 xl:hidden"
+                      @click="isShowMailMenu = !isShowMailMenu">
+                      <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6">
+                        <path d="M20 7L4 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        <path opacity="0.5" d="M20 12L4 12" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round"></path>
+                        <path d="M20 17L4 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      </svg>
+                    </button>
+                    <h4 class="text-lg font-medium text-gray-600 dark:text-gray-400">Message</h4>
+                  </div>
+                  <div
+                    class="h-px bg-gradient-to-l from-indigo-900/20 via-black to-indigo-900/20 opacity-[0.1] dark:via-white">
+                  </div>
+                  <form action="/submit-ticket" method="post" class="grid gap-6 p-6">
+                    <div>
+                      <select class="form-select text-white-dark" name="service">
+                        <option>Select service</option>
+                        <option value="SMM Panel">SMM Panel</option>
+                        <option value="Verification">Verification</option>
+                        <option value="P2P Market">P2P Market</option>
+                        <option value="Others Not Listed Here">Others Not Listed Here</option>
+                      </select>
+                    </div>
+                    <div>
+                      <select class="form-select text-white-dark" name="priority">
+                        <option>Priority Level</option>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                        <option value="4">Urgent</option>
+                      </select>
+                    </div>
+                    <div>
+                      <input type="text" class="form-input" placeholder="Order or Purchase id" name="orderId">
+                    </div>
+
+                    <div>
+                      <input type="text" class="form-input" placeholder="Enter title" name="title">
+                    </div>
+
+                    <div class="h-fit">
+                      <textarea rows="4" class="form-textarea  ltr:rounded-l-none rtl:rounded-r-none"
+                        name="description"></textarea>
+                    </div>
+
+                    <div class="mt-8 flex items-center ltr:ml-auto rtl:mr-auto">
+                      <button type="button" class="btn btn-outline-danger ltr:mr-3 rtl:ml-3"
+                        @click="closeMsgPopUp">Close</button>
+                      <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                  </form>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -933,7 +963,7 @@
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
           <script src="../assets/js/notification.js"></script>
 
-          <!-- <script>
+          <script>
             $(function () {
               var errorMessage = $('#error-message').text();
               var successMessage = $('#success-message').text();
@@ -946,7 +976,7 @@
                 toastr.success(successMessage);
               }
             });
-          </script> -->
+          </script>
 
           <script>
             let tickets = [];
@@ -956,13 +986,14 @@
             const listpageBTN = document.getElementById('listpageBTN')
             const backheaderBTN = document.getElementById('backheaderBTN')
             const typeMSG = document.getElementById('typeMSG')
+            const ticketIdDiv = document.getElementById('ticketIdDiv')
             const activeTicketBTN = document.getElementById('activeTicketBTN')
             const solvedTicketBTN = document.getElementById('solvedTicketBTN')
-            const activeTL = document.getElementById('activeTicketLength')
-            const solvedTL = document.getElementById('solvedTicketLength')
+            const activeTL = document.getElementById('activeTL')
+            const solvedTL = document.getElementById('solvedTL')
+
             let activeTLL = 0
             let solvedTLL = 0
-
 
             function updateTicketCounts() {
               activeTL.innerHTML = activeTLL || 0;
@@ -972,7 +1003,7 @@
             // Fetch Tickets from the Backend
             async function fetchTickets() {
               try {
-                const response = await fetch("/api/admin/tickets");
+                const response = await fetch("/api/tickets");
                 tickets = await response.json();
                 activeTLL = tickets.length || 0;
                   updateTicketCounts();
@@ -984,7 +1015,7 @@
 
             async function fetchSolvedTickets() {
               try {
-                const response = await fetch("/api/admin/solved/tickets");
+                const response = await fetch("/api/solved/tickets");
                 solvedTickets = await response.json();
                 solvedTLL = solvedTickets.length || 0;
                 updateTicketCounts();
@@ -998,12 +1029,12 @@
             function renderTickets() {
               const ticketsTableBody = document.getElementById("ticketsTableBody");
               ticketsTableBody.innerHTML = tickets.length === 0
-              ? '<tr><td colspan="3" class="text-center">No tickets available.</td></tr>'
-              : "";
+                ? '<tr><td colspan="3" class="text-center">No tickets available.</td></tr>'
+                : "";
 
               tickets.forEach((ticket) => {
                 const latestResponse = ticket.responses?.[ticket.responses.length - 1] || null;
-                console.log("here", latestResponse.sender)
+                console.log("here", latestResponse.seen)
                 const row = document.createElement("tr");
                 row.className = "cursor-pointer view-ticket";
 
@@ -1025,10 +1056,10 @@
                     </span>
                   </div>
                 </td>
-                 <td>
+                <td>
                 <div class="flex items-center">
                 <div class="h-2 w-2 rounded-full relative">
-                  <span class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0" style="${latestResponse?.seen === false && latestResponse?.sender !== 'Admin' ? "display: flex;" : "display: none;"}">
+                  <span class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0" style="${latestResponse?.seen === false && latestResponse?.sender !== 'User' ? "display: flex;" : "display: none;"}">
 
                     <span class="absolute -top-[3px] inline-flex h-full w-full animate-ping rounded-full bg-success/50 opacity-75 ltr:-left-[3px] rtl:-right-[3px]"></span>
                       <span class="relative inline-flex h-[6px] w-[6px] rounded-full bg-success"></span>
@@ -1044,6 +1075,7 @@
                   ${ticket.timeSince}
                 </td>
                  `;
+
                 row.addEventListener("click", () => fetchMessages(ticket.ticket_id));
                 row.addEventListener("click", () => postread(ticket.ticket_id));
                 ticketsTableBody.appendChild(row);
@@ -1108,7 +1140,7 @@
 
             async function postread(ticketId) {
               try {
-                const response = await fetch(`/api/tickets/admin/${ticketId}/read`, {
+                const response = await fetch(`/api/tickets/${ticketId}/read`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1136,28 +1168,30 @@
               }
             }
 
-
             // Fetch Messages for a Specific Ticket
             async function fetchMessages(ticketId) {
               try {
-                const response = await fetch(`/api/admin/tickets/${ticketId}/messages`);
+                const response = await fetch(`/api/tickets/${ticketId}/messages`);
 
                 if (!response.ok) {
-                console.error(`API error: ${response.status} ${response.statusText}`);
-                return;
-                 }
+                  console.error(`API error: ${response.status} ${response.statusText}`);
+                  return;
+                }
 
                 messages = await response.json();
-                console.log(messages)
                 toggleView(true);
+                const status = messages?.[0]?.status;
 
                 if (!messages || messages.length === 0) {
-                    renderNoMessagesPlaceholder(ticketId);
-                    renderMessageButton(ticketId)
-                  } else {
+                  renderNoMessagesPlaceholder(ticketId);
+                } else {
+                  if (status === 'Pending' || (status === 'Closed' || status === 'Resolved')) {
+                    typeMSG.style.display = "none"
+                  }
                     renderMessages();
                     renderMessageButton(ticketId)
-                  }
+                    ticketIdDiv.innerHTML = ticketId;
+                }
               } catch (error) {
                 console.error("Error fetching messages:", error);
               }
@@ -1166,50 +1200,50 @@
             function renderMessages() {
               const chatContainer = document.getElementById("chatContainer");
               chatContainer.innerHTML = messages
-              .map((message) => createMessageElement(message))
-              .join('');
+                .map((message) => createMessageElement(message))
+                .join('');
               // Scroll to the bottom of the chat
               chatContainer.scrollTop = chatContainer.scrollHeight;
             }
 
             function createMessageElement(message) {
-            const isUserMessage = message.user_id === loggedInUserId;
+              const isUserMessage = message.user_id === loggedInUserId;
+              const isSystemMessage = message.user_id === null;
 
-            return `
-             <div class="flex items-start gap-3  ${message.sender === 'Admin' ? 'justify-end' : ''}">
+              return `
+              <div class="flex items-start gap-3 ${message.sender === 'User' ? 'justify-end' : ''}">
                 <div class="space-y-2">
                 <div class="flex items-center gap-3">
-                <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800 ${message.sender === 'Admin' ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white' : 'ltr:rounded-bl-none rtl:rounded-br-none'}" >${message.message}</div>
+                <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800 ${message.sender === 'User' ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white' : 'ltr:rounded-bl-none rtl:rounded-br-none'}" >${message.message}</div>
                     
                   </div>
-                  <div class="text-xs text-white-dark ${
-                    isUserMessage ? "ltr:text-right rtl:text-left" : ""
-                      }">${message.timeSince}</div>
+                  <div class="text-xs text-white-dark ${isUserMessage ? "ltr:text-right rtl:text-left" : ""
+                }">${message.timeSince}</div>
                     </div>
                 </div>
                   `;
-                }
+            }
 
-                
+
             // Render Messages in the Chat Box
             function renderNoMessagesPlaceholder(ticketId) {
-            const chatContainer = document.getElementById("chatContainer");
-            chatContainer.innerHTML = `
+              const chatContainer = document.getElementById("chatContainer");
+              chatContainer.innerHTML = `
                 <div class="text-center text-gray-500">
                     <p>No messages yet for this ticket. Start the conversation for !</p>
                 </div>
             `;
-              }
+            }
 
-              function renderMessageButton(ticketId) {
-            const typeMSG = document.getElementById("typeMSG");
-            typeMSG.innerHTML = `
-                 <form id="messageForm">
+            function renderMessageButton(ticketId) {
+              const typeMSG = document.getElementById("typeMSG");
+              typeMSG.innerHTML = `
+                 <form id="messageUserForm">
                 <div class="absolute bottom-0 left-0 w-full p-4">
                   
                   <div class="w-full items-center space-x-3 rtl:space-x-reverse sm:flex">
                       <div class="relative flex-1">
-                          <input id="messageInput" class="form-input rounded-full border-0 bg-[#f4f4f4] px-12 py-2 focus:outline-none" placeholder="Type a message" name="message">
+                          <input id="messageUserInput" class="form-input rounded-full border-0 bg-[#f4f4f4] px-12 py-2 focus:outline-none" placeholder="Type a message" name="message">
                           <button type="button" class="absolute top-1/2 -translate-y-1/2 hover:text-primary ltr:left-4 rtl:right-4">
                               <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
                                   <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
@@ -1262,91 +1296,57 @@
               </div>
             </form>
             `;
-                        const messageForm = document.getElementById("messageForm");
-                const messageInput = document.getElementById("messageInput");
 
-                messageForm.addEventListener("submit", async (e) => {
-                    e.preventDefault(); 
+              const messageForm = document.getElementById("messageUserForm");
+              const messageInput = document.getElementById("messageUserInput");
 
-                    const messageText = messageInput.value.trim();
-                    if (!messageText) return alert("Please type a message.");
+              messageForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
 
-                    try {
-                        const response = await fetch(`/api/tickets/admin/${ticketId}/messages`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ message: messageText }),
-                        });
+                const messageText = messageInput.value.trim();
+                if (!messageText) return alert("Please type a message.");
 
-                        if (!response.ok) {
-                            console.error(`Error posting message: ${response.status} ${response.statusText}`);
-                            return alert("Failed to send message. Please try again.");
-                        }
-
-                        const newMessage = await response.json(); 
-                        messages.push(newMessage); 
-                        renderMessages(); 
-                        messageInput.value = ""; 
-                    } catch (error) {
-                        console.error("Error:", error);
-                        alert("An error occurred. Please try again.");
-                    }
-                });
-
-               const closeTicketId = document.getElementById("closeTicketForm");
-
-               document.querySelectorAll('.close-ticket-btn').forEach((button) => {
-                button.addEventListener('click', async () => {
-                  
-
-                  closeTicketId.addEventListener("submit", async (e) => {
-                    e.preventDefault(); 
-
-                    const statusId = button.getAttribute('data-status-id');
-
-                  try {
-                    const response = await fetch(`/api/tickets/close/${ticketId}`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ statusId }), // Send the status ID in the request body
-                    });
-
-                    if (!response.ok) {
-                      console.error(`Error closing ticket: ${response.status}`);
-                      return alert('Failed to close ticket. Please try again.');
-                    }
-
-                    location.reload(); // Optional: reload the page to reflect the change
-                  } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                  }
+                try {
+                  const response = await fetch(`/api/tickets/${ticketId}/messages`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ message: messageText }),
                   });
-                });
+
+                  if (!response.ok) {
+                    console.error(`Error posting message: ${response.status} ${response.statusText}`);
+                    return alert("Failed to send message. Please try again.");
+                  }
+
+                  const newMessage = await response.json();
+                  messages.push(newMessage);
+                  renderMessages();
+                  messageInput.value = "";
+                } catch (error) {
+                  console.error("Error:", error);
+                  alert("An error occurred. Please try again.");
+                }
               });
+            }
 
-              }
+            function toggleView(showChat) {
+              tableContent.style.display = showChat ? "none" : "block";
+              chatContainer.style.display = showChat ? "block" : "none";
+              backheaderBTN.style.display = "flex";
+              listpageBTN.style.display = "none";
+              typeMSG.style.display = "flex"
+            }
 
-              function toggleView(showChat) {
-                tableContent.style.display = showChat ? "none" : "block";
-                chatContainer.style.display = showChat ? "block" : "none";
-                backheaderBTN.style.display = "flex";
-                listpageBTN.style.display = "none";
-                typeMSG.style.display = "flex"
-                 }
+            document.getElementById('backBTN').addEventListener('click', () => {
+              toggleView(false);
+              listpageBTN.style.display = "flex";
+              backheaderBTN.style.display = "none";
+              typeMSG.style.display = "none"
+            });
 
-                 document.getElementById('backBTN').addEventListener('click', () => {
-                  toggleView(false);
-                  listpageBTN.style.display = "flex";
-                  backheaderBTN.style.display = "none";
-                  typeMSG.style.display = "none"
-                   });
-
-              document.getElementById('solvedTicketBTN').addEventListener('click', () => {
+            document.getElementById('solvedTicketBTN').addEventListener('click', () => {
               fetchSolvedTickets();
               toggleView(false);
               listpageBTN.style.display = "flex";

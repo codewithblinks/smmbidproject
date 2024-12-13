@@ -78,7 +78,7 @@ router.get("/admin/pending-deposit", adminEnsureAuthenticated, adminRole, async 
         res.render("admin/pendingDeposit", {
           transactions,
           currentPage: page,
-          totalPages: Math.ceil(totalTransactions / limit), user
+          totalPages: Math.ceil(totalTransactions / limit), user, messages: req.flash()
         })
   } catch (error) {
     console.error("Error fetching pending deposits:", error);
@@ -179,6 +179,8 @@ router.post('/admin/deposits/:id/approve', adminEnsureAuthenticated, adminRole, 
 
             await db.query('COMMIT');
 
+            req.flash("success", "You have succesfully approve this deposit.");
+
            res.redirect('/admin/pending-deposit');
 
   } catch (err) {
@@ -232,6 +234,8 @@ router.post('/admin/deposits/:id/reject', async (req, res) => {
               const { username, email } = userQuery.rows[0];
 
             await sendDepositRejectedEmail(email, username, reference, amount);
+
+            req.flash("success", "You have succesfully rejected this deposit.");
 
              res.redirect('/admin/pending-deposit');
   } catch (err) {

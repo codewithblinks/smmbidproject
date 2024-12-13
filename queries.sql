@@ -76,11 +76,7 @@ CREATE TABLE IF NOT EXISTS admin_products (
 	country TEXT NOT NULL,
 	description TEXT NOT NULL,
 	amount numeric(10,2) NOT NULL,
-	status TEXT DEFAULT 'pending',
     payment_status TEXT DEFAULT 'not sold',
-    loginusername VARCHAR(20),
-    loginemail VARCHAR(100),
-    loginpassword TEXT,
     logindetails TEXT,
 	created_at TIMESTAMPTZ DEFAULT NOW(),
     sold_at TIMESTAMPTZ,
@@ -230,6 +226,23 @@ CREATE TABLE pending_deposits (
 
 -- remember to add
 
+DROP TABLE IF EXISTS admin_products;
+CREATE TABLE IF NOT EXISTS admin_products (
+	id SERIAL PRIMARY KEY,
+	admin_id INT REFERENCES admins(id) ON DELETE CASCADE,
+	years INT NOT NULL,
+	profile_link TEXT NOT NULL,
+	account_type TEXT NOT NULL,
+	country TEXT NOT NULL,
+	description TEXT NOT NULL,
+	amount numeric(10,2) NOT NULL,
+    payment_status TEXT DEFAULT 'not sold',
+    logindetails TEXT,
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+    sold_at TIMESTAMPTZ,
+    statustype text
+);
+
 CREATE TABLE ticket_statuses (
     id SERIAL PRIMARY KEY,
     status_name VARCHAR(50) NOT NULL
@@ -264,6 +277,7 @@ CREATE TABLE support_tickets (
     order_id VARCHAR(255),
     description TEXT NOT NULL,
     status_id INTEGER DEFAULT 1 REFERENCES ticket_statuses(id) ON DELETE CASCADE,
+	status VARCHAR(25) NOT NULL,
     priority_id INTEGER DEFAULT 2 REFERENCES ticket_priorities(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP, 
@@ -275,7 +289,10 @@ CREATE TABLE ticket_responses (
     ticket_id VARCHAR(255) NOT NULL,
     support_tickets_id INTEGER REFERENCES support_tickets(id) ON DELETE CASCADE,       
     user_id INTEGER REFERENCES userprofile(id) ON DELETE CASCADE,
+	admin_id INTEGER REFERENCES admins(id) ON DELETE CASCADE,
+	sender VARCHAR(25) NOT NULL,
     message TEXT NOT NULL,
+	seen BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

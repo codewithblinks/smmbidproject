@@ -757,15 +757,11 @@
                 </div>
                 <div class="p-5">
                   <form action="/product/edit/active/account" method="post">
-                      <div class="mb-5">
-                          <label for="loginemail">Login Email</label>
-                          <input id="loginemail" type="text" class="form-input" name="productLoginEmail" :value="productLoginEmail">
-                          <input type="hidden" name="productid" id="productid" :value="productId">
-                      </div>
                       <div class="mb-5 flex justify-between gap-4">
                           <div class="flex-1">
                               <label for="amount">Amount</label>
                               <input id="productAmount" name="productAmount" type="text" class="form-input" :value="productAmount">
+                              <input type="hidden" name="productid" id="productid" :value="productId">
                           </div>
                           <div class="flex-1">
                               <label for="year">Year</label>
@@ -780,16 +776,6 @@
                         <div class="flex-1">
                             <label for="productAccountType">Account Type</label>
                               <input id="productAccountType" name="productAccountType" type="text" class="form-input" :value="productAccountType">
-                        </div>
-                    </div>
-                      <div class="mb-5 flex justify-between gap-4">
-                        <div class="flex-1">
-                            <label for="password">Login Password</label>
-                            <input id="productLoginPassword" name="productLoginPassword" type="text" class="form-input" :value="productLoginPassword">
-                        </div>
-                        <div class="flex-1">
-                            <label for="loginusername">Login Username</label>
-                              <input id="productLoginUsername" name="productLoginUsername" type="text" class="form-input" :value="productLoginUsername">
                         </div>
                     </div>
                       <div class="mb-5">

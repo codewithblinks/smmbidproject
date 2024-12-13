@@ -32,9 +32,6 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
     country,
     price,
     description,
-    loginusername,
-    loginemail,
-    loginpassword,
     logindetails,
   } = req.body;
   
@@ -46,9 +43,8 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
       admin_id, years, profile_link,
       account_type, country,
       description, amount,
-      payment_status,
-      loginusername, loginemail, loginpassword, logindetails ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) 
+      payment_status, logindetails ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 ) 
       RETURNING *`,
       [
         adminId,
@@ -59,9 +55,6 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
         description,
         price,
         'not sold',
-        loginusername,
-        loginemail,
-        loginpassword,
         logindetails
       ]
     );
@@ -164,11 +157,24 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
         const page = parseInt(req.query.page) || 1;
         const offset = (page - 1) * limit; 
 
-          const productResult = await db.query('SELECT * FROM admin_products WHERE id = $1 AND payment_status = $2 ORDER BY created_at DESC LIMIT $3 OFFSET $4', [userId, "sold", limit, offset]);
-          const products = productResult.rows;
+          const soldProductResult = await db.query(`
+            SELECT purchases_admin_product.id AS purchase_id,
+            product_id, date_purchased, purchase_id,
+            admin_products.id AS admin_products_id,
+            account_type, country, amount, payment_status
+            FROM purchases_admin_product 
+            JOIN admin_products
+            ON purchases_admin_product.product_id = admin_products.id
+            WHERE 
+            admin_products.payment_status = $1 
+            ORDER BY created_at 
+            DESC LIMIT $2 OFFSET $3`, 
+            ["sold", limit, offset]);
+
+          const soldProducts = soldProductResult.rows;
     
-          products.forEach(products => {
-            products.sold_at = moment(products.sold_at).format('D MMM h:mmA');
+          soldProducts.forEach(products => {
+            products.date_purchased = moment(products.date_purchased).format('D MMM h:mmA');
             products.amount = numeral(products.amount).format("0,0.00");
           })
     
@@ -176,7 +182,7 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
           const countResult = await db.query(countQuery, ["sold"]);
           const totalOrders = parseInt(countResult.rows[0].count);
     
-          res.render('admin/soldproductsadmin', {messages: req.flash(), products, 
+          res.render('admin/soldproductsadmin', {messages: req.flash(), soldProducts, 
             currentPage: page, 
             totalPages: Math.ceil(totalOrders / limit), user
            });
@@ -210,14 +216,11 @@ router.post("/product/delete/active/account/:id", adminEnsureAuthenticated, admi
 
 router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole, 
       async (req, res) => {
-        const {productid, productLoginEmail, productAmount, productYear, productAccountCountry, productAccountType, productLoginPassword, 
-          productLoginUsername, productDescription, productLoginDetails
-        } = req.body;
+        const {productid, productAmount, productYear, productAccountCountry, productAccountType, productDescription, productLoginDetails} = req.body;
 
         const amount = parseFloat(productAmount.replace(/,/g, ''));
 
-
-        if (!productid || isNaN(amount) || !productLoginEmail) {
+        if (!productid || isNaN(amount)) {
           req.flash("error", "Invalid or missing data.");
           return res.redirect("/admin/active/products");
         }    
@@ -227,12 +230,9 @@ router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole,
               UPDATE admin_products 
               SET years = $1,
               account_type = $2, country = $3,
-              description = $4, amount = $5,
-              loginusername = $6, loginemail = $7, 
-              loginpassword = $8, logindetails = $9 WHERE id = $10`, 
+              description = $4, amount = $5, logindetails = $6 WHERE id = $7`, 
               [productYear, productAccountType, productAccountCountry, productDescription, 
-               amount, productLoginUsername, productLoginEmail, 
-               productLoginPassword, productLoginDetails, productid]);
+               amount, productLoginDetails, productid]);
 
                req.flash("success", "Account updated successfully");
               res.redirect("/admin/active/products");
@@ -241,5 +241,53 @@ router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole,
               res.status(500).json({ error: 'Internal server error' });
           }
   })
+
+ router.get("/api/admin/products/:id", adminEnsureAuthenticated, adminRole, async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const purchasesresult = await db.query("SELECT * FROM purchases_admin_product WHERE purchase_id = $1", [id]);
+  
+      if (purchasesresult.rows.length === 0) {
+        return res.status(404).json({ error: "Purchase not found" });
+      }
+
+      const purchaseId = purchasesresult.rows[0].product_id;
+
+      const result = await db.query("SELECT * FROM admin_products WHERE id = $1", [purchaseId]);
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+  
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+
+
+  router.put("/api/admin/products/:id", adminEnsureAuthenticated, adminRole, async (req, res) => {
+    const id = Number(req.params.id);
+    const { logindetails } = req.body;
+  
+    try {
+
+      const result = await db.query(
+        "UPDATE admin_products SET logindetails = $1 WHERE id = $2 RETURNING *",
+        [logindetails, id]
+      );
+
+      if (result.rows.length === 0) return res.status(404).send("Product not found");
+
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Server error");
+    }
+  });
+  
+  
 
 export default router;

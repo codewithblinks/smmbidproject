@@ -98,7 +98,8 @@ import imageUploadRoute from './routes/imageUpload.js'
 import adminsettingsRoute from './routes/admin/adminsettings.js'
 import knowledgebaseRoute from './routes/knowledgebase.js'
 import settingsAdminRoute from './routes/admin/settings.js'
-// import adminTickets from './routes/admin/admintickets.js'
+import adminTickets from './routes/admin/admintickets.js'
+import tickets from './routes/ticket.js'
 
 app.use(loginRoute)
 app.use(registerRoute)
@@ -129,7 +130,8 @@ app.use(imageUploadRoute)
 app.use(adminsettingsRoute)
 app.use(knowledgebaseRoute)
 app.use(settingsAdminRoute)
-// app.use(adminTickets)
+app.use(adminTickets)
+app.use(tickets)
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;

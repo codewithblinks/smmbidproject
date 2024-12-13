@@ -13,14 +13,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="../assets/css/animate.css" />
-  <link
-  rel="shortcut icon"
-  href="../assets/images/favicon.png"
-  type="image/x-icon"
-/>
+  <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon" />
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -114,7 +111,8 @@
                 <li class="nav-item">
                   <a href="/admin/dashboard" class="group">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M9 17.25C8.58579 17.25 8.25 17.5858 8.25 18C8.25 18.4142 8.58579 18.75 9 18.75H15C15.4142 18.75 15.75 18.4142 15.75 18C15.75 17.5858 15.4142 17.25 15 17.25H9Z"
                           fill="currentColor" />
@@ -131,13 +129,20 @@
                   <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'myProducts'}"
                     @click="activeDropdown === 'myProducts' ? activeDropdown = null : activeDropdown = 'myProducts'">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 22H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.5" d="M20 22V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.5" d="M4 22V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M16.5279 2H7.47226C6.26944 2 5.66803 2 5.18473 2.2987C4.70142 2.5974 4.43247 3.13531 3.89455 4.21114L2.49094 7.75929C2.16665 8.57905 1.88291 9.54525 2.42879 10.2375C2.79501 10.7019 3.36269 11 4.00004 11C5.1046 11 6.00004 10.1046 6.00004 9C6.00004 10.1046 6.89547 11 8.00004 11C9.1046 11 10 10.1046 10 9C10 10.1046 10.8955 11 12 11C13.1046 11 14 10.1046 14 9C14 10.1046 14.8955 11 16 11C17.1046 11 18 10.1046 18 9C18 10.1046 18.8955 11 20 11C20.6374 11 21.2051 10.7019 21.5713 10.2375C22.1172 9.54525 21.8335 8.57905 21.5092 7.75929L20.1056 4.21114C19.5677 3.13531 19.2987 2.5974 18.8154 2.2987C18.3321 2 17.7307 2 16.5279 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                        <path opacity="0.5" d="M9.5 21.5V18.5C9.5 17.5654 9.5 17.0981 9.70096 16.75C9.83261 16.522 10.022 16.3326 10.25 16.201C10.5981 16 11.0654 16 12 16C12.9346 16 13.4019 16 13.75 16.201C13.978 16.3326 14.1674 16.522 14.299 16.75C14.5 17.0981 14.5 17.5654 14.5 18.5V21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 22H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path opacity="0.5" d="M20 22V11" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                        <path opacity="0.5" d="M4 22V11" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                        <path
+                          d="M16.5279 2H7.47226C6.26944 2 5.66803 2 5.18473 2.2987C4.70142 2.5974 4.43247 3.13531 3.89455 4.21114L2.49094 7.75929C2.16665 8.57905 1.88291 9.54525 2.42879 10.2375C2.79501 10.7019 3.36269 11 4.00004 11C5.1046 11 6.00004 10.1046 6.00004 9C6.00004 10.1046 6.89547 11 8.00004 11C9.1046 11 10 10.1046 10 9C10 10.1046 10.8955 11 12 11C13.1046 11 14 10.1046 14 9C14 10.1046 14.8955 11 16 11C17.1046 11 18 10.1046 18 9C18 10.1046 18.8955 11 20 11C20.6374 11 21.2051 10.7019 21.5713 10.2375C22.1172 9.54525 21.8335 8.57905 21.5092 7.75929L20.1056 4.21114C19.5677 3.13531 19.2987 2.5974 18.8154 2.2987C18.3321 2 17.7307 2 16.5279 2Z"
+                          stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                        <path opacity="0.5"
+                          d="M9.5 21.5V18.5C9.5 17.5654 9.5 17.0981 9.70096 16.75C9.83261 16.522 10.022 16.3326 10.25 16.201C10.5981 16 11.0654 16 12 16C12.9346 16 13.4019 16 13.75 16.201C13.978 16.3326 14.1674 16.522 14.299 16.75C14.5 17.0981 14.5 17.5654 14.5 18.5V21.5"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                      </svg>
                       <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">My
                         Products</span>
                     </div>
@@ -166,11 +171,16 @@
                 <li class="nav-item">
                   <a href="/admin/smmorders" class="group">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary"  width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.0867 21.3877L13.7321 21.7697L13.7321 21.7697L13.0867 21.3877ZM13.6288 20.4718L12.9833 20.0898L12.9833 20.0898L13.6288 20.4718ZM10.3712 20.4718L9.72579 20.8539L9.72579 20.8539L10.3712 20.4718ZM10.9133 21.3877L11.5587 21.0057L11.5587 21.0057L10.9133 21.3877ZM2.3806 15.9134L3.07351 15.6264L3.07351 15.6264L2.3806 15.9134ZM7.78958 18.9915L7.77666 19.7413L7.77666 19.7413L7.78958 18.9915ZM5.08658 18.6194L4.79957 19.3123L4.79957 19.3123L5.08658 18.6194ZM21.6194 15.9134L22.3123 16.2004L22.3123 16.2004L21.6194 15.9134ZM16.2104 18.9915L16.1975 18.2416L16.1975 18.2416L16.2104 18.9915ZM18.9134 18.6194L19.2004 19.3123L19.2004 19.3123L18.9134 18.6194ZM19.6125 2.7368L19.2206 3.37628L19.2206 3.37628L19.6125 2.7368ZM21.2632 4.38751L21.9027 3.99563L21.9027 3.99563L21.2632 4.38751ZM4.38751 2.7368L3.99563 2.09732L3.99563 2.09732L4.38751 2.7368ZM2.7368 4.38751L2.09732 3.99563L2.09732 3.99563L2.7368 4.38751ZM9.40279 19.2098L9.77986 18.5615L9.77986 18.5615L9.40279 19.2098ZM13.7321 21.7697L14.2742 20.8539L12.9833 20.0898L12.4412 21.0057L13.7321 21.7697ZM9.72579 20.8539L10.2679 21.7697L11.5587 21.0057L11.0166 20.0898L9.72579 20.8539ZM12.4412 21.0057C12.2485 21.3313 11.7515 21.3313 11.5587 21.0057L10.2679 21.7697C11.0415 23.0767 12.9585 23.0767 13.7321 21.7697L12.4412 21.0057ZM10.5 2.75H13.5V1.25H10.5V2.75ZM21.25 10.5V11.5H22.75V10.5H21.25ZM2.75 11.5V10.5H1.25V11.5H2.75ZM1.25 11.5C1.25 12.6546 1.24959 13.5581 1.29931 14.2868C1.3495 15.0223 1.45323 15.6344 1.68769 16.2004L3.07351 15.6264C2.92737 15.2736 2.84081 14.8438 2.79584 14.1847C2.75041 13.5189 2.75 12.6751 2.75 11.5H1.25ZM7.8025 18.2416C6.54706 18.2199 5.88923 18.1401 5.37359 17.9265L4.79957 19.3123C5.60454 19.6457 6.52138 19.7197 7.77666 19.7413L7.8025 18.2416ZM1.68769 16.2004C2.27128 17.6093 3.39066 18.7287 4.79957 19.3123L5.3736 17.9265C4.33223 17.4951 3.50486 16.6678 3.07351 15.6264L1.68769 16.2004ZM21.25 11.5C21.25 12.6751 21.2496 13.5189 21.2042 14.1847C21.1592 14.8438 21.0726 15.2736 20.9265 15.6264L22.3123 16.2004C22.5468 15.6344 22.6505 15.0223 22.7007 14.2868C22.7504 13.5581 22.75 12.6546 22.75 11.5H21.25ZM16.2233 19.7413C17.4786 19.7197 18.3955 19.6457 19.2004 19.3123L18.6264 17.9265C18.1108 18.1401 17.4529 18.2199 16.1975 18.2416L16.2233 19.7413ZM20.9265 15.6264C20.4951 16.6678 19.6678 17.4951 18.6264 17.9265L19.2004 19.3123C20.6093 18.7287 21.7287 17.6093 22.3123 16.2004L20.9265 15.6264ZM13.5 2.75C15.1512 2.75 16.337 2.75079 17.2619 2.83873C18.1757 2.92561 18.7571 3.09223 19.2206 3.37628L20.0044 2.09732C19.2655 1.64457 18.4274 1.44279 17.4039 1.34547C16.3915 1.24921 15.1222 1.25 13.5 1.25V2.75ZM22.75 10.5C22.75 8.87781 22.7508 7.6085 22.6545 6.59611C22.5572 5.57256 22.3554 4.73445 21.9027 3.99563L20.6237 4.77938C20.9078 5.24291 21.0744 5.82434 21.1613 6.73809C21.2492 7.663 21.25 8.84876 21.25 10.5H22.75ZM19.2206 3.37628C19.7925 3.72672 20.2733 4.20752 20.6237 4.77938L21.9027 3.99563C21.4286 3.22194 20.7781 2.57144 20.0044 2.09732L19.2206 3.37628ZM10.5 1.25C8.87781 1.25 7.6085 1.24921 6.59611 1.34547C5.57256 1.44279 4.73445 1.64457 3.99563 2.09732L4.77938 3.37628C5.24291 3.09223 5.82434 2.92561 6.73809 2.83873C7.663 2.75079 8.84876 2.75 10.5 2.75V1.25ZM2.75 10.5C2.75 8.84876 2.75079 7.663 2.83873 6.73809C2.92561 5.82434 3.09223 5.24291 3.37628 4.77938L2.09732 3.99563C1.64457 4.73445 1.44279 5.57256 1.34547 6.59611C1.24921 7.6085 1.25 8.87781 1.25 10.5H2.75ZM3.99563 2.09732C3.22194 2.57144 2.57144 3.22194 2.09732 3.99563L3.37628 4.77938C3.72672 4.20752 4.20752 3.72672 4.77938 3.37628L3.99563 2.09732ZM11.0166 20.0898C10.8136 19.7468 10.6354 19.4441 10.4621 19.2063C10.2795 18.9559 10.0702 18.7304 9.77986 18.5615L9.02572 19.8582C9.07313 19.8857 9.13772 19.936 9.24985 20.0898C9.37122 20.2564 9.50835 20.4865 9.72579 20.8539L11.0166 20.0898ZM7.77666 19.7413C8.21575 19.7489 8.49387 19.7545 8.70588 19.7779C8.90399 19.7999 8.98078 19.832 9.02572 19.8582L9.77986 18.5615C9.4871 18.3912 9.18246 18.3215 8.87097 18.287C8.57339 18.2541 8.21375 18.2487 7.8025 18.2416L7.77666 19.7413ZM14.2742 20.8539C14.4916 20.4865 14.6287 20.2564 14.7501 20.0898C14.8622 19.936 14.9268 19.8857 14.9742 19.8582L14.2201 18.5615C13.9298 18.7304 13.7204 18.9559 13.5379 19.2063C13.3646 19.4441 13.1864 19.7468 12.9833 20.0898L14.2742 20.8539ZM16.1975 18.2416C15.7862 18.2487 15.4266 18.2541 15.129 18.287C14.8175 18.3215 14.5129 18.3912 14.2201 18.5615L14.9742 19.8582C15.0192 19.832 15.096 19.7999 15.2941 19.7779C15.5061 19.7545 15.7842 19.7489 16.2233 19.7413L16.1975 18.2416Z" fill="currentColor"/>
-                        <path opacity="0.5" d="M8 9H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.5" d="M8 12.5H13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M13.0867 21.3877L13.7321 21.7697L13.7321 21.7697L13.0867 21.3877ZM13.6288 20.4718L12.9833 20.0898L12.9833 20.0898L13.6288 20.4718ZM10.3712 20.4718L9.72579 20.8539L9.72579 20.8539L10.3712 20.4718ZM10.9133 21.3877L11.5587 21.0057L11.5587 21.0057L10.9133 21.3877ZM2.3806 15.9134L3.07351 15.6264L3.07351 15.6264L2.3806 15.9134ZM7.78958 18.9915L7.77666 19.7413L7.77666 19.7413L7.78958 18.9915ZM5.08658 18.6194L4.79957 19.3123L4.79957 19.3123L5.08658 18.6194ZM21.6194 15.9134L22.3123 16.2004L22.3123 16.2004L21.6194 15.9134ZM16.2104 18.9915L16.1975 18.2416L16.1975 18.2416L16.2104 18.9915ZM18.9134 18.6194L19.2004 19.3123L19.2004 19.3123L18.9134 18.6194ZM19.6125 2.7368L19.2206 3.37628L19.2206 3.37628L19.6125 2.7368ZM21.2632 4.38751L21.9027 3.99563L21.9027 3.99563L21.2632 4.38751ZM4.38751 2.7368L3.99563 2.09732L3.99563 2.09732L4.38751 2.7368ZM2.7368 4.38751L2.09732 3.99563L2.09732 3.99563L2.7368 4.38751ZM9.40279 19.2098L9.77986 18.5615L9.77986 18.5615L9.40279 19.2098ZM13.7321 21.7697L14.2742 20.8539L12.9833 20.0898L12.4412 21.0057L13.7321 21.7697ZM9.72579 20.8539L10.2679 21.7697L11.5587 21.0057L11.0166 20.0898L9.72579 20.8539ZM12.4412 21.0057C12.2485 21.3313 11.7515 21.3313 11.5587 21.0057L10.2679 21.7697C11.0415 23.0767 12.9585 23.0767 13.7321 21.7697L12.4412 21.0057ZM10.5 2.75H13.5V1.25H10.5V2.75ZM21.25 10.5V11.5H22.75V10.5H21.25ZM2.75 11.5V10.5H1.25V11.5H2.75ZM1.25 11.5C1.25 12.6546 1.24959 13.5581 1.29931 14.2868C1.3495 15.0223 1.45323 15.6344 1.68769 16.2004L3.07351 15.6264C2.92737 15.2736 2.84081 14.8438 2.79584 14.1847C2.75041 13.5189 2.75 12.6751 2.75 11.5H1.25ZM7.8025 18.2416C6.54706 18.2199 5.88923 18.1401 5.37359 17.9265L4.79957 19.3123C5.60454 19.6457 6.52138 19.7197 7.77666 19.7413L7.8025 18.2416ZM1.68769 16.2004C2.27128 17.6093 3.39066 18.7287 4.79957 19.3123L5.3736 17.9265C4.33223 17.4951 3.50486 16.6678 3.07351 15.6264L1.68769 16.2004ZM21.25 11.5C21.25 12.6751 21.2496 13.5189 21.2042 14.1847C21.1592 14.8438 21.0726 15.2736 20.9265 15.6264L22.3123 16.2004C22.5468 15.6344 22.6505 15.0223 22.7007 14.2868C22.7504 13.5581 22.75 12.6546 22.75 11.5H21.25ZM16.2233 19.7413C17.4786 19.7197 18.3955 19.6457 19.2004 19.3123L18.6264 17.9265C18.1108 18.1401 17.4529 18.2199 16.1975 18.2416L16.2233 19.7413ZM20.9265 15.6264C20.4951 16.6678 19.6678 17.4951 18.6264 17.9265L19.2004 19.3123C20.6093 18.7287 21.7287 17.6093 22.3123 16.2004L20.9265 15.6264ZM13.5 2.75C15.1512 2.75 16.337 2.75079 17.2619 2.83873C18.1757 2.92561 18.7571 3.09223 19.2206 3.37628L20.0044 2.09732C19.2655 1.64457 18.4274 1.44279 17.4039 1.34547C16.3915 1.24921 15.1222 1.25 13.5 1.25V2.75ZM22.75 10.5C22.75 8.87781 22.7508 7.6085 22.6545 6.59611C22.5572 5.57256 22.3554 4.73445 21.9027 3.99563L20.6237 4.77938C20.9078 5.24291 21.0744 5.82434 21.1613 6.73809C21.2492 7.663 21.25 8.84876 21.25 10.5H22.75ZM19.2206 3.37628C19.7925 3.72672 20.2733 4.20752 20.6237 4.77938L21.9027 3.99563C21.4286 3.22194 20.7781 2.57144 20.0044 2.09732L19.2206 3.37628ZM10.5 1.25C8.87781 1.25 7.6085 1.24921 6.59611 1.34547C5.57256 1.44279 4.73445 1.64457 3.99563 2.09732L4.77938 3.37628C5.24291 3.09223 5.82434 2.92561 6.73809 2.83873C7.663 2.75079 8.84876 2.75 10.5 2.75V1.25ZM2.75 10.5C2.75 8.84876 2.75079 7.663 2.83873 6.73809C2.92561 5.82434 3.09223 5.24291 3.37628 4.77938L2.09732 3.99563C1.64457 4.73445 1.44279 5.57256 1.34547 6.59611C1.24921 7.6085 1.25 8.87781 1.25 10.5H2.75ZM3.99563 2.09732C3.22194 2.57144 2.57144 3.22194 2.09732 3.99563L3.37628 4.77938C3.72672 4.20752 4.20752 3.72672 4.77938 3.37628L3.99563 2.09732ZM11.0166 20.0898C10.8136 19.7468 10.6354 19.4441 10.4621 19.2063C10.2795 18.9559 10.0702 18.7304 9.77986 18.5615L9.02572 19.8582C9.07313 19.8857 9.13772 19.936 9.24985 20.0898C9.37122 20.2564 9.50835 20.4865 9.72579 20.8539L11.0166 20.0898ZM7.77666 19.7413C8.21575 19.7489 8.49387 19.7545 8.70588 19.7779C8.90399 19.7999 8.98078 19.832 9.02572 19.8582L9.77986 18.5615C9.4871 18.3912 9.18246 18.3215 8.87097 18.287C8.57339 18.2541 8.21375 18.2487 7.8025 18.2416L7.77666 19.7413ZM14.2742 20.8539C14.4916 20.4865 14.6287 20.2564 14.7501 20.0898C14.8622 19.936 14.9268 19.8857 14.9742 19.8582L14.2201 18.5615C13.9298 18.7304 13.7204 18.9559 13.5379 19.2063C13.3646 19.4441 13.1864 19.7468 12.9833 20.0898L14.2742 20.8539ZM16.1975 18.2416C15.7862 18.2487 15.4266 18.2541 15.129 18.287C14.8175 18.3215 14.5129 18.3912 14.2201 18.5615L14.9742 19.8582C15.0192 19.832 15.096 19.7999 15.2941 19.7779C15.5061 19.7545 15.7842 19.7489 16.2233 19.7413L16.1975 18.2416Z"
+                          fill="currentColor" />
+                        <path opacity="0.5" d="M8 9H16" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                        <path opacity="0.5" d="M8 12.5H13.5" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                      </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">SMS
                         Orders</span>
@@ -180,11 +190,17 @@
                 <li class="nav-item">
                   <a href="/admin/smsorders" class="group">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 22C14.4183 22 18 18.4183 18 14C18 9.58172 14.4183 6 10 6C5.58172 6 2 9.58172 2 14C2 15.2355 2.28008 16.4056 2.7802 17.4502C2.95209 17.8093 3.01245 18.2161 2.90955 18.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L5.39939 21.0904C5.78393 20.9876 6.19071 21.0479 6.54976 21.2198C7.5944 21.7199 8.76449 22 10 22Z" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M18 14.5018C18.0665 14.4741 18.1324 14.4453 18.1977 14.4155C18.5598 14.2501 18.9661 14.1882 19.3506 14.2911L19.8267 14.4185C20.793 14.677 21.677 13.793 21.4185 12.8267L21.2911 12.3506C21.1882 11.9661 21.2501 11.5598 21.4155 11.1977C21.7908 10.376 22 9.46242 22 8.5C22 4.91015 19.0899 2 15.5 2C12.7977 2 10.4806 3.64899 9.5 5.9956" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M6.51828 14H6.52728M10.009 14H10.018M13.5 14H13.509" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M10 22C14.4183 22 18 18.4183 18 14C18 9.58172 14.4183 6 10 6C5.58172 6 2 9.58172 2 14C2 15.2355 2.28008 16.4056 2.7802 17.4502C2.95209 17.8093 3.01245 18.2161 2.90955 18.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L5.39939 21.0904C5.78393 20.9876 6.19071 21.0479 6.54976 21.2198C7.5944 21.7199 8.76449 22 10 22Z"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5"
+                          d="M18 14.5018C18.0665 14.4741 18.1324 14.4453 18.1977 14.4155C18.5598 14.2501 18.9661 14.1882 19.3506 14.2911L19.8267 14.4185C20.793 14.677 21.677 13.793 21.4185 12.8267L21.2911 12.3506C21.1882 11.9661 21.2501 11.5598 21.4155 11.1977C21.7908 10.376 22 9.46242 22 8.5C22 4.91015 19.0899 2 15.5 2C12.7977 2 10.4806 3.64899 9.5 5.9956"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5" d="M6.51828 14H6.52728M10.009 14H10.018M13.5 14H13.509"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Verification</span>
                     </div>
@@ -193,13 +209,20 @@
                 <li class="nav-item">
                   <a href="/admin/deposits" class="group">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 20V14M19 14L21 16M19 14L17 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M22 12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.4" d="M13 16H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 20V14M19 14L21 16M19 14L17 16" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                          d="M22 12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H14"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                        <path opacity="0.4" d="M13 16H12.5" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                        <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" />
+                      </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deposits</span>
                     </div>
@@ -209,13 +232,20 @@
                   <a href="/admin/pending-deposit" class="group">
                     <div class="flex items-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity="0.5" d="M18.6667 12C20.5513 11.7213 22 10.0457 22 8.02036C22 5.79998 20.2589 4 18.1111 4H5.88889C3.74112 4 2 5.79998 2 8.02036C2 10.0457 3.44873 11.7213 5.33333 12" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M12 7V14M12 14L14 11.6667M12 14L10 11.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M5 11C5 9.11438 5 8.17157 5.58579 7.58579C6.17157 7 7.11438 7 9 7H15C16.8856 7 17.8284 7 18.4142 7.58579C19 8.17157 19 9.11438 19 11V17C19 18.8856 19 19.8284 18.4142 20.4142C17.8284 21 16.8856 21 15 21H9C7.11438 21 6.17157 21 5.58579 20.4142C5 19.8284 5 18.8856 5 17V11Z" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M5 18H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <path opacity="0.5"
+                          d="M18.6667 12C20.5513 11.7213 22 10.0457 22 8.02036C22 5.79998 20.2589 4 18.1111 4H5.88889C3.74112 4 2 5.79998 2 8.02036C2 10.0457 3.44873 11.7213 5.33333 12"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <path d="M12 7V14M12 14L14 11.6667M12 14L10 11.6667" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                          d="M5 11C5 9.11438 5 8.17157 5.58579 7.58579C6.17157 7 7.11438 7 9 7H15C16.8856 7 17.8284 7 18.4142 7.58579C19 8.17157 19 9.11438 19 11V17C19 18.8856 19 19.8284 18.4142 20.4142C17.8284 21 16.8856 21 15 21H9C7.11438 21 6.17157 21 5.58579 20.4142C5 19.8284 5 18.8856 5 17V11Z"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5" d="M5 18H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
                       <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Pending Deposits</span>
+                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Pending
+                        Deposits</span>
                     </div>
                   </a>
                 </li>
@@ -223,14 +253,20 @@
                   <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
                     @click="activeDropdown === 'invoice' ? activeDropdown = null : activeDropdown = 'invoice'">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <ellipse cx="12" cy="17" rx="6" ry="4" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path opacity="0.5" d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <ellipse cx="12" cy="17" rx="6" ry="4" stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5"
+                          d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path opacity="0.5" d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                      </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Manage
                         Users</span>
@@ -257,10 +293,13 @@
                 <li class="nav-item">
                   <a href="/admin/settings" class="group">
                     <div class="flex items-center">
-                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity="0.5" d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z" stroke="currentColor" stroke-width="1.5"/>
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
-                        </svg>
+                      <svg class="shrink-0 group-hover:!text-primary" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.5"
+                          d="M7.84308 3.80211C9.8718 2.6007 10.8862 2 12 2C13.1138 2 14.1282 2.6007 16.1569 3.80211L16.8431 4.20846C18.8718 5.40987 19.8862 6.01057 20.4431 7C21 7.98943 21 9.19084 21 11.5937V12.4063C21 14.8092 21 16.0106 20.4431 17C19.8862 17.9894 18.8718 18.5901 16.8431 19.7915L16.1569 20.1979C14.1282 21.3993 13.1138 22 12 22C10.8862 22 9.8718 21.3993 7.84308 20.1979L7.15692 19.7915C5.1282 18.5901 4.11384 17.9894 3.55692 17C3 16.0106 3 14.8092 3 12.4063V11.5937C3 9.19084 3 7.98943 3.55692 7C4.11384 6.01057 5.1282 5.40987 7.15692 4.20846L7.84308 3.80211Z"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+                      </svg>
                       <span
                         class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Settings</span>
                     </div>
@@ -270,19 +309,23 @@
                   <a href="/admin/account/delete" class="group">
                     <div class="flex items-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-                        <path opacity="0.5" d="M15 13.3271C14.0736 13.1162 13.0609 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C17.6874 22 19.3315 20.9817 19.8068 19.5" stroke="currentColor" stroke-width="1.5"/>
-                        <circle cx="18" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M17 16H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                        <path opacity="0.5"
+                          d="M15 13.3271C14.0736 13.1162 13.0609 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C17.6874 22 19.3315 20.9817 19.8068 19.5"
+                          stroke="currentColor" stroke-width="1.5" />
+                        <circle cx="18" cy="16" r="4" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M17 16H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
                       <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deletion Request</span>
+                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deletion
+                        Request</span>
                     </div>
                   </a>
                 </li>
-                </ul>
+              </ul>
             </li>
-          
+
         </div>
       </nav>
     </div>
@@ -411,7 +454,8 @@
                     <div class="relative overflow-hidden rounded-t-md !p-5 text-white">
                       <div
                         class="absolute inset-0 h-full w-full bg-[url('../assets/images/menu-heade.jpg')] bg-cover bg-center bg-no-repeat">
-                        <img src="../assets/images/menu-heade.jpg" alt=""></div>
+                        <img src="../assets/images/menu-heade.jpg" alt="">
+                      </div>
                       <h4 class="relative z-10 text-lg font-semibold">
                         Messages
                       </h4>
@@ -497,15 +541,15 @@
                   </span>
                 </a>
                 <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
-                <li>
-                  <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
-                    <h4 class="text-lg">Notification</h4>
-                    <template >
-                      <span class="badge bg-primary/80"></span>
-                    </template>
-                  </div>
-                </li>
+                  class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
+                  <li>
+                    <div class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
+                      <h4 class="text-lg">Notification</h4>
+                      <template>
+                        <span class="badge bg-primary/80"></span>
+                      </template>
+                    </div>
+                  </li>
                   <li class="dark:text-white-light/90">
                     <div class="group flex items-center px-4 py-2" @click.self="toggle">
                       <div class="grid place-content-center rounded">
@@ -516,9 +560,8 @@
                       </div>
                       <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
                         <div class="ltr:pr-3 rtl:pl-3">
-                          <h6 ></h6>
-                          <span class="block text-xs font-normal dark:text-gray-500"
-                           ></span>
+                          <h6></h6>
+                          <span class="block text-xs font-normal dark:text-gray-500"></span>
                         </div>
                         <button type="button"
                           class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
@@ -534,37 +577,37 @@
                       </div>
                     </div>
                   </li>
-                <template >
-                  <li>
-                    <div class="p-4">
-                      <button class="btn btn-primary btn-small block w-full" @click="toggle">
-                        Read All Notifications
-                      </button>
-                    </div>
-                  </li>
-                </template>
-                <template x-if="!notifications.length">
-                  <li>
-                    <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
-                      <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
-                        <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path opacity="0.5"
-                            d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
-                            fill="currentColor"></path>
-                          <path
-                            d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
-                            fill="currentColor"></path>
-                          <path
-                            d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
-                            fill="currentColor"></path>
-                        </svg>
+                  <template>
+                    <li>
+                      <div class="p-4">
+                        <button class="btn btn-primary btn-small block w-full" @click="toggle">
+                          Read All Notifications
+                        </button>
                       </div>
-                      No data available.
-                    </div>
-                  </li>
-                </template>
-              </ul>
+                    </li>
+                  </template>
+                  <template x-if="!notifications.length">
+                    <li>
+                      <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
+                        <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
+                          <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.5"
+                              d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
+                              fill="currentColor"></path>
+                            <path
+                              d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
+                              fill="currentColor"></path>
+                            <path
+                              d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
+                              fill="currentColor"></path>
+                          </svg>
+                        </div>
+                        No data available.
+                      </div>
+                    </li>
+                  </template>
+                </ul>
               </div>
               <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
                 <a href="javascript:;" class="group relative" @click="toggle()">
@@ -578,11 +621,14 @@
 
                       <div class="truncate ltr:pl-4 rtl:pr-4">
                         <h4 class="text-base">
-                          <%= user.firstname %> <%= user.lastname %><span
-                            class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
+                          <%= user.firstname %>
+                            <%= user.lastname %><span
+                                class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
                         </h4>
                         <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
-                          href="javascript:;"><%= user.email %> </a>
+                          href="javascript:;">
+                          <%= user.email %>
+                        </a>
                       </div>
                     </div>
                   </li>
@@ -663,61 +709,167 @@
 
         <div>
 
-            <div>
-                <div class="table-responsive panel">
-                  <h5 class="text-lg font-semibold dark:text-white-light mb-4">Sold Accounts</h5>
-                  <table class="table-hover">
-                    <thead>
-                      <tr>
-                        <th>Account Type</th>
-                        <th>Country</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th class="text-center">Sold Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% products.map(details=> { %>
-                        <tr>
-                          <td >
-                            <%=details.account_type %>
-                          </td>
-                          <td>
-                            <%= details.country%>
-                          </td>
-                          <td>
-                            ₦ <%= details.amount %>
-                          </td>
-                          <td class="text-center whitespace-nowrap"><%= details.payment_status %></td>
-                          <td class="text-center">
-                            <%= details.sold_at %>
-                          </td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                  </table>
-                  <div class="flex mt-3">
-                    <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
-                        <% if (currentPage > 1) { %>
-                        <a href="/admin/sold/products?page=<%= currentPage - 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button></li></a>
-                        <% } %>
-                    
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                        <a href="/admin/sold/products?page=<%= i %>"><li><button type="button" class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light"><%= i %></button></li></a>
-                        <% } %>
-                    
-                        <% if (currentPage < totalPages) { %>
-                        <a href="/admin/sold/products?page=<%= currentPage + 1 %>"><li><button type="button" class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button></li></a>
-                        <% } %>
-                    </ul>
+          <div>
+            <div class="table-responsive panel">
+              <div class="flex flex-wrap justify-between gap-4 px-4">
+                <h5 class="text-lg font-semibold dark:text-white-light mb-4">Sold Accounts</h5>
+                <div class="mb-5" x-data="modal">
+                  <!-- button -->
+                  <div class="mb-6 sm:mb-0">
+                    <button type="button" class="btn btn-primary" @click="toggle">Edit Item</button>
+                  </div>
+
+                  <!-- modal -->
+                  <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto checkProductModal" :class="open && '!block'">
+                    <div class="flex items-center justify-center min-h-screen px-4" @click.self="open = false">
+                      <div x-show="open" x-transition x-transition.duration.300
+                        class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
+                        <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                          <h5 class="font-bold text-lg">Check Product</h5>
+                          <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24"
+                              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                              stroke-linejoin="round" class="h-6 w-6">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        </div>
+                        <form id="productIdForm">
+                          <div class="p-5">
+                            <div class="grid gap-5">
+                              <div>
+                                <label for="productId">Product ID</label>
+                                <input id="productIdInput" type="text" class="form-input mt-1"
+                                  placeholder="Enter Product ID" required>
+                              </div>
+                            </div>
+                            <div class="flex justify-end items-center mt-8">
+                              <button type="button" class="btn btn-outline-danger" @click="toggle">Discard</button>
+                              <button type="submit" id="checkProductBTN"
+                                class="btn btn-primary ltr:ml-4 rtl:mr-4">Check</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <table class="table-hover">
+                <thead>
+                  <tr>
+                    <th>Transaction id</th>
+                    <th>Account Type</th>
+                    <th>Country</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th class="text-center">Sold Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% soldProducts.map(details=> { %>
+                    <tr>
+                      <td>
+                        <%=details.purchase_id %>
+                      </td>
+                      <td>
+                        <%=details.account_type %>
+                      </td>
+                      <td>
+                        <%= details.country%>
+                      </td>
+                      <td>
+                        ₦ <%= details.amount %>
+                      </td>
+                      <td class="text-center whitespace-nowrap">
+                        <%= details.payment_status %>
+                      </td>
+                      <td class="text-center">
+                        <%= details.date_purchased %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+              </table>
+              <div class="flex mt-3">
+                <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
+                  <% if (currentPage> 1) { %>
+                    <a href="/admin/sold/products?page=<%= currentPage - 1 %>">
+                      <li><button type="button"
+                          class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Prev</button>
+                      </li>
+                    </a>
+                    <% } %>
+
+                      <% for (let i=1; i <=totalPages; i++) { %>
+                        <a href="/admin/sold/products?page=<%= i %>">
+                          <li><button type="button"
+                              class="<%= i === currentPage ? 'border-primary' : 'border-[#e0e6ed]' %> flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">
+                              <%= i %>
+                            </button></li>
+                        </a>
+                        <% } %>
+
+                          <% if (currentPage < totalPages) { %>
+                            <a href="/admin/sold/products?page=<%= currentPage + 1 %>">
+                              <li><button type="button"
+                                  class="flex justify-center font-semibold px-3.5 py-2 rounded transition text-dark hover:text-primary border-2 border-[#e0e6ed] dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light">Next</button>
+                              </li>
+                            </a>
+                            <% } %>
+                </ul>
               </div>
             </div>
+          </div>
         </div>
+        <!-- second modal -->
+
+        <!-- Second Modal: Edit Product -->
+        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 px-4 editProductModal">
+          <div class="flex min-h-screen items-center justify-center">
+            <div class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
+              <!-- Close Button -->
+              <button type="button" class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4"
+             onclick="checkProductAndEdit()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="h-6 w-6">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <div
+                class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">
+                Edit Product
+              </div>
+              <div class="p-5">
+                <form id="editProductForm">
+                  <div class="mb-5">
+                    <label for="price">Login Details</label>
+                    <textarea id="logindetails" rows="6" class="form-textarea" placeholder="Enter Login Details" required></textarea>
+                    <input type="hidden" id="ProdId">
+                  </div>
+                  <!-- Add other fields dynamically as needed -->
+                  <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
+                    <button type="button" class="btn btn-outline-danger"
+                    onclick="checkProductAndEdit()">Cancel</button>
+                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- end of second modal -->
 
         <!-- end main content section -->
       </div>
-
       <!-- start footer section -->
       <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
         © <span id="footer-year">2022</span>.
@@ -726,6 +878,17 @@
     </div>
   </div>
 
+  <% if (messages.error) { %>
+    <div id="error-message">
+      <%= messages.error %>
+    </div>
+    <% } %>
+      <% if (messages.success) { %>
+        <div id="success-message">
+          <%= messages.success %>
+        </div>
+        <% } %>
+
   <script src="../assets/js/alpine-collaspe.min.js"></script>
   <script src="../assets/js/alpine-persist.min.js"></script>
   <script defer="" src="../assets/js/alpine-ui.min.js"></script>
@@ -733,6 +896,104 @@
   <script defer="" src="../assets/js/alpine.min.js"></script>
   <script src="../assets/js/custom.js"></script>
   <script defer="" src="../assets/js/apexcharts.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script>
+    $(function () {
+      var errorMessage = $('#error-message').text();
+      var successMessage = $('#success-message').text();
+
+      if (errorMessage) {
+        toastr.error(errorMessage);
+      }
+
+      if (successMessage) {
+        toastr.success(successMessage);
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("modal", (initialOpenState = false) => ({
+        open: initialOpenState,
+
+        toggle() {
+          this.open = !this.open;
+        },
+      }));
+    });
+  </script>
+
+  <script>
+    document.getElementById("productIdForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const editProductModal = document.querySelector('.editProductModal');
+      const checkProductModal = document.querySelector('.checkProductModal');
+      const productId = document.getElementById("productIdInput").value;
+
+      try {
+        const response = await fetch(`/api/admin/products/${productId}`);
+        if (!response.ok) {
+          throw new Error("Product not found");
+        }
+
+        const product = await response.json();
+
+        if (product) {
+          checkProductModal.classList.remove('!block');
+          editProductModal.classList.add('!block');
+
+          document.getElementById("ProdId").value = product.id || "";
+          document.getElementById("logindetails").value = product.logindetails || "";
+
+          toastr.success("Product found and loaded successfully!");
+
+        } 
+      } catch (error) {
+        toastr.error(error.message || "An error occurred while fetching the product.");
+      }
+    });
+
+    document.getElementById("editProductForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const editProductModal = document.querySelector('.editProductModal');
+      const logindetails = document.getElementById("logindetails").value;
+      const productId = document.getElementById("ProdId").value;
+
+      try {
+        const response = await fetch(`/api/admin/products/${productId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({logindetails}),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update product");
+        }
+
+        const result = await response.json();
+
+        editProductModal.classList.remove('!block');
+        toastr.success("Product updated successfully!");
+      } catch (error) {
+        toastr.error(error.message || "An error occurred while updating the product.");
+      }
+    });
+
+   function checkProductAndEdit() {
+    const editProductModal = document.querySelector('.editProductModal');
+    const checkProductModal = document.querySelector('.checkProductModal');
+
+    editProductModal.classList.remove('!block');
+    checkProductModal.classList.remove('!block');
+    }
+  </script>
 
   <script>
     // main section

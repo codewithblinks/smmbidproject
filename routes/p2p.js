@@ -193,6 +193,10 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
           return "bi bi-instagram";
         case "tiktok":
           return "bi bi-tiktok";
+          case "discord":
+          return "bi bi-discord";
+          case "tiktok":
+          return "bi bi-tiktok";
         default:
           return "bi bi-question-circle"; // Default icon if type is unknown
       }

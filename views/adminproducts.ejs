@@ -709,13 +709,17 @@
 
         <div>
           <div class="panel h-full flex-1 overflow-auto">
-
             <form class="w-full sm:w-1/2 w-1/2 mb-8">
               <div class="relative">
                 <input type="text" id="searchInput" placeholder="Search Product By Price or Account Type..."
                   class="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider" />
               </div>
             </form>
+            <div  class="mb-8">
+              <small>You can now view and see the account you are buying by clicking on the account View Account</small>
+            </div>
+
+            
 
             <div style="<%=products.length === 0 ? " display: block;" : "display: none;" %>">
               <div class="flex h-full min-h-[400px] items-center justify-center text-lg font-semibold sm:min-h-[300px]">
@@ -773,6 +777,20 @@
                             <h4 class="mt-4 font-semibold">Country</h4>
                             <p class="mt-2 text-white-dark">
                               <%= details.country%>
+                            </p>
+                          </div>
+                        </div>
+                        <hr>
+                         <div style="display: flex; justify-content: space-between;">
+                          <div>
+                            <h4 class="mt-4 font-semibold">View Account</h4>
+                            <p class="mt-2 text-white-dark">
+                              <a href="<%= details.profile_link %>">
+                                <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 shrink-0 ltr:mr-3 rtl:ml-3">
+                                    <path opacity="0.5" d="M3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C4.97196 6.49956 7.81811 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957Z" stroke="currentColor" stroke-width="1.5"></path>
+                                    <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5"></path>
+                                </svg>
+                            </a>
                             </p>
                           </div>
                         </div>
