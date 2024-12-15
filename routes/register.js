@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import bodyParser from "body-parser";
 import { Strategy } from "passport-local";
-import ensureAuthenticated, {checkAuthenticated, checkAdminAuthenticated} from "../authMiddleware/authMiddleware.js"
+import ensureAuthenticated, {checkAuthenticated, checkAdminAuthenticated, userRole} from "../authMiddleware/authMiddleware.js"
 import {sendEmail} from "../config/transporter.js";
 import { sendWelcomeEmail, resendVericationEmail } from "../config/emailMessages.js";
 import crypto from "crypto";
@@ -180,8 +180,6 @@ router.post("/register", upload, registrationValidationRules, async (req, res) =
       );
     }
 
-    const referralLink = `${req.protocol}://${req.get('host')}/register?ref=${referralCode}`;
-
     await sendVerificationEmail(email, username, verificationCode);
 
 
@@ -259,13 +257,11 @@ router.post('/verify-email', async (req, res) => {
       );
 
       if (result.rows.length === 0 || result.rows[0].email_verified) {
-          req.flash('error', 'Invalid verification code or email already verified');
-          return res.redirect('/verifyemail');
+        return res.status(400).json({ message: 'Invalid verification code or email already verified' });
       }
 
       if (new Date() > new Date(result.rows[0].verification_code_expires_at)) {
-          req.flash('error', 'Verification code has expired.');
-          return res.redirect('/verifyemail');
+        return res.status(400).json({ message: 'Verification code has expired' });
       }
 
       // Update user as verified
@@ -274,17 +270,15 @@ router.post('/verify-email', async (req, res) => {
           [result.rows[0].id]
       );
 
-      const username = result.rows[0].username;
+      const {username} = result.rows[0];
 
-      await sendWelcomeEmail(email, username);
+        await sendWelcomeEmail(email, username);
 
-      req.flash('success', 'Email verified successfully! You can now log in.');
-      res.redirect('/login');
+        return res.json({ message: 'Email verified and logged in successfully!'});
 
   } catch (err) {
-      console.log("error verifying email", err);
-      req.flash('error', 'An error occurred. Please try again.');
-      res.redirect('/verifyemail');
+    console.error('Error verifying email:', err);
+    res.status(500).json({ message: 'An error occurred. Please try again.' });
   }
 });
 
@@ -298,23 +292,28 @@ router.post('/resend-verification-code', async (req, res) => {
       );
 
       if (result.rows.length === 0) {
-          req.flash('error', 'Email not found.');
-          console.log(email)
-          return res.redirect('/resend-verification-code');
+        return res.status(400).json({ message: 'Email not found.' });
       }
 
       if (result.rows[0].email_verified) {
-          req.flash('error', 'Email is already verified.');
-          return res.redirect('/login');
+        return res.status(400).json({ message: 'Email is already verified.' });
       }
 
       const lastSent = new Date(result.rows[0].last_verification_code_sent_at);
       const now = new Date();
-
-      if (now - lastSent < 1 * 60 * 1000) { 
-          req.flash('error', 'You can only resend the code every 1 minutes.');
-          return res.redirect('/resend-verification-code');
+      
+      const timeElapsed = now - lastSent; 
+      const waitTime = 1 * 60 * 1000;
+      const timeRemaining = waitTime - timeElapsed; 
+      
+      if (timeElapsed < waitTime) {
+          const minutesRemaining = Math.ceil(timeRemaining / (60 * 1000)); 
+          let imeRemaining = Math.max(0, Math.ceil(timeRemaining / 1000));
+          return res.status(400).json({
+              message: `You can only resend the code every 1 minute. Time left: ${imeRemaining}`
+          });
       }
+      
 
       const verificationCode = crypto.randomBytes(3).toString('hex');
       const verificationCodeExpiresAt = new Date(now.getTime() + 30 * 60 * 1000);
@@ -329,23 +328,26 @@ router.post('/resend-verification-code', async (req, res) => {
 
       await resendVericationEmail(email, username, verificationCode);
 
-      req.flash('success', 'Verification code resent successfully. Please check your email.');
-      return res.redirect('/verifyemail');
+      return res.json({ message: 'Verification code resent successfully. Please check your email.'});
 
   } catch (err) {
-      req.flash('error', 'An error occurred. Please try again.');
-      res.redirect('/resend-verification-code');
+    console.error('Error resending verication email:', err);
+    res.status(500).json({ message: 'An error occurred. Please try again.' });
   }
 });
 
 router.get("/verifyemail", (req, res) => {
-  res.render('verifyEmail',  { messages: req.flash() });
+  try {
+    res.render('verifyEmail',  { messages: req.flash() });
+  } catch (error) {
+    console.error('Error displaying the verify email page:', error);
+    res.status(500).send('Internal Server Error');
+  }
 })
 
 router.get("/resend-verification-code", (req, res) => {
   res.render('resendemailcode',  { messages: req.flash() });
 })
-
 
 
 

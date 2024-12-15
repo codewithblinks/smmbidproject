@@ -376,5 +376,34 @@ router.post('/send-email-to-users', adminEnsureAuthenticated, adminRole, async (
   }
 });
 
+router.post("/admin/users/user/:id/delete", adminEnsureAuthenticated, adminRole, 
+  async (req, res) => {
+    const { id } = req.params;
+
+      try {
+
+        if (!id) {
+          req.flash("error", "Invalid or missing ID.");
+          return res.redirect("/admin/users/list/suspend");
+        }
+
+        const deletedUserQuery =  await db.query('DELETE FROM userprofile WHERE id = $1 RETURNING firstname, lastname', [id]);
+
+        if (deletedUserQuery.rows.length === 0) {
+          req.flash("error", "User not found or already deleted.");
+          return res.redirect("/admin/users/list/suspend");
+        }
+
+        const {firstname, lastname} = deletedUserQuery.rows[0];
+
+          req.flash("success", `User ${firstname} ${lastname} has been deleted`);
+          res.redirect("/admin/users/list/suspend");
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        req.flash("error", "An error occurred while trying to delete the user.");
+        return res.redirect("/admin/users/list/suspend");
+      }
+})
+
 
 export default router;

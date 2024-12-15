@@ -12,24 +12,19 @@
   <link rel="stylesheet" href="assets/css/register.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
-  <link
-  rel="shortcut icon"
-  href="assets/images/favicon.png"
-  type="image/x-icon"
-/>
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
   <script src="https://kit.fontawesome.com/9499a831e8.js" crossorigin="anonymous"></script>
   <script src="https://www.google.com/recaptcha/api.js?render=6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD"></script>
   <style>
-    .showHidePw{
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    left: 90%;
-    transform: translateY(-50%);
-    color: #999;
-    transition: all 0.2s ease;
-}
-
+    .showHidePw {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      left: 90%;
+      transform: translateY(-50%);
+      color: #999;
+      transition: all 0.2s ease;
+    }
   </style>
 </head>
 
@@ -85,9 +80,9 @@
                   <label for="Name">Username</label>
                   <div class="relative text-white-dark">
                     <input id="Name" type="text" name="username" autocomplete="username" required minlength="3"
-                      maxlength="15" placeholder="Enter Username"
-                      class="form-input ps-10 placeholder:text-white-dark" required/>
-                      <input type="hidden" name="g_recaptcha_response" id="recaptchaResponse">
+                      maxlength="15" placeholder="Enter Username" class="form-input ps-10 placeholder:text-white-dark"
+                      required />
+                    <input type="hidden" name="g_recaptcha_response" id="recaptchaResponse">
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                       <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                         <circle cx="9" cy="4.5" r="3" fill="#888EA8"></circle>
@@ -102,7 +97,7 @@
                   <label for="Name">Firstname</label>
                   <div class="relative text-white-dark">
                     <input id="firstname" type="text" name="firstname" required placeholder="Enter Firstname"
-                      class="form-input ps-10 placeholder:text-white-dark" required/>
+                      class="form-input ps-10 placeholder:text-white-dark" required />
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                       <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                         <circle cx="9" cy="4.5" r="3" fill="#888EA8"></circle>
@@ -117,7 +112,7 @@
                   <label for="Name">Lastname</label>
                   <div class="relative text-white-dark">
                     <input id="lastname" type="text" name="lastname" required placeholder="Enter Lastname"
-                      class="form-input ps-10 placeholder:text-white-dark" required/>
+                      class="form-input ps-10 placeholder:text-white-dark" required />
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                       <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                         <circle cx="9" cy="4.5" r="3" fill="#888EA8"></circle>
@@ -132,7 +127,7 @@
                   <label for="Email">Email</label>
                   <div class="relative text-white-dark">
                     <input id="Email" type="email" name="email" required="Enter Email"
-                      class="form-input ps-10 placeholder:text-white-dark" required/>
+                      class="form-input ps-10 placeholder:text-white-dark" required />
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                       <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                         <path opacity="0.5"
@@ -175,7 +170,7 @@
                   <label for="Password">Confirm Password</label>
                   <div class="relative text-white-dark">
                     <input id="confirm_pw" type="password" name="password" autocomplete="new-password" required
-                      placeholder="Confirm Password" class="form-input ps-10 placeholder:text-white-dark confirm_pw"/>
+                      placeholder="Confirm Password" class="form-input ps-10 placeholder:text-white-dark confirm_pw" />
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                       <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
                         <path opacity="0.5"
@@ -204,15 +199,18 @@
                 </div>
                 <div>
                   <label class="flex cursor-pointer items-center">
-                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" name="terms" required/>
-                    <span class="text-white-dark"><small>By creating an account, you agree with our Terms of Service.</small></span>
+                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" name="terms" required />
+                    <span class="text-white-dark"><small>By creating an account, you agree with our Terms of
+                        Service.</small></span>
                   </label>
                 </div>
                 <button type="submit" id="button" disabled
                   class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                   Sign Up
 
-                  <svg style="display: none;" id="loadingIcon" viewbox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="inline-block h-5 w-5 shrink-0 animate-[spin_2s_linear_infinite] align-middle ltr:mr-2 rtl:ml-2">
+                  <svg style="display: none;" id="loadingIcon" viewbox="0 0 24 24" width="24" height="24"
+                    stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                    class="inline-block h-5 w-5 shrink-0 animate-[spin_2s_linear_infinite] align-middle ltr:mr-2 rtl:ml-2">
                     <line x1="12" y1="2" x2="12" y2="6"></line>
                     <line x1="12" y1="18" x2="12" y2="22"></line>
                     <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
@@ -221,7 +219,7 @@
                     <line x1="18" y1="12" x2="22" y2="12"></line>
                     <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
                     <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-                </svg>
+                  </svg>
                 </button>
               </form>
               <div class="relative my-7 text-center md:mb-9">
@@ -235,7 +233,7 @@
                 <a href="login"
                   class="uppercase text-primary underline transition hover:text-black dark:hover:text-white">SIGN IN</a>
               </div>
-              
+
             </div>
           </div>
         </div>
@@ -251,7 +249,7 @@
   <script src="assets/js/custom.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastr@latest/build/toastr.min.js"></script>
-  
+
 
   <script>
     $(document).ready(function () {
@@ -262,49 +260,50 @@
     });
   </script>
 
-<script>
-  grecaptcha.ready(function() {
-grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'register' }).then(function(token) {
-
-  document.getElementById('recaptchaResponse').value = token;
-});
-});
-
-</script>
-  
   <script>
+    grecaptcha.ready(function () {
+      grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'register' }).then(function (token) {
+
+        document.getElementById('recaptchaResponse').value = token;
+      });
+    });
+
+  </script>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
       const urlParams = new URLSearchParams(window.location.search);
       const ref = urlParams.get('ref');
-
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-    
-      const form = e.target;
-      const formData = new FormData(form); 
-
       if (ref) {
-      formData.append('ref', ref);
-    }
-    
-      const response = await fetch('/register', {
-        method: 'POST',
-        body: formData,
-      });
-    
-      const data = await response.json();
-    
-      if (data.success) {
+        formData.append('ref', ref);
+      }
 
-        document.getElementById('loadingIcon').style.display = 'block'; 
-        document.getElementById('button').disabled = true;
+      const submitButton = document.getElementById('button');
+      const loadingIcon = document.getElementById('loadingIcon');
+      submitButton.disabled = true;
+      loadingIcon.style.display = 'block';
 
-        toastr.success(data.message);
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          body: formData,
+        });
 
-         setTimeout(() => {
-       window.location.href = '/verifyemail';
-       }, 3000); 
-      } else {
-    data.errors.forEach(error => {
+        const data = await response.json();
+
+        if (data.success) {
+          toastr.success(data.message);
+
+          setTimeout(() => {
+            window.location.href = '/verifyemail';
+          }, 3000);
+        } else {
+          data.errors.forEach(error => {
       if (error.msg === 'Username must be between 3 and 15 characters.') {
         toastr.warning('Username must be between 3 and 15 characters.');
       } else if (error.msg === 'Please enter a valid email address.') {
@@ -321,32 +320,40 @@ grecaptcha.execute('6Ld0bmYqAAAAAJtTmEcQfoBgLrkgFyNeIIMVZZpD', { action: 'regist
         toastr.warning(error);
       }
     });
-  }
-});
-    </script>
+        }
+      } catch (error) {
+        toastr.error('An unexpected error occurred. Please try again.');
+        console.error('Error during form submission:', error);
+      } finally {
+        submitButton.disabled = false;
+        loadingIcon.style.display = 'none';
+      }
+    });
+
+  </script>
 
   <script>
     pwShowHide = document.querySelectorAll(".showHidePw"),
-    pwFields = document.querySelectorAll(".confirm_pw"),
+      pwFields = document.querySelectorAll(".confirm_pw"),
 
-  pwShowHide.forEach(eyeIcon =>{
-      eyeIcon.addEventListener("click", ()=>{
-          pwFields.forEach(pwField =>{
-              if(pwField.type === "password"){
-                  pwField.type = "text";
-                  pwShowHide.forEach(icon =>{
-                      icon.classList.replace("fa-eye-slash", "fa-eye");
-                  })
-              }else{
-                  pwField.type = "password";
-                  pwShowHide.forEach(icon =>{
-                      icon.classList.replace("fa-eye", "fa-eye-slash");
-                  })
-              }
-          }) 
+      pwShowHide.forEach(eyeIcon => {
+        eyeIcon.addEventListener("click", () => {
+          pwFields.forEach(pwField => {
+            if (pwField.type === "password") {
+              pwField.type = "text";
+              pwShowHide.forEach(icon => {
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+              })
+            } else {
+              pwField.type = "password";
+              pwShowHide.forEach(icon => {
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+              })
+            }
+          })
+        })
       })
-  })
-</script>
+  </script>
 
   <script>
     // main section
