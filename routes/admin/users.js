@@ -149,10 +149,10 @@ router.get('/searchActiveUsers', adminEnsureAuthenticated, async (req, res) => {
       const result = await db.query(
         `SELECT * FROM userprofile
         WHERE is_suspended = $1
-         AND (firstname ILIKE $2 OR lastname ILIKE $2 OR email ILIKE $2)
+         AND (firstname ILIKE $2 OR lastname ILIKE $2 OR email ILIKE $2) AND email_verified = $3
          ORDER BY id DESC
          `,
-        [false, `%${query}%`]
+        [false, `%${query}%`, true]
       );
 
       res.json(result.rows); 
@@ -171,10 +171,10 @@ router.get('/searchSuspendedUsers', adminEnsureAuthenticated, async (req, res) =
       const result = await db.query(
         `SELECT * FROM userprofile
         WHERE is_suspended = $1
-         AND (firstname ILIKE $2 OR lastname ILIKE $2 OR email ILIKE $2)
+         AND (firstname ILIKE $2 OR lastname ILIKE $2 OR email ILIKE $2) AND email_verified = $3
          ORDER BY id DESC
          `,
-        [true, `%${query}%`]
+        [true, `%${query}%`, true]
       );
 
       res.json(result.rows); 

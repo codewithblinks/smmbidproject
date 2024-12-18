@@ -15,6 +15,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="../assets/css/animate.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -842,6 +843,7 @@
                     </button>
                     <h4 class="text-base font-medium ltr:mr-2 rtl:ml-2 md:text-lg">Ticket ID</h4>
                     <div class="badge bg-info hover:top-0" id="ticketIdDiv"></div>
+                    <button onclick="testScroll()">Test Scroll</button>
                   </div>
                 </div>
                 <!-- End back button -->
@@ -964,6 +966,15 @@
           <script src="../assets/js/notification.js"></script>
 
           <script>
+            function testScroll() {
+                const chatContainer = document.getElementById("chatContainer");
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                console.log("Scroll Top:", chatContainer.scrollTop);
+                console.log("Scroll Height:", chatContainer.scrollHeight);
+            }
+            </script>
+
+          <script>
             $(function () {
               var errorMessage = $('#error-message').text();
               var successMessage = $('#success-message').text();
@@ -1034,7 +1045,6 @@
 
               tickets.forEach((ticket) => {
                 const latestResponse = ticket.responses?.[ticket.responses.length - 1] || null;
-                console.log("here", latestResponse.seen)
                 const row = document.createElement("tr");
                 row.className = "cursor-pointer view-ticket";
 
@@ -1052,7 +1062,7 @@
                 <td>
                   <div class="min-w-[300px] overflow-hidden font-medium text-white-dark line-clamp-1">
                     <span>
-                      <span>${ticket.title}</span> &minus; <span>${ticket.description}</span>
+                      <span>${ticket.title}</span> &minus; <span>${truncateText(ticket.description, 50)}</span>
                     </span>
                   </div>
                 </td>
@@ -1076,10 +1086,19 @@
                 </td>
                  `;
 
-                row.addEventListener("click", () => fetchMessages(ticket.ticket_id));
-                row.addEventListener("click", () => postread(ticket.ticket_id));
+                      row.addEventListener("click", () => {
+                      fetchMessages(ticket.ticket_id);
+                      postread(ticket.ticket_id);
+                    });
                 ticketsTableBody.appendChild(row);
               });
+            }
+
+            function truncateText(text, maxLength) {
+              if (text.length > maxLength) {
+                return text.slice(0, maxLength) + '...';
+              }
+              return text;
             }
 
             function renderSolvedTickets() {
@@ -1136,7 +1155,6 @@
                 ticketsTableBody.appendChild(row);
               });
             }
-
 
             async function postread(ticketId) {
               try {
@@ -1199,28 +1217,37 @@
 
             function renderMessages() {
               const chatContainer = document.getElementById("chatContainer");
+              if (!chatContainer) return;
+
               chatContainer.innerHTML = messages
                 .map((message) => createMessageElement(message))
                 .join('');
               // Scroll to the bottom of the chat
-              chatContainer.scrollTop = chatContainer.scrollHeight;
+                  chatContainer.scrollTop = chatContainer.scrollHeight;
+                  console.log("After Scroll - Scroll Top:", chatContainer.scrollTop);
             }
 
             function createMessageElement(message) {
               const isUserMessage = message.user_id === loggedInUserId;
-              const isSystemMessage = message.user_id === null;
 
               return `
-              <div class="flex items-start gap-3 ${message.sender === 'User' ? 'justify-end' : ''}">
-                <div class="space-y-2">
-                <div class="flex items-center gap-3">
-                <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800 ${message.sender === 'User' ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white' : 'ltr:rounded-bl-none rtl:rounded-br-none'}" >${message.message}</div>
-                    
-                  </div>
-                  <div class="text-xs text-white-dark ${isUserMessage ? "ltr:text-right rtl:text-left" : ""
-                }">${message.timeSince}</div>
-                    </div>
-                </div>
+              <div class="flex ${message.sender === 'User' ? 'justify-end' : 'justify-start'} gap-3 items-start">
+  <!-- Message Container -->
+  <div class="space-y-2 max-w-[80%]">
+    <!-- Message Bubble -->
+    <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800
+      ${message.sender === 'User' 
+        ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white' 
+        : 'ltr:rounded-bl-none rtl:rounded-br-none'}" style="max-width: 667px">
+      ${message.message}
+    </div>
+    <!-- Timestamp -->
+    <div class="text-xs text-white-dark ${message.sender === 'User' ? 'text-right' : 'text-left'}">
+      ${message.timeSince}
+    </div>
+  </div>
+</div>
+
                   `;
             }
 
@@ -1317,7 +1344,6 @@
 
                   if (!response.ok) {
                     console.error(`Error posting message: ${response.status} ${response.statusText}`);
-                    return alert("Failed to send message. Please try again.");
                   }
 
                   const newMessage = await response.json();
@@ -1336,7 +1362,8 @@
               chatContainer.style.display = showChat ? "block" : "none";
               backheaderBTN.style.display = "flex";
               listpageBTN.style.display = "none";
-              typeMSG.style.display = "flex"
+              typeMSG.style.display = "flex";
+              renderMessages()
             }
 
             document.getElementById('backBTN').addEventListener('click', () => {

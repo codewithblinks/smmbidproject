@@ -16,6 +16,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="../assets/css/animate.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link
   rel="shortcut icon"
   href="../assets/images/favicon.png"
@@ -823,6 +824,16 @@
       <!-- end footer section -->
     </div>
   </div>
+  <% if (messages.error) { %>
+    <div id="error-message">
+      <%= messages.error %>
+    </div>
+    <% } %>
+      <% if (messages.success) { %>
+        <div id="success-message">
+          <%= messages.success %>
+        </div>
+        <% } %>
 
   <script src="../assets/js/alpine-collaspe.min.js"></script>
   <script src="../assets/js/alpine-persist.min.js"></script>
@@ -831,12 +842,32 @@
   <script defer="" src="../assets/js/alpine.min.js"></script>
   <script src="../assets/js/custom.js"></script>
   <script defer="" src="../assets/js/apexcharts.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script>
+    $(function () {
+      var errorMessage = $('#error-message').text();
+      var successMessage = $('#success-message').text();
+
+      if (errorMessage) {
+        toastr.error(errorMessage);
+      }
+
+      if (successMessage) {
+        toastr.success(successMessage);
+      }
+    });
+  </script>
 
   <script>
     // Function to handle suspend/unsuspend actions
     async function handleSuspendUnsuspend(event) {
         event.preventDefault();
-        const button = event.target;
+        // const button = event.target;
+        const button = event.target.closest('.toggle-suspend');
+        if (!button) return;
+
         const userId = button.getAttribute('data-id');
         const action = button.textContent.trim().toLowerCase();
         const url = action === 'suspend' ? `/admin/suspend-user/${userId}` : `/admin/unsuspend-user/${userId}`;
@@ -849,13 +880,16 @@
                 }
             });
 
+            const result = await response.json();
+
             if (response.ok) {
-                // Update the status in the frontend
-                // Optionally reload the page or refresh the table data
-                location.reload();
-                document.getElementById('searchInput').dispatchEvent(new Event('input')); // Trigger search again to update the table
+              toastr.success(result.message);
+                setTimeout(() => {
+                  location.reload();
+                }, 2000);
+                document.getElementById('searchInput').dispatchEvent(new Event('input'));
             } else {
-                console.error('Failed to update user status');
+              toastr.error(result.message);
             }
         } catch (err) {
             console.error('Error:', err);
@@ -870,52 +904,63 @@
     });
 
     // JavaScript to handle the search input
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const searchValue = this.value;
-        
-        fetch(`/searchActiveUsers?query=${encodeURIComponent(searchValue)}`)
-            .then(response => response.json())
-            .then(users => {
-                const resultsBody = document.getElementById('resultsBody');
-                resultsBody.innerHTML = ''; 
-                
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>
-                            <div class="flex w-max items-center">
-                                <div class="flex-none mr-3">
-                                    <div class="p-1 bg-white-dark/30 rounded-full">
-                                        <img class="h-8 w-8 rounded-full object-cover" src="${user.profile_picture ? user.profile_picture : '../assets/images/user-profile.jpeg'}" />
-                                    </div>
-                                </div>
-                                <div>${user.firstname} ${user.lastname}</div>
-                            </div>
-                        </td>
-                        <td>${user.email}</td>
-                        <td class="whitespace-nowrap">₦${user.balance}</td>
-                        <td class="${user.is_suspended ? 'text-danger' : 'text-success'} whitespace-nowrap">
-                            ${user.is_suspended ? "Suspended" : "Active"}
-                        </td>
-                        <td>
-                            <div class="flex items-center justify-center gap-4">
-                                <button type="button" class="btn btn-sm btn-outline-primary">
-                                    <a class="toggle-suspend" data-id="${user.id}">
-                                        ${user.is_suspended ? 'Activate' : 'Suspend'}
-                                    </a>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-warning">
-                                     <a href="/admin/users/user/${user.id}/personal">View</a> 
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    resultsBody.appendChild(row);
-                });
-            });
-    });
-</script>
+    async function fetchSearchResults(query) {
+    try {
+      const response = await fetch(`/searchActiveUsers?query=${encodeURIComponent(query)}`);
+      const users = await response.json();
 
+      const resultsBody = document.getElementById('resultsBody');
+      resultsBody.innerHTML = '';
+
+      users.forEach((user) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div class="flex w-max items-center">
+              <div class="flex-none mr-3">
+                <div class="p-1 bg-white-dark/30 rounded-full">
+                  <img 
+                    class="h-8 w-8 rounded-full object-cover" 
+                    src="${user.profile_picture || '../assets/images/user-profile.jpeg'}" 
+                    alt="Profile Picture" 
+                  />
+                </div>
+              </div>
+              <div>${user.firstname} ${user.lastname}</div>
+            </div>
+          </td>
+          <td>${user.email}</td>
+          <td class="whitespace-nowrap">₦${user.balance}</td>
+          <td class="${user.is_suspended ? 'text-danger' : 'text-success'} whitespace-nowrap">
+            ${user.is_suspended ? 'Suspended' : 'Active'}
+          </td>
+          <td>
+            <div class="flex items-center justify-center gap-4">
+              <button type="button" class="btn btn-sm btn-outline-primary">
+                <a class="toggle-suspend" data-id="${user.id}">
+                  ${user.is_suspended ? 'Activate' : 'Suspend'}
+                </a>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-warning">
+                <a href="/admin/users/user/${user.id}/personal">View</a>
+              </button>
+            </div>
+          </td>
+        `;
+        resultsBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      toastr.error('Failed to fetch search results. Please try again.');
+    }
+  }
+
+  // Event listener for the search input
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const searchValue = this.value.trim();
+    fetchSearchResults(searchValue);
+  });
+</script>
 
 <script>
   document.addEventListener('alpine:init', () => {

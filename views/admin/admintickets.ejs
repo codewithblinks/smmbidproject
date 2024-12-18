@@ -1021,7 +1021,7 @@
                 <td>
                   <div class="min-w-[300px] overflow-hidden font-medium text-white-dark line-clamp-1">
                     <span>
-                      <span>${ticket.title}</span> &minus; <span>${ticket.description}</span>
+                      <span>${ticket.title}</span> &minus; <span>${truncateText(ticket.description, 50)}</span>
                     </span>
                   </div>
                 </td>
@@ -1048,6 +1048,13 @@
                 row.addEventListener("click", () => postread(ticket.ticket_id));
                 ticketsTableBody.appendChild(row);
               });
+            }
+
+            function truncateText(text, maxLength) {
+              if (text.length > maxLength) {
+                return text.slice(0, maxLength) + '...';
+              }
+              return text;
             }
 
             function renderSolvedTickets() {
@@ -1179,8 +1186,11 @@
              <div class="flex items-start gap-3  ${message.sender === 'Admin' ? 'justify-end' : ''}">
                 <div class="space-y-2">
                 <div class="flex items-center gap-3">
-                <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800 ${message.sender === 'Admin' ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white' : 'ltr:rounded-bl-none rtl:rounded-br-none'}" >${message.message}</div>
-                    
+                <div class="rounded-md bg-black/10 p-4 py-2 dark:bg-gray-800 
+                ${message.sender === 'Admin' ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white'
+                 : 'ltr:rounded-bl-none rtl:rounded-br-none'}" 
+                >${message.message}
+                </div>       
                   </div>
                   <div class="text-xs text-white-dark ${
                     isUserMessage ? "ltr:text-right rtl:text-left" : ""
