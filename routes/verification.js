@@ -49,7 +49,7 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
       res.render('verification', { messages: req.flash(), user: userDetails, countries, services, pools, notifications, timeSince });
 
   } catch (error) {
-    console.error("error at verification", error.message);
+    console.error("error at verification", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -262,28 +262,30 @@ const fetchAllUserIds = async () => {
 // fetch pending order
 const fetchAndFilterActiveOrders = async (orderCodes) => {
   try {
-
     const form = new FormData();
     form.append('key', BEARER_TOKEN);
 
     const headers = {
       ...form.getHeaders(),
     };
-
     const response = await axios.post('https://api.smspool.net/request/active', form, { headers });
-
     const activeOrders = response.data;
 
     for (const order of activeOrders) {
       if (orderCodes.includes(order.order_code)) {
         if (order.status === 'completed') {
           try {
-            await db.query(
-              'UPDATE sms_order SET code = $1, status = $2 WHERE order_id = $3',
+            const updateResult = await db.query(
+              'UPDATE sms_order SET code = $1, status = $2 WHERE order_id = $3 RETURNING *',
               [order.code, 'complete', order.order_code]
             );
+
+            if (updateResult.rows.length === 0) {
+              console.warn(`Order ${order.order_code} not found in sms_order table.`);
+            } else {
             notifyOrderStatusChange(order);
-            console.log(`Order updated to complete with code`);
+            console.log(`Order ${order.order_code} updated to complete with code ${order.code}`);
+          }
           } catch (dbError) {
             console.error(`Error updating order ${order.order_code}:`, dbError);
           }
@@ -295,6 +297,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
     const filteredOrders = activeOrders.filter(order => 
       (order.status === 'pending' || order.status === 'completed' || order.status === 'expired') 
       && orderCodes.includes(order.order_code));
+      
     return filteredOrders;
   } catch (error) {
     console.error('Error fetching and filtering data 1:', error);
@@ -437,7 +440,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
   const orderId = req.body.orderId;
 
   if (!orderId) {
-    return res.status(200).json({ success: false, message: 'Order ID is required' });
+    return res.status(400).json({ success: false, message: 'Order ID is required' });
   }
 
   try {
@@ -449,7 +452,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const order = orderResult.rows[0];
     
     if (order.status !== 'pending' && order.status !== 'expired') {
-      return res.status(200).json({ success: false, message: 'Order is not eligible for refund' });
+      return res.status(400).json({ success: false, message: 'Order is not eligible for refund' });
     }
 
     const form = new FormData();
@@ -495,41 +498,50 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const orderId = req.body.orderId;
 
-
   if (!orderId) {
-    return res.status(200).json({ success: false, message: 'Order ID is required' });
+    return res.status(400).json({ success: false, message: 'Order ID is required' });
   }
 
   try {
-    // Check if the order exists and is eligible for refund
     const orderResult = await db.query('SELECT * FROM sms_order WHERE order_id = $1', [orderId]);
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    const form = new FormData();
-    form.append('orderid', orderId);
-    form.append('key', BEARER_TOKEN);
+    const checkForm = new FormData();
+    checkForm.append('orderid', orderId);
+    checkForm.append('key', BEARER_TOKEN);
 
     const headers = {
-      ...form.getHeaders(),
+      ...checkForm.getHeaders(),
     };
 
-    const response = await axios.post('https://api.smspool.net/sms/resend', form, { headers });
+    const checkResendResponse = await axios.post('https://api.smspool.net/sms/check_resend', checkForm, { headers });
+    const checkResend = checkResendResponse.data;
 
+    if ( checkResend.success !== 1) {
+      return res.status(400).json({ success: false, message: `${checkResend.message}` });
+    }
+
+    const resendForm = new FormData();
+    resendForm.append('orderid', orderId);
+    resendForm.append('key', BEARER_TOKEN);
+
+    const resendHeaders = {
+      ...resendForm.getHeaders(),
+    };
+
+    const response = await axios.post('https://api.smspool.net/sms/resend', resendForm, { headers: resendHeaders });
     const resend = response.data;
 
     if ( resend.success !== 1) {
-      return res.status(200).json({ success: false, message: `${resend.message}` });
+      return res.status(400).json({ success: false, message: `${resend.message}` });
     }
 
     const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
-
-    const rate = rateResult.rows[0].rate
-
-    const orderCharge = resend.charge * rate;
-
-    const charge = resend.charge === 0 ? 0 : Math.floor(orderCharge + 500);
+    const rate = rateResult.rows[0]?.rate || 1750;
+    const orderCharge = checkResend.resendCost * rate;
+    const charge = checkResend.charge === 0 ? 0 : Math.floor(orderCharge + 500);
 
     if (charge > 0) {
       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
@@ -538,10 +550,12 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
 
     await db.query('UPDATE sms_order SET status = $1, cost = $2, amount = $3 WHERE order_id = $4', ['pending',  resend.charge, charge, resend.order_id]);
 
-    return res.json({ success: true, message: `${resend.message}` });
+    return res.status(200).json({ success: true, message: resend.message });
 
   } catch (error) {
-    return res.status(200).json({ success: false, message: error.response ? error.response.data.message : error.message });
+    console.error('Error in /sms/resend:', error);
+    const errorMessage = error.response?.data?.message || 'Internal server error.';
+    return res.status(500).json({ success: false, message: errorMessage })
   }
 })
 
@@ -561,7 +575,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
 
     if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
-      return res.status(200).json({ error: 'Insufficient balance, please top up your balance' });
+      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
     }
 
       const form = new FormData();
@@ -644,7 +658,7 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
 
     if (!user || userBalance < displaycharge1) {
       await db.query("ROLLBACK");
-      return res.status(200).json({ error: 'Insufficient balance, please top up your balance' });
+      return res.status(400).json({ error: 'Insufficient balance, please top up your balance' });
     }
 
       const form = new FormData();
@@ -691,13 +705,13 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
       const errType = error.response.data.type;
 
     if (errType === "BALANCE_ERROR") {
-      return res.status(200).json({ error: 'Service currently unavailable, try later or contact support' });
+      return res.status(400).json({ error: 'Service currently unavailable, try later or contact support' });
     } else if (errType === "OUT_OF_STOCK") {
-      return res.status(200).json({ error: error.response.data?.message || 'Out of stock' });
+      return res.status(400).json({ error: error.response.data?.message || 'Out of stock' });
     } else if (errType === "PRICE_NOT_FOUND") {
-      return res.status(200).json({ error: error.response.data[0]?.message || 'Price not found' });
+      return res.status(400).json({ error: error.response.data[0]?.message || 'Price not found' });
     } else {
-      return res.status(200).json({ error: error.response.data?.message || 'Unknown error' });
+      return res.status(400).json({ error: error.response.data?.message || 'Unknown error' });
     }
     } else if (error.request) {
       console.error('No response received from API:', error.request);
