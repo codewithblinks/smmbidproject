@@ -1,34 +1,31 @@
 import express from "express";
 import bodyParser from "body-parser";
-import bcrypt from "bcrypt";
 import env from "dotenv";
 import session from "express-session";
 import flash from "connect-flash"
 import db from "./db/index.js";
 import passport from "./config/passportConfig.js";
-import axios from "axios";
-import crypto from "crypto";
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import speakeasy from 'speakeasy'
-import multer from "multer";
 import connectPgSimple from 'connect-pg-simple';
 import { expressCspHeader, SELF, INLINE } from "express-csp-header";
 
 const PgStore = connectPgSimple(session);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const port = 3000;
 
-app.set('trust proxy', true);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 env.config();
+
+app.set('trust proxy', true);
+
 
 app.use(session({
   store: new PgStore({
@@ -44,28 +41,25 @@ app.use(session({
 
 app.use(expressCspHeader({
   policies: {
-    'default-src': [SELF],              // Allow content from the same origin
-    'script-src': [SELF], // Allow jQuery CDN scripts
-    'style-src': [SELF],        // Allow inline styles and content from the same origin
-    // Add other directives as needed
+    'default-src': [SELF], 
+    'script-src': [SELF],
+    'style-src': [SELF],
   }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({
-  verify: (req, res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static('uploads'));
+
 app.use(flash());
-app.use(express.json());
 
 // Routes
 
@@ -83,7 +77,6 @@ import depositRoute from "./routes/payment/deposit.js"
 import smmRoute from "./routes/smm.js"
 import orderhistoryRoute from "./routes/orderhistory.js"
 import verificationRoute from "./routes/verification.js"
-import messagesRoute from "./routes/message.js"
 import usersRoute from "./routes/admin/users.js"
 import checkRoute from "./routes/admin/check.js"
 import set2faRoute from "./routes/admin/2fa.js"
@@ -115,7 +108,6 @@ app.use("/", depositRoute)
 app.use('/', smmRoute)
 app.use('/', orderhistoryRoute)
 app.use('/', verificationRoute)
-app.use('/', messagesRoute)
 app.use(usersRoute)
 app.use(checkRoute)
 app.use(set2faRoute)
@@ -138,7 +130,12 @@ const paystackCreateRecipientUrl = process.env.PAYSTACK_RECIPIENT_URL;
 
 
 app.get("/", (req, res) => {
-  res.render("index");
+  try {
+    res.render("index");
+  } catch (error) {
+    console.error('Error getting home page:', error);
+    res.sendStatus(500);
+  }
 });
 
 // Real-time communication

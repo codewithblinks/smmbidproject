@@ -3,7 +3,7 @@ import db from "../db/index.js";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
-import ensureAuthenticated, {
+import {
   checkAuthenticated,
   checkAdminAuthenticated,
 } from "../authMiddleware/authMiddleware.js";

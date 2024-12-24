@@ -94,8 +94,6 @@ const sendVerificationEmail = async (email, username, verificationCode) => {
       appName: appName
     });
 
-    console.log(html);
-
     const mailOptions = {
       to: email,
       subject: 'Email Verification',
@@ -103,16 +101,21 @@ const sendVerificationEmail = async (email, username, verificationCode) => {
     };
 
     await sendEmail(mailOptions);
-
-    console.log('Verification email sent');
   } catch (error) {
     console.error('Error sending email:', error);
     throw error;
   }
 };
 
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 router.post("/register", upload, registrationValidationRules, async (req, res) => {
-  const { username, firstname, lastname, newPassword, password, terms } = req.body;
+  const { username, newPassword, password, terms } = req.body;
+  let { firstname, lastname, } = req.body;
+  firstname = capitalizeFirstLetter(firstname);
+  lastname = capitalizeFirstLetter(lastname);
   const email = req.body.email.toLowerCase();
   const verificationCode = crypto.randomBytes(3).toString('hex');
   const verificationCodeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
@@ -214,12 +217,10 @@ router.post("/register-admin", async (req, res) => {
       return res.redirect("/register-admin");
     }
     else {
-      //hashing the password and saving it in the database
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) {
           console.error("Error hashing password:", err);
         } else {
-          // console.log("Password hashed:", hash)
           const result = await db.query(
             "INSERT INTO admins (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [username, firstname, lastname, email, hash]

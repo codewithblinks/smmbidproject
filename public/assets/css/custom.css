@@ -22,8 +22,6 @@
     overflow-wrap: break-word;
 }
 
-
-
 @media (max-width: 987px) {
     .table-hover thead {
         display: none; /* Hide the table headers */

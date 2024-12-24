@@ -17,6 +17,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link
   rel="shortcut icon"
   href="assets/images/favicon.png"
@@ -76,237 +77,7 @@
   <div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
     <!-- start sidebar section -->
     <div :class="{'dark text-white-dark' : $store.app.semidark}">
-      <nav x-data="sidebar"
-        class="sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
-        <div class="h-full bg-white dark:bg-[#0e1726]">
-          <div class="flex items-center justify-between px-4 py-3">
-            <a class="main-logo flex shrink-0 items-center">
-              <img class="inline w-8 ltr:-ml-1 rtl:-mr-1" src="../assets/images/logo01.png" alt="image" />
-              <span class="align-middle text-2sl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
-                <%= userDetails.username %>
-              </span>
-            </a>
-            <a href="javascript:;"
-              class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
-              @click="$store.app.toggleSidebar()">
-              <svg class="m-auto h-5 w-5" width="20" height="20" viewbox="0 0 24 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round"></path>
-                <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round"></path>
-              </svg>
-            </a>
-          </div>
-          <ul
-            class="perfect-scrollbar relative h-[calc(100vh-80px)] space-y-0.5 overflow-y-auto overflow-x-hidden p-4 py-0 font-semibold"
-            x-data="{ activeDropdown: 'dashboard' }">
-            <a>
-              <h2
-                class="-mx-4 mb-1 flex items-center bg-white-light/30 py-3 px-7 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
-                <svg class="hidden h-5 w-4 flex-none" viewbox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
-                  fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <span>Dashboard</span>
-              </h2>
-            </a>
-
-            <li class="nav-item">
-              <ul>
-                <li class="nav-item">
-                  <a href="/dashboard" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M11.25 18C11.25 18.4142 11.5858 18.75 12 18.75C12.4142 18.75 12.75 18.4142 12.75 18V15C12.75 14.5858 12.4142 14.25 12 14.25C11.5858 14.25 11.25 14.5858 11.25 15V18Z"
-                          fill="currentColor" />
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M12 1.25C11.2919 1.25 10.6485 1.45282 9.95055 1.79224C9.27585 2.12035 8.49642 2.60409 7.52286 3.20832L5.45628 4.4909C4.53509 5.06261 3.79744 5.5204 3.2289 5.95581C2.64015 6.40669 2.18795 6.86589 1.86131 7.46263C1.53535 8.05812 1.38857 8.69174 1.31819 9.4407C1.24999 10.1665 1.24999 11.0541 1.25 12.1672V13.7799C1.24999 15.6837 1.24998 17.1866 1.4027 18.3616C1.55937 19.567 1.88856 20.5401 2.63236 21.3094C3.37958 22.0824 4.33046 22.4277 5.50761 22.5914C6.64849 22.75 8.10556 22.75 9.94185 22.75H14.0581C15.8944 22.75 17.3515 22.75 18.4924 22.5914C19.6695 22.4277 20.6204 22.0824 21.3676 21.3094C22.1114 20.5401 22.4406 19.567 22.5973 18.3616C22.75 17.1866 22.75 15.6838 22.75 13.7799V12.1672C22.75 11.0541 22.75 10.1665 22.6818 9.4407C22.6114 8.69174 22.4646 8.05812 22.1387 7.46263C21.8121 6.86589 21.3599 6.40669 20.7711 5.95581C20.2026 5.5204 19.4649 5.06262 18.5437 4.49091L16.4771 3.20831C15.5036 2.60409 14.7241 2.12034 14.0494 1.79224C13.3515 1.45282 12.7081 1.25 12 1.25ZM8.27953 4.50412C9.29529 3.87371 10.0095 3.43153 10.6065 3.1412C11.1882 2.85833 11.6002 2.75 12 2.75C12.3998 2.75 12.8118 2.85833 13.3935 3.14119C13.9905 3.43153 14.7047 3.87371 15.7205 4.50412L17.7205 5.74537C18.6813 6.34169 19.3559 6.76135 19.8591 7.1467C20.3487 7.52164 20.6303 7.83106 20.8229 8.18285C21.0162 8.53589 21.129 8.94865 21.1884 9.58104C21.2492 10.2286 21.25 11.0458 21.25 12.2039V13.725C21.25 15.6959 21.2485 17.1012 21.1098 18.1683C20.9736 19.2163 20.717 19.8244 20.2892 20.2669C19.8649 20.7058 19.2871 20.9664 18.2858 21.1057C17.2602 21.2483 15.9075 21.25 14 21.25H10C8.09247 21.25 6.73983 21.2483 5.71422 21.1057C4.71286 20.9664 4.13514 20.7058 3.71079 20.2669C3.28301 19.8244 3.02642 19.2163 2.89019 18.1683C2.75149 17.1012 2.75 15.6959 2.75 13.725V12.2039C2.75 11.0458 2.75076 10.2286 2.81161 9.58104C2.87103 8.94865 2.98385 8.53589 3.17709 8.18285C3.36965 7.83106 3.65133 7.52164 4.14092 7.1467C4.6441 6.76135 5.31869 6.34169 6.27953 5.74537L8.27953 4.50412Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Home</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'invoice'}"
-                    @click="activeDropdown === 'invoice2' ? activeDropdown = null : activeDropdown = 'invoice2'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M9.63786 21.75C8.55269 21.75 7.6716 21.75 6.96278 21.6653C6.22377 21.5769 5.58914 21.3888 5.03451 20.9558C4.47989 20.5227 4.14349 19.9527 3.87852 19.2572C3.62438 18.5901 3.4107 17.7353 3.14753 16.6825L3.12113 16.5769C2.70491 14.9121 2.37241 13.5822 2.26504 12.5261C2.15439 11.4377 2.26455 10.4888 2.88654 9.6922C3.16941 9.32992 3.50849 9.06269 3.89599 8.86426L4.52386 6.56133C4.76094 5.68968 4.93319 5.05639 5.30012 4.5623C5.66383 4.07255 6.15805 3.69505 6.72623 3.47298C7.20178 3.28712 7.73453 3.25574 8.41807 3.25077C8.69877 2.65912 9.30162 2.25 10 2.25H14C14.6984 2.25 15.3013 2.65912 15.582 3.25077C16.2655 3.25574 16.7983 3.28712 17.2738 3.47298C17.842 3.69505 18.3362 4.07255 18.6999 4.5623C19.0669 5.05639 19.2391 5.68968 19.4762 6.56133L20.1041 8.86431C20.4915 9.06274 20.8306 9.32995 21.1134 9.6922C21.7354 10.4888 21.8456 11.4377 21.7349 12.5261C21.6276 13.5822 21.2951 14.9121 20.8788 16.5769L20.8525 16.6824C20.5893 17.7352 20.3756 18.5901 20.1214 19.2572C19.8565 19.9527 19.5201 20.5227 18.9654 20.9558C18.4108 21.3888 17.7762 21.5769 17.0372 21.6653C16.3284 21.75 15.4473 21.75 14.3621 21.75H9.63786ZM7.27226 4.87007C7.49206 4.78416 7.75764 4.75888 8.41948 4.75219C8.70079 5.34225 9.30279 5.75 10 5.75H14C14.6973 5.75 15.2993 5.34225 15.5806 4.75219C16.2424 4.75888 16.508 4.78416 16.7278 4.87007C17.0337 4.98964 17.2998 5.19291 17.4957 5.45663C17.6718 5.69377 17.7751 6.02508 18.066 7.09194L18.4196 8.3887C17.3818 8.24996 16.042 8.24998 14.3774 8.25L12.0058 8.25C12.0022 8.24997 11.9986 8.24997 11.9951 8.25L9.62259 8.25C7.958 8.24998 6.61822 8.24996 5.58043 8.38868L5.934 7.09195C6.2249 6.02508 6.32824 5.69376 6.50435 5.45662C6.7002 5.19291 6.96632 4.98964 7.27226 4.87007ZM10.3987 9.75H9.68464C7.8923 9.75 6.63046 9.75187 5.69983 9.88649C5.58189 9.90355 5.47184 9.92243 5.36899 9.94313L7.55996 13.1565L10.3987 9.75ZM4.03889 10.655C3.78111 11.0086 3.66764 11.4919 3.75735 12.3744C3.85246 13.3099 4.15668 14.5345 4.59139 16.2733C4.62089 16.3913 4.64944 16.5054 4.67717 16.6159L6.56144 14.3548L4.03889 10.655ZM5.1596 18.38C5.19941 18.5018 5.23938 18.6159 5.28025 18.7231C5.49156 19.2778 5.69847 19.5711 5.95763 19.7735C6.2168 19.9758 6.55152 20.1054 7.14088 20.1759C7.75027 20.2488 8.54145 20.25 9.68464 20.25H10.5809L7.44009 15.6435L5.1596 18.38ZM13.4191 20.25L16.5725 15.625L18.8407 18.3791C18.8008 18.5013 18.7607 18.6156 18.7197 18.7231C18.5084 19.2778 18.3015 19.5711 18.0423 19.7735C17.7832 19.9758 17.4484 20.1054 16.8591 20.1759C16.2497 20.2488 15.4585 20.25 14.3153 20.25H13.4191ZM19.3249 16.6075C19.352 16.4997 19.3798 16.3883 19.4086 16.2733C19.8433 14.5345 20.1475 13.3099 20.2426 12.3744C20.3323 11.492 20.2189 11.0086 19.9611 10.6551L17.4527 14.3341L19.3249 16.6075ZM18.6311 9.94314C18.5282 9.92243 18.4181 9.90356 18.3001 9.88649C17.3695 9.75187 16.1077 9.75 14.3153 9.75H13.6775L16.4595 13.1281L18.6311 9.94314ZM10 3.75C9.86195 3.75 9.75002 3.86193 9.75002 4C9.75002 4.13807 9.86195 4.25 10 4.25H14C14.1381 4.25 14.25 4.13807 14.25 4C14.25 3.86193 14.1381 3.75 14 3.75H10ZM12.041 10.1224L15.5793 14.419L12 19.6686L8.43861 14.4452L12.041 10.1224Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Buy
-                        From Us</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'invoice'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'invoice2'" x-collapse="" class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/all/accounts">Buy Accounts</a>
-                    </li>
-                    <li>
-                      <a href="/product/adminorderhistory">Purchase History</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'SMM'}"
-                    @click="activeDropdown === 'SMM' ? activeDropdown = null : activeDropdown = 'SMM'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 13.4811 3.09753 14.8788 3.7148 16.1181C3.96254 16.6155 4.05794 17.2103 3.90163 17.7945L3.30602 20.0205C3.19663 20.4293 3.57066 20.8034 3.97949 20.694L6.20553 20.0984C6.78973 19.9421 7.38451 20.0375 7.88191 20.2852C9.12121 20.9025 10.5189 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75ZM1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C10.2817 22.75 8.65552 22.3463 7.21315 21.6279C6.99791 21.5207 6.77814 21.4979 6.59324 21.5474L4.3672 22.143C2.84337 22.5507 1.44927 21.1566 1.857 19.6328L2.4526 17.4068C2.50208 17.2219 2.47933 17.0021 2.37213 16.7869C1.65371 15.3445 1.25 13.7183 1.25 12ZM7.25 10.5C7.25 10.0858 7.58579 9.75 8 9.75H16C16.4142 9.75 16.75 10.0858 16.75 10.5C16.75 10.9142 16.4142 11.25 16 11.25H8C7.58579 11.25 7.25 10.9142 7.25 10.5ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H13.5C13.9142 13.25 14.25 13.5858 14.25 14C14.25 14.4142 13.9142 14.75 13.5 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">SMM</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'SMM'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'SMM'" x-collapse="" class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/smm">SMM Panel</a>
-                    </li>
-                    <li>
-                      <a href="/orderhistory">SMS Order History</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="menu nav-item">
-                  <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'verification'}"
-                    @click="activeDropdown === 'verification' ? activeDropdown = null : activeDropdown = 'verification'">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M5.73262 2.043C6.94995 0.832583 8.95433 1.04804 9.97364 2.40962L11.2346 4.09402C12.064 5.20191 11.9908 6.75032 11.0063 7.72923L10.7676 7.96665C10.7571 7.99694 10.7318 8.09215 10.7599 8.2731C10.8231 8.6806 11.1634 9.545 12.5919 10.9654C14.0199 12.3853 14.8905 12.7253 15.3037 12.7887C15.491 12.8174 15.589 12.7906 15.6193 12.78L16.0273 12.3743C16.9025 11.5041 18.2474 11.3414 19.331 11.9305L21.2415 12.9691C22.8775 13.8584 23.2908 16.0821 21.9505 17.4148L20.5299 18.8273C20.0824 19.2723 19.4805 19.6434 18.7459 19.7119C16.9369 19.8806 12.7186 19.6654 8.28653 15.2584C4.14862 11.144 3.35456 7.556 3.25409 5.78817L4.00288 5.74562L3.25409 5.78817C3.20328 4.89426 3.6257 4.13796 4.16302 3.60369L5.73262 2.043ZM8.77285 3.30856C8.26622 2.63182 7.32194 2.57801 6.79026 3.10668L5.22066 4.66737C4.89074 4.99542 4.732 5.35695 4.75167 5.70307C4.8315 7.10766 5.47279 10.3453 9.34417 14.1947C13.4056 18.2331 17.1568 18.3536 18.6067 18.2184C18.9029 18.1908 19.1975 18.0369 19.4723 17.7636L20.8928 16.3511C21.4703 15.777 21.3429 14.7315 20.5251 14.2869L18.6146 13.2484C18.0871 12.9616 17.469 13.0562 17.085 13.438L16.6295 13.8909L16.1007 13.359C16.6295 13.8909 16.6288 13.8916 16.6281 13.8923L16.6266 13.8937L16.6236 13.8967L16.6171 13.903L16.6024 13.9166C16.5919 13.9262 16.5799 13.9367 16.5663 13.948C16.5392 13.9705 16.5057 13.9959 16.4658 14.0227C16.3857 14.0763 16.28 14.1347 16.1472 14.1841C15.8763 14.285 15.5192 14.3392 15.0763 14.2713C14.2095 14.1384 13.0613 13.5474 11.5343 12.0291C10.0078 10.5113 9.41188 9.36834 9.27764 8.50306C9.209 8.06061 9.26375 7.70331 9.36588 7.43225C9.41593 7.29941 9.47491 7.19378 9.52904 7.11389C9.55604 7.07405 9.58173 7.04074 9.6044 7.01368C9.61574 7.00015 9.62633 6.98817 9.63598 6.9777L9.64971 6.96312L9.656 6.95666L9.65899 6.95363L9.66045 6.95217C9.66116 6.95146 9.66188 6.95075 10.1907 7.48258L9.66188 6.95075L9.94869 6.66556C10.3773 6.23939 10.4373 5.53194 10.0338 4.99297L8.77285 3.30856Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Verification</span>
-                    </div>
-                    <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'verification'}">
-                      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                          stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </button>
-                  <ul x-cloak="" x-show="activeDropdown === 'verification'" x-collapse=""
-                    class="sub-menu text-gray-500">
-                    <li>
-                      <a href="/verification">Buy Numbers</a>
-                    </li>
-                    <li>
-                      <a href="/smsorderhistory">SMS Order Historys</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="nav-item">
-                  <a href="/deposit" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M11.948 1.25H12.052C12.9505 1.24997 13.6997 1.24995 14.2945 1.32991C14.9223 1.41432 15.4891 1.59999 15.9445 2.05546C16.4 2.51093 16.5857 3.07773 16.6701 3.70552C16.7292 4.14512 16.7446 4.66909 16.7486 5.27533C17.3971 5.29614 17.9752 5.33406 18.489 5.40314C19.6614 5.56076 20.6104 5.89288 21.3588 6.64124C22.1071 7.38961 22.4392 8.33856 22.5969 9.51098C22.75 10.6502 22.75 12.1058 22.75 13.9436V14.0564C22.75 15.8942 22.75 17.3498 22.5969 18.489C22.4392 19.6614 22.1071 20.6104 21.3588 21.3588C20.6104 22.1071 19.6614 22.4392 18.489 22.5969C17.3498 22.75 15.8942 22.75 14.0564 22.75H9.94359C8.10583 22.75 6.65019 22.75 5.51098 22.5969C4.33856 22.4392 3.38961 22.1071 2.64124 21.3588C1.89288 20.6104 1.56076 19.6614 1.40314 18.489C1.24997 17.3498 1.24998 15.8942 1.25 14.0564V13.9436C1.24998 12.1058 1.24997 10.6502 1.40314 9.51098C1.56076 8.33856 1.89288 7.38961 2.64124 6.64124C3.38961 5.89288 4.33856 5.56076 5.51098 5.40314C6.02475 5.33406 6.60288 5.29614 7.2514 5.27533C7.2554 4.66909 7.27081 4.14512 7.32991 3.70552C7.41432 3.07773 7.59999 2.51093 8.05546 2.05546C8.51093 1.59999 9.07773 1.41432 9.70552 1.32991C10.3003 1.24995 11.0495 1.24997 11.948 1.25ZM8.7518 5.25178C9.12993 5.24999 9.52694 5.25 9.94358 5.25H14.0564C14.4731 5.25 14.8701 5.24999 15.2482 5.25178C15.244 4.68146 15.23 4.25125 15.1835 3.90539C15.1214 3.44393 15.0142 3.24644 14.8839 3.11612C14.7536 2.9858 14.5561 2.87858 14.0946 2.81654C13.6116 2.7516 12.964 2.75 12 2.75C11.036 2.75 10.3884 2.7516 9.90539 2.81654C9.44393 2.87858 9.24643 2.9858 9.11612 3.11612C8.9858 3.24644 8.87858 3.44393 8.81654 3.90539C8.77004 4.25125 8.75601 4.68146 8.7518 5.25178ZM5.71085 6.88976C4.70476 7.02503 4.12511 7.2787 3.7019 7.70191C3.27869 8.12511 3.02502 8.70476 2.88976 9.71085C2.75159 10.7385 2.75 12.0932 2.75 14C2.75 15.9068 2.75159 17.2615 2.88976 18.2892C3.02502 19.2952 3.27869 19.8749 3.7019 20.2981C4.12511 20.7213 4.70476 20.975 5.71085 21.1102C6.73851 21.2484 8.09318 21.25 10 21.25H14C15.9068 21.25 17.2615 21.2484 18.2892 21.1102C19.2952 20.975 19.8749 20.7213 20.2981 20.2981C20.7213 19.8749 20.975 19.2952 21.1102 18.2892C21.2484 17.2615 21.25 15.9068 21.25 14C21.25 12.0932 21.2484 10.7385 21.1102 9.71085C20.975 8.70476 20.7213 8.12511 20.2981 7.70191C19.8749 7.2787 19.2952 7.02503 18.2892 6.88976C17.2615 6.7516 15.9068 6.75 14 6.75H10C8.09318 6.75 6.73851 6.7516 5.71085 6.88976ZM12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V10.0102C13.8388 10.2845 14.75 11.143 14.75 12.3333C14.75 12.7475 14.4142 13.0833 14 13.0833C13.5858 13.0833 13.25 12.7475 13.25 12.3333C13.25 11.9493 12.8242 11.4167 12 11.4167C11.1758 11.4167 10.75 11.9493 10.75 12.3333C10.75 12.7174 11.1758 13.25 12 13.25C13.3849 13.25 14.75 14.2098 14.75 15.6667C14.75 16.857 13.8388 17.7155 12.75 17.9898V18C12.75 18.4142 12.4142 18.75 12 18.75C11.5858 18.75 11.25 18.4142 11.25 18V17.9898C10.1612 17.7155 9.25 16.857 9.25 15.6667C9.25 15.2525 9.58579 14.9167 10 14.9167C10.4142 14.9167 10.75 15.2525 10.75 15.6667C10.75 16.0507 11.1758 16.5833 12 16.5833C12.8242 16.5833 13.25 16.0507 13.25 15.6667C13.25 15.2826 12.8242 14.75 12 14.75C10.6151 14.75 9.25 13.7903 9.25 12.3333C9.25 11.143 10.1612 10.2845 11.25 10.0102V10C11.25 9.58579 11.5858 9.25 12 9.25Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Deposit</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/transactions" class="group">
-                    <div class="flex items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M7.09872 1.25004C7.14677 1.25006 7.19553 1.25008 7.24502 1.25008H16.755C16.8045 1.25008 16.8532 1.25006 16.9013 1.25004C17.918 1.2496 18.6178 1.24929 19.2071 1.45435C20.3201 1.84161 21.1842 2.73726 21.5546 3.86559L20.8421 4.09954L21.5546 3.86559C21.7507 4.46271 21.7504 5.17254 21.75 6.22655C21.75 6.27372 21.75 6.32158 21.75 6.37014V20.3743C21.75 21.8395 20.023 22.7118 18.8856 21.671C18.8061 21.5983 18.6939 21.5983 18.6144 21.671L18.1313 22.1131C17.2031 22.9624 15.7969 22.9624 14.8687 22.1131C14.5137 21.7882 13.9863 21.7882 13.6313 22.1131C12.7031 22.9624 11.2969 22.9624 10.3687 22.1131C10.0137 21.7882 9.48631 21.7882 9.13132 22.1131C8.20313 22.9624 6.79688 22.9624 5.86869 22.1131L5.3856 21.671C5.30612 21.5983 5.19389 21.5983 5.11442 21.671C3.97699 22.7118 2.25001 21.8395 2.25001 20.3743V6.37014C2.25001 6.32158 2.24999 6.27372 2.24997 6.22655C2.24959 5.17255 2.24933 4.46271 2.44539 3.86559C2.81585 2.73726 3.67996 1.84161 4.79292 1.45435C5.38224 1.24929 6.08197 1.2496 7.09872 1.25004ZM7.24502 2.75008C6.02394 2.75008 5.60334 2.76057 5.28587 2.87103C4.62649 3.10047 4.09913 3.63728 3.87054 4.3335C3.75945 4.67183 3.75001 5.11796 3.75001 6.37014V20.3743C3.75001 20.4933 3.80993 20.5661 3.88511 20.6009C3.92427 20.619 3.96258 20.6237 3.99449 20.6194C4.02263 20.6156 4.05904 20.6035 4.10179 20.5644C4.75447 19.9671 5.74555 19.9671 6.39822 20.5644L6.88132 21.0065C7.23631 21.3313 7.76371 21.3313 8.11869 21.0065C9.04688 20.1571 10.4531 20.1571 11.3813 21.0065C11.7363 21.3313 12.2637 21.3313 12.6187 21.0065C13.5469 20.1571 14.9531 20.1571 15.8813 21.0065C16.2363 21.3313 16.7637 21.3313 17.1187 21.0065L17.6018 20.5644C18.2545 19.9671 19.2455 19.9671 19.8982 20.5644C19.941 20.6035 19.9774 20.6156 20.0055 20.6194C20.0374 20.6237 20.0757 20.619 20.1149 20.6009C20.1901 20.5661 20.25 20.4934 20.25 20.3743V6.37014C20.25 5.11797 20.2406 4.67183 20.1295 4.3335C19.9009 3.63728 19.3735 3.10047 18.7141 2.87103C18.3967 2.76057 17.9761 2.75008 16.755 2.75008H7.24502ZM6.25001 7.50008C6.25001 7.08587 6.58579 6.75008 7.00001 6.75008H7.50001C7.91422 6.75008 8.25001 7.08587 8.25001 7.50008C8.25001 7.9143 7.91422 8.25008 7.50001 8.25008H7.00001C6.58579 8.25008 6.25001 7.9143 6.25001 7.50008ZM9.75001 7.50008C9.75001 7.08587 10.0858 6.75008 10.5 6.75008H17C17.4142 6.75008 17.75 7.08587 17.75 7.50008C17.75 7.9143 17.4142 8.25008 17 8.25008H10.5C10.0858 8.25008 9.75001 7.9143 9.75001 7.50008ZM6.25001 11.0001C6.25001 10.5859 6.58579 10.2501 7.00001 10.2501H7.50001C7.91422 10.2501 8.25001 10.5859 8.25001 11.0001C8.25001 11.4143 7.91422 11.7501 7.50001 11.7501H7.00001C6.58579 11.7501 6.25001 11.4143 6.25001 11.0001ZM9.75001 11.0001C9.75001 10.5859 10.0858 10.2501 10.5 10.2501H17C17.4142 10.2501 17.75 10.5859 17.75 11.0001C17.75 11.4143 17.4142 11.7501 17 11.7501H10.5C10.0858 11.7501 9.75001 11.4143 9.75001 11.0001ZM6.25001 14.5001C6.25001 14.0859 6.58579 13.7501 7.00001 13.7501H7.50001C7.91422 13.7501 8.25001 14.0859 8.25001 14.5001C8.25001 14.9143 7.91422 15.2501 7.50001 15.2501H7.00001C6.58579 15.2501 6.25001 14.9143 6.25001 14.5001ZM9.75001 14.5001C9.75001 14.0859 10.0858 13.7501 10.5 13.7501H17C17.4142 13.7501 17.75 14.0859 17.75 14.5001C17.75 14.9143 17.4142 15.2501 17 15.2501H10.5C10.0858 15.2501 9.75001 14.9143 9.75001 14.5001Z"
-                          fill="currentColor" />
-                      </svg>
-                      <span
-                        class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Transactions
-                        History</span>
-                    </div>
-                  </a>
-                </li>
-            </li>
-          </ul>
-          </li>
-
-          <h2
-            class="-mx-4 mb-1 flex items-center bg-white-light/30 py-3 px-7 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
-            <svg class="hidden h-5 w-4 flex-none" viewbox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
-              fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>USER AND SECURITY</span>
-          </h2>
-
-          <li class="menu nav-item">
-            <button type="button" class="nav-link group" :class="{'active' : activeDropdown === 'users'}"
-              @click="activeDropdown === 'users' ? activeDropdown = null : activeDropdown = 'users'">
-              <div class="flex items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M12 1.25C9.37665 1.25 7.25 3.37665 7.25 6C7.25 8.62335 9.37665 10.75 12 10.75C14.6234 10.75 16.75 8.62335 16.75 6C16.75 3.37665 14.6234 1.25 12 1.25ZM8.75 6C8.75 4.20507 10.2051 2.75 12 2.75C13.7949 2.75 15.25 4.20507 15.25 6C15.25 7.79493 13.7949 9.25 12 9.25C10.2051 9.25 8.75 7.79493 8.75 6Z"
-                    fill="currentColor" />
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M13.9107 21.6083C13.2991 21.7009 12.6587 21.75 12 21.75C9.96067 21.75 8.07752 21.2792 6.67815 20.4796C5.3 19.6921 4.25 18.4899 4.25 17C4.25 15.5101 5.3 14.3079 6.67815 13.5204C8.07752 12.7208 9.96067 12.25 12 12.25C13.8045 12.25 15.4825 12.6184 16.8117 13.2537C16.8742 13.2512 16.937 13.25 17 13.25C19.6234 13.25 21.75 15.3766 21.75 18C21.75 20.6234 19.6234 22.75 17 22.75C15.8204 22.75 14.7413 22.32 13.9107 21.6083ZM13.75 18C13.75 16.2051 15.2051 14.75 17 14.75C17.6257 14.75 18.2102 14.9268 18.7061 15.2333L14.2333 19.7061C13.9268 19.2102 13.75 18.6257 13.75 18ZM15.2939 20.7667L19.7667 16.2939C20.0732 16.7898 20.25 17.3743 20.25 18C20.25 19.7949 18.7949 21.25 17 21.25C16.3743 21.25 15.7898 21.0732 15.2939 20.7667ZM14.4176 14.0127C13.113 14.8593 12.25 16.3289 12.25 18C12.25 18.8029 12.4492 19.5593 12.8009 20.2224C12.5388 20.2406 12.2715 20.25 12 20.25C10.1733 20.25 8.55649 19.8253 7.42236 19.1772C6.26701 18.517 5.75 17.7193 5.75 17C5.75 16.2807 6.26701 15.483 7.42236 14.8228C8.55649 14.1747 10.1733 13.75 12 13.75C12.8611 13.75 13.6767 13.8444 14.4176 14.0127Z"
-                    fill="currentColor" />
-                </svg>
-                <span
-                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Users</span>
-              </div>
-              <div class="rtl:rotate-180" :class="{'!rotate-90' : activeDropdown === 'users'}">
-                <svg width="16" height="16" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </div>
-            </button>
-            <ul x-cloak="" x-show="activeDropdown === 'users'" x-collapse="" class="sub-menu text-gray-500">
-              <li>
-                <a href="/profile">Profile</a>
-              </li>
-              <li>
-                <a href="referrals">Referral</a>
-              </li>
-              <li>
-                <a href="settings">Account Settings</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a href="/knowledgebase" class="group">
-              <div class="flex items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-                  <path opacity="0.5" d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
-                <span
-                  class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Knowledgebase</span>
-              </div>
-            </a>
-          </li>
-          </ul>
-        </div>
-      </nav>
+      <%- include('partials/sidebar.ejs') %>
     </div>
     <!-- end sidebar section -->
 
@@ -337,46 +108,38 @@
                 </svg>
               </a>
             </div>
+            <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
+              <a href="javascript:;"
+                class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                @click="toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+              </a>
+              <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
+                class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark currency-list">
+                <% if (userDetails.currency === "USD") { %>
+                  <li data-currency="NGN">
+                     <a href="javascript:;" class="hover:text-primary">
+                       <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
+                     </a>
+                   </li>
+                   <% } else { %>
+                     <li data-currency="USD">
+                     <a href="javascript:;" class="hover:text-primary">
+                       <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
+                     </a>
+                   </li>
+                <% } %>
+
+              </ul>
+            </div>
             <div x-data="header"
               class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
               <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
-                <form
-                  class="absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0"
-                  :class="{'!block' : search}" @submit.prevent="search = false">
-                  <div class="relative">
-                    <input type="text"
-                      class="peer form-input bg-gray-100 placeholder:tracking-widest ltr:pl-9 ltr:pr-9 rtl:pr-9 rtl:pl-9 sm:bg-transparent ltr:sm:pr-4 rtl:sm:pl-4"
-                      placeholder="Search..." />
-                    <button type="button"
-                      class="absolute inset-0 h-9 w-9 appearance-none peer-focus:text-primary ltr:right-auto rtl:left-auto">
-                      <svg class="mx-auto" width="16" height="16" viewbox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5">
-                        </circle>
-                        <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                        </path>
-                      </svg>
-                    </button>
-                    <button type="button"
-                      class="absolute top-1/2 block -translate-y-1/2 hover:opacity-80 ltr:right-2 rtl:left-2 sm:hidden"
-                      @click="search = false">
-                      <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
-                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-                <button type="button"
-                  class="search_btn rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 dark:bg-dark/40 dark:hover:bg-dark/60 sm:hidden"
-                  @click="search = ! search">
-                  <svg class="mx-auto h-4.5 w-4.5 dark:text-[#d0d2d6]" width="20" height="20" viewbox="0 0 24 24"
-                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5"></circle>
-                    <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                  </svg>
-                </button>
               </div>
               <div>
                 <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'light'" href="javascript:;"
@@ -440,71 +203,6 @@
                           :src="`../assets/images/flags/${item.value.toUpperCase()}.svg`" alt="image" />
                         <span class="ltr:ml-3 rtl:mr-3" x-text="item.key"></span>
                       </a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-
-              <div class="dropdown" x-data="dropdown" @click.outside="open = false">
-                <a href="javascript:;"
-                  class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                  @click="toggle">
-                  <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M22 10C22.0185 10.7271 22 11.0542 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H13"
-                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <path
-                      d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908"
-                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                    <circle cx="19" cy="5" r="3" stroke="currentColor" stroke-width="1.5"></circle>
-                  </svg>
-                </a>
-                <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                  class="top-11 w-[300px] !py-0 text-xs text-dark ltr:-right-16 rtl:-left-16 dark:text-white-dark sm:w-[375px] sm:ltr:-right-2 sm:rtl:-left-2">
-                  <li class="mb-5">
-                    <div class="relative overflow-hidden rounded-t-md !p-5 text-white">
-                      <div
-                        class="absolute inset-0 h-full w-full bg-[url('../assets/images/menu-heade.jpg')] bg-cover bg-center bg-no-repeat">
-                        <img src="../assets/images/menu-heade.jpg" alt="">
-                      </div>
-                      <h4 class="relative z-10 text-lg font-semibold">
-                        Messages
-                      </h4>
-                    </div>
-                  </li>
-                  <template x-if="messages.length">
-                    <li class="mt-5 border-t border-white-light text-center dark:border-white/10">
-                      <div
-                        class="group flex cursor-pointer items-center justify-center px-4 py-4 font-semibold text-primary dark:text-gray-400"
-                        @click="toggle">
-                        <span class="group-hover:underline ltr:mr-1 rtl:ml-1">VIEW ALL ACTIVITIES</span>
-                        <svg class="h-4 w-4 transition duration-300 group-hover:translate-x-1 ltr:ml-1 rtl:mr-1"
-                          viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                      </div>
-                    </li>
-                  </template>
-                  <template x-if="!messages.length">
-                    <li class="mb-5">
-                      <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
-                        <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
-                          <svg width="40" height="40" viewbox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.5"
-                              d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z"
-                              fill="currentColor"></path>
-                            <path
-                              d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z"
-                              fill="currentColor"></path>
-                          </svg>
-                        </div>
-                        No data available.
-                      </div>
                     </li>
                   </template>
                 </ul>
@@ -711,7 +409,7 @@
           <h5 class="text-lg font-semibold dark:text-white-light">Order History</h5>
           <div class="panel mt-6 table-responsive">
             <h3 class="mb-3 text-lg"><%= orders.length === 0 ? "You have no orders" : "" %></h3>
-            <table id="myTable" class="table-hover ">
+            <table id="myTable" class="table-hover">
               <thead class="whitespace-nowrap">
                 <tr class="table-header" style="font-size: 12px; text-align: center;">
                   <th>ORDER ID</th>
@@ -761,7 +459,6 @@
                   <% }); %>
               </tbody>
             </table>
-            </table>
           </div>
           <div class="flex">
             <ul class="inline-flex items-start space-x-1 rtl:space-x-reverse m-auto mt-5">
@@ -799,6 +496,9 @@
   <script defer="" src="assets/js/apexcharts.js"></script>
   <script src="assets/js/tablecustom.js"></script>
   <script src="../assets/js/notification.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="../assets/js/userCurrency.js"></script>
 
    <script>
     document.addEventListener('alpine:init', () => {

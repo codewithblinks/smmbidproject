@@ -6,15 +6,6 @@ import timeSince from "../controller/timeSince.js";
 
 const router = express.Router();
 
-function generateTransferId() {
-    const prefix = "ticket";
-    const uniqueId = uuidv4();
-    const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex');
-    const base36Id = buffer.toString('hex').slice(0, 6);
-    return `${prefix}${base36Id}`;
-  }
-
-
 router.get("/knowledgebase", ensureAuthenticated, userRole, async(req, res) => {
     const userId = req.user.id;
 

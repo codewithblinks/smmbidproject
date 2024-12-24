@@ -28,42 +28,53 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
   const {
     option1,
     years,
-    url,
     country,
     price,
     description,
     logindetails,
+    account_category,
   } = req.body;
   
+  if (!logindetails || !Array.isArray(logindetails) || logindetails.length === 0) {
+    return res.status(400).json({ error: "At least one login detail is required." });
+  }
 
   try {
-    const result = await db.query(
-      `INSERT INTO admin_products
-       (
-      admin_id, years, profile_link,
-      account_type, country,
-      description, amount,
-      payment_status, logindetails ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 ) 
-      RETURNING *`,
-      [
-        adminId,
-        years,
-        url,
-        option1,
-        country,
-        description,
-        price,
-        'not sold',
-        logindetails
-      ]
-    );
-    req.flash("success", "Account listed successfully");
-    res.redirect("/admin/list/product");
+    for (const detail of logindetails) {
+      
+      const urlMatch = detail.match(/url:\s*(https?:\/\/[^\s]+)/i);
+      const url = urlMatch ? urlMatch[1] : null;
+
+      if (!url) {
+        return res.status(400).json({ error: "Each login detail must include a valid URL." });
+      }
+
+      const cleanedDetails = detail.replace(/url:\s*(https?:\/\/[^\s]+)/i, "").trim();
+
+      await db.query(
+        `INSERT INTO admin_products
+         (admin_id, years, profile_link, account_type, country, description, amount, payment_status, logindetails, account_category) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+        [
+          adminId,
+          years,
+          url,
+          option1,
+          country,
+          description,
+          price,
+          "not sold",
+          cleanedDetails,
+          account_category,
+        ]
+      );
+    }
+
+
+    return res.status(200).json({ message: "Products listed successfully" });
   } catch (error) {
-    console.error("error listing account", error);
-    req.flash("error", "Error: listing account was not successfully");
-    return res.redirect("/admin/list/product");
+    console.error("Error listing account:", error);
+    return res.status(500).json({ error: "An error occurred while listing the products." });
   }
 });
 
@@ -266,7 +277,6 @@ router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole,
       res.status(500).json({ error: "Server error" });
     }
   });
-
 
   router.put("/api/admin/products/:id", adminEnsureAuthenticated, adminRole, async (req, res) => {
     const id = Number(req.params.id);

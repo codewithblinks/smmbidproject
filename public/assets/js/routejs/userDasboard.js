@@ -42,13 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/set-currency', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: 1, currency: selectedCurrency }),
+                body: JSON.stringify({currency: selectedCurrency }),
             });
             const result = await response.json();
             if (result.success) {
-                location.reload(); 
+                toastr.success(result.message || 'Currency preference updated');
+                setTimeout(() => {
+                  location.reload();
+                }, 3000);
             } else {
-                alert('Failed to update currency');
+                toastr.error(result.error || 'Failed to update currency');
             }
         } catch (error) {
             console.error('Error setting currency:', error);

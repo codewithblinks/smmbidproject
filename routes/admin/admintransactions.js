@@ -3,9 +3,17 @@ import db from "../../db/index.js"
 import{adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js"
 import numeral from "numeral";
 import moment from "moment";
+import crypto from "crypto";
 import { sendDepositApproveEmail, sendDepositRejectedEmail } from "../../config/emailMessages.js";
 
 const router = express.Router();
+
+function generateTransactionReference() {
+  const prefix = "#CRE";
+  const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 2);
+  const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `${prefix}${timestamp}${randomPart}`;
+}
 
 router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const adminId = req.user.id;
@@ -19,7 +27,7 @@ router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, r
     const offset = (page - 1) * limit;
 
 
-        const transactionsResult = await db.query("SELECT * FROM transactions WHERE type = 'deposit' ORDER BY created_at DESC LIMIT $1 OFFSET $2",[limit, offset])
+        const transactionsResult = await db.query("SELECT * FROM transactions WHERE type IN ('deposit', 'debit')  ORDER BY created_at DESC LIMIT $1 OFFSET $2",[limit, offset])
         const transactions =transactionsResult.rows;
 
         transactions.forEach(transactions => {
@@ -34,7 +42,7 @@ router.get("/admin/deposits", adminEnsureAuthenticated, adminRole, async (req, r
         res.render("admin/deposits", {
           transactions,
           currentPage: page,
-          totalPages: Math.ceil(totalTransactions / limit), user
+          totalPages: Math.ceil(totalTransactions / limit), user, messages: req.flash()
         })
   } catch (error) {
     console.error("Error getting admin deposits page", error);
@@ -257,6 +265,110 @@ router.get('/admin/view-deposit/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error retrieving image');
+  }
+});
+
+router.post("/api/admin/update/payment", adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const email = req.body.email;
+  const userEmailLowerCase = email.toLowerCase();
+
+  try {
+
+    const UserResult = await db.query(`
+      SELECT * FROM userprofile 
+      WHERE email = $1 
+      AND email_verified = $2 
+      AND is_suspended = $3`, [userEmailLowerCase, true, false]);
+  
+      if (UserResult.rows.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const user = UserResult.rows[0];
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error getting user details", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put("/api/admin/update/payment", adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const { userType, useremail } = req.body;
+  const updatedBalance = Number(req.body.updatedBalance);
+  const transactionReference = generateTransactionReference()
+
+  if (!updatedBalance || !userType || !useremail) {
+    return res.status(400).json({
+      error: 'Missing required fields. Please provide updatedBalance, userType, and useremail.',
+    });
+  }
+
+  if (isNaN(updatedBalance)) {
+    return res.status(400).json({
+      error: 'Updated balance must be a valid number.',
+    });
+  }
+
+  try {
+    let result;
+
+    if (userType === 'credit') {
+      result = await db.query(`
+        UPDATE userprofile 
+        SET balance = balance + $1 
+        WHERE email = $2 
+        RETURNING *
+      `, [updatedBalance, useremail]);
+    } else if (userType === 'debit') {
+      result = await db.query(`
+        UPDATE userprofile 
+        SET balance = balance - $1 
+        WHERE email = $2 
+        RETURNING *
+      `, [updatedBalance, useremail]);
+    } else {
+      return res.status(400).json({
+        error: 'Invalid userType. Please provide either "credit" or "debit".',
+      });
+    }
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found or balance not updated");
+    }
+
+    const returnedData = result.rows[0];
+    
+    let addTransactionQuery
+
+  if (userType === 'credit') {
+    addTransactionQuery = `
+    INSERT INTO transactions 
+    (user_id, type, amount, reference, status)
+    VALUES ($1, $2, $3, $4, $5)
+  `;
+  await db.query(addTransactionQuery, 
+    [returnedData.id, 'deposit', updatedBalance,
+       transactionReference, 'success']);
+  } else if (userType === 'debit') {
+    addTransactionQuery = `
+    INSERT INTO transactions 
+    (user_id, type, amount, reference, status)
+    VALUES ($1, $2, $3, $4, $5)
+  `;
+  await db.query(addTransactionQuery, 
+    [returnedData.id, 'debit', updatedBalance,
+       transactionReference, 'success']);
+  } else {
+    return res.status(400).json({
+      error: 'Invalid userType. Please provide either "credit" or "debit".',
+    });
+  }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating balance:", error);
+    res.status(500).send("Server error");
   }
 });
 

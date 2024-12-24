@@ -255,9 +255,6 @@ router.post('/set-currency', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const { currency } = req.body; 
 
-  console.log(userId)
-
-
   if (!['USD', 'NGN'].includes(currency)) {
       return res.status(400).json({ error: 'Invalid currency' });
   }

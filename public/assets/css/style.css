@@ -3383,6 +3383,13 @@ table {
   width: 100%;
   border-collapse: collapse !important;
 }
+.table-container .table thead tr{
+  background-color: #4361EE !important;
+}
+.table-container .table thead tr th {
+  color: white;
+  text-align: center !important;
+}
 table tfoot tr,
 table thead tr {
   border-bottom-width: 0;

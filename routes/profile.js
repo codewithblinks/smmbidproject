@@ -2,9 +2,8 @@ import express from "express";
 import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
-import { v4 as uuidv4 } from 'uuid';
+import crypto from "crypto";
 import numeral from "numeral";
-import moment from "moment";
 import { calculateUserTotalDeposit } from "../middlewares/totalUserSpent.js";
 import { convertedTotalDeposit } from "./dashboard/userDashboard.js";
 import getExchangeRate from "../controller/exchangeRateService.js";
@@ -12,11 +11,10 @@ import getExchangeRate from "../controller/exchangeRateService.js";
 const router = express.Router();
 
 function generateTransferId() {
-  const prefix = "trans_ref";
-  const uniqueId = uuidv4();
-  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex');
-  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 12);
-  return `${prefix}_${base64Id}`;
+  const prefix = "#REF";
+  const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 2);
+  const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `${prefix}${timestamp}${randomPart}`;
 }
 
   router.get("/profile", ensureAuthenticated, userRole, async(req, res) => {
@@ -163,7 +161,6 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
       INSERT INTO referral_withdrawals (user_id, amount) VALUES ($1, $2) RETURNING *
     `, [userId, transferAmount]);
   };
-  
 
   router.post("/transfer/referral/balance", ensureAuthenticated, userRole, async (req, res) => {
     const userId = req.user.id;
@@ -217,7 +214,5 @@ WHERE referrals.referred_by = $1 ORDER BY commissions.id DESC LIMIT $2 OFFSET $3
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-  
-
 
   export default router;

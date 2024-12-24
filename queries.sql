@@ -80,7 +80,8 @@ CREATE TABLE IF NOT EXISTS admin_products (
     logindetails TEXT,
 	created_at TIMESTAMPTZ DEFAULT NOW(),
     sold_at TIMESTAMPTZ,
-    statustype text
+    statustype text,
+    account_category TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS sms_order (
@@ -279,6 +280,8 @@ CREATE TABLE ticket_responses (
 
 -- remember to add
 
+ALTER TABLE admin_products
+ADD COLUMN account_category TEXT NOT NULL DEFAULT 'ADD';
 
 
 

@@ -2,6 +2,7 @@ import express from "express";
 import db from "../../db/index.js"
 import {adminEnsureAuthenticated, adminRole} from "../../authMiddleware/authMiddleware.js";
 import numeral from "numeral";
+import timeSince from "../../controller/timeSince.js";
 
 const router = express.Router();
 
@@ -192,7 +193,8 @@ async function getTotalSmsProfit(period) {
     case 'today':
       query = `
         SELECT 
-            SUM(amount) AS total_successful_sms_purchases
+            SUM(amount) AS total_successful_sms_purchases,
+            COUNT(*) AS total_sms_sold
         FROM 
             sms_order
         WHERE 
@@ -204,24 +206,28 @@ async function getTotalSmsProfit(period) {
     case 'week':
       query = `
         SELECT 
-           SUM(amount) AS total_successful_sms_purchases
+           SUM(amount) AS total_successful_sms_purchases,
+           COUNT(*) AS total_sms_sold
         FROM 
             sms_order
         WHERE 
             status = 'complete'
-            AND EXTRACT(WEEK FROM timestamp) = EXTRACT(WEEK FROM CURRENT_DATE);
+            AND EXTRACT(WEEK FROM timestamp) = EXTRACT(WEEK FROM CURRENT_DATE)
+            AND EXTRACT(YEAR FROM timestamp) = EXTRACT(YEAR FROM CURRENT_DATE);
       `;
       break;
 
     case 'month':
       query = `
         SELECT 
-           SUM(amount) AS total_successful_sms_purchases
+           SUM(amount) AS total_successful_sms_purchases,
+           COUNT(*) AS total_sms_sold
         FROM 
             sms_order
         WHERE 
             status = 'complete'
-            AND EXTRACT(MONTH FROM timestamp) = EXTRACT(MONTH FROM CURRENT_DATE);
+            AND EXTRACT(MONTH FROM timestamp) = EXTRACT(MONTH FROM CURRENT_DATE)
+            AND EXTRACT(YEAR FROM timestamp) = EXTRACT(YEAR FROM CURRENT_DATE);
       `;
       break;
 
@@ -231,15 +237,59 @@ async function getTotalSmsProfit(period) {
 
   const result = await db.query(query);
   const totalSmsComplete = result.rows[0]?.total_successful_sms_purchases || 0;
+  const totalSmsSold = result.rows[0]?.total_sms_sold || 0;
 
-  return { totalSmsComplete };
+  return { totalSmsComplete, totalSmsSold };
 }
+
+async function getRecentSold() {
+  const query = `
+    SELECT 
+        pap.*, 
+        ad.id AS admin_product_id, 
+        ad.account_category,
+        ad.amount,
+        up.username
+    FROM 
+        purchases_admin_product pap
+    JOIN 
+        admin_products ad ON pap.product_id = ad.id
+    JOIN 
+        userprofile up ON pap.buyer_id = up.id
+    WHERE 
+        pap.status = 'confirmed' 
+        AND ad.payment_status = 'sold'
+        ORDER BY 
+        pap.date_purchased DESC;
+  `;
+
+  try {
+    const result = await db.query(query);
+    const rows = result.rows.map(row => {
+      row.username = row.username.length > 3 ? `...${row.username.slice(-3)}` : row.username;
+
+      const maxCategoryLength = 15;
+      row.account_category = row.account_category.length > maxCategoryLength 
+        ? `${row.account_category.slice(0, maxCategoryLength)}...` 
+        : row.account_category;
+
+      return row;
+    });
+    return rows;
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+    throw err;
+  }
+}
+
 
 router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const userId = req.user.id;
 
   try {
     const totalsThisWeek = await getWeeklyTotals();
+
+    const RecentSold = await getRecentSold();
 
     const userResult = await db.query('SELECT * FROM admins WHERE id = $1', [userId]);
     const userDetails = userResult.rows[0];
@@ -265,7 +315,8 @@ router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, 
 const totalSmmAmount = smmPanelResult.rows[0];
 
 const smsResult = await db.query(`
-  SELECT SUM(amount) AS total_successful_sms_purchases
+  SELECT SUM(amount) AS total_successful_sms_purchases,
+  COUNT(*) AS total_sms_sold
   FROM sms_order
   WHERE status = 'complete';
 `);
@@ -286,6 +337,9 @@ let totalSmmAmount1 = totalCompleted + totalNotRefunded;
   const totalAdminSold = await db.query("SELECT * FROM admin_products WHERE payment_status = 'sold'");
   const adminSold = totalAdminSold.rows;
 
+  const avalableStocks = await db.query("SELECT * FROM admin_products WHERE payment_status = 'not sold'");
+  const stock = avalableStocks.rows;
+
 const resultAdminSold = await db.query(`
   SELECT
        SUM(amount) AS total_admin_sold
@@ -302,7 +356,7 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
         user: userDetails,
         totalDeposit: totals.total_deposit,
         weekTotalDeposit, totalSmmAmount1, 
-        totalSmsAmount, adminSold, totalAdminSoldp2p
+        totalSmsAmount, adminSold, totalAdminSoldp2p, stock, RecentSold, timeSince
        });
     
   } catch (error) {
@@ -311,7 +365,7 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
   }
 });
 
-router.get('/totals/deposits/:period', async (req, res) => {
+router.get('/totals/deposits/:period', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const period = req.params.period;
 
   try {
@@ -326,7 +380,7 @@ router.get('/totals/deposits/:period', async (req, res) => {
   }
 });
 
-router.get('/totals/admin/sold/:period', async (req, res) => {
+router.get('/totals/admin/sold/:period', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const period = req.params.period;
 
   try {
@@ -341,7 +395,7 @@ router.get('/totals/admin/sold/:period', async (req, res) => {
   }
 });
 
-router.get('/totals/smmpanel/:period', async (req, res) => {
+router.get('/totals/smmpanel/:period', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const period = req.params.period;
 
   try {
@@ -358,15 +412,16 @@ router.get('/totals/smmpanel/:period', async (req, res) => {
   }
 });
 
-router.get('/totals/sms/:period', async (req, res) => {
+router.get('/totals/sms/:period', adminEnsureAuthenticated, adminRole, async (req, res) => {
   const period = req.params.period;
 
   try {
-    const { totalSmsComplete } = await getTotalSmsProfit(period);
+    const { totalSmsComplete, totalSmsSold } = await getTotalSmsProfit(period);
 
     const total_sms_completed = numeral(totalSmsComplete).format('0,0.00');
+    console.log(totalSmsSold)
 
-    res.json({ total_sms_completed });
+    res.json({ total_sms_completed, totalSmsSold });
   } catch (err) {
     console.error('Error fetching total sold amount and profit', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });

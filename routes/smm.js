@@ -146,7 +146,7 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       "SELECT * FROM userprofile WHERE id = $1",
       [userId]
     );
-    const userDetails = userResult.rows;
+    const userDetails = userResult.rows[0];
 
     const notificationsResult = await db.query(
       'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',

@@ -21,6 +21,14 @@
   href="assets/images/favicon.png"
   type="image/x-icon"
 />
+<style>
+  .jess {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  text-align: center;
+}
+
+</style>
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -769,7 +777,7 @@
                       class="text-black ltr:right-0 rtl:left-0 dark:text-white-dark">
                       <li><a href="javascript:;" onclick="getTotalSmmProfit('today')">Today</a></li>
                       <li><a href="javascript:;" onclick="getTotalSmmProfit('week')">This Week</a></li>
-                      <li><a href="javascript:;" onclick="getTotalSmmProfit('week')">This Month</a></li>
+                      <li><a href="javascript:;" onclick="getTotalSmmProfit('month')">This Month</a></li>
                       <li><a href="javascript:;" onclick="overAllSmm()">Overall</a></li>
                     </ul>
                   </div>
@@ -808,7 +816,7 @@
                       class="text-black ltr:right-0 rtl:left-0 dark:text-white-dark">
                       <li><a href="javascript:;" onclick="getTotalSmsProfit('today')">Today</a></li>
                       <li><a href="javascript:;" onclick="getTotalSmsProfit('week')">This Week</a></li>
-                      <li><a href="javascript:;" onclick="getTotalSmsProfit('week')">This Month</a></li>
+                      <li><a href="javascript:;" onclick="getTotalSmsProfit('month')">This Month</a></li>
                       <li><a href="javascript:;" onclick="overAllSms()">Overall</a></li>
                     </ul>
                   </div>
@@ -827,7 +835,7 @@
                       d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
                       stroke="currentColor" stroke-width="1.5"></path>
                   </svg>
-                  Total Sold Numbers 100
+                  Total Sold Numbers:<span id="totalSmsSold"> <%= totalSmsAmount.total_sms_sold %></span>
                 </div>
               </div>
             </div>
@@ -870,6 +878,10 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
+                      <div>
+                        <div class="text-primary">Available Stock</div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalstock"> <%= stock.length %></div>
+                      </div>
                       <div>
                         <div class="text-primary">Total Sold Accounts</div>
                         <div class="mt-2 text-2xl font-semibold" id="totalAdminProductsSold"> <%= adminSold.length %></div>
@@ -936,80 +948,26 @@
                   </div>
                 </div>
               </div>
-
               <!-- Recent Transactions -->
-              <div class="panel">
-                <div class="mb-5 text-lg font-bold">Recent Transactions</div>
-                <div class="table-responsive">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th class="ltr:rounded-l-md rtl:rounded-r-md">ID</th>
-                        <th>DATE</th>
-                        <th>NAME</th>
-                        <th>AMOUNT</th>
-                        <th class="text-center ltr:rounded-r-md rtl:rounded-l-md">STATUS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="font-semibold">#01</td>
-                        <td class="whitespace-nowrap">Oct 08, 2021</td>
-                        <td class="whitespace-nowrap">Eric Page</td>
-                        <td>$1,358.75</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-success/20 text-success hover:top-0">Completed</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="font-semibold">#02</td>
-                        <td class="whitespace-nowrap">Dec 18, 2021</td>
-                        <td class="whitespace-nowrap">Nita Parr</td>
-                        <td>-$1,042.82</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-info/20 text-info hover:top-0">In Process</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="font-semibold">#03</td>
-                        <td class="whitespace-nowrap">Dec 25, 2021</td>
-                        <td class="whitespace-nowrap">Carl Bell</td>
-                        <td>$1,828.16</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-danger/20 text-danger hover:top-0">Pending</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="font-semibold">#04</td>
-                        <td class="whitespace-nowrap">Nov 29, 2021</td>
-                        <td class="whitespace-nowrap">Dan Hart</td>
-                        <td>$1,647.55</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-success/20 text-success hover:top-0">Completed</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="font-semibold">#05</td>
-                        <td class="whitespace-nowrap">Nov 24, 2021</td>
-                        <td class="whitespace-nowrap">Jake Ross</td>
-                        <td>$927.43</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-success/20 text-success hover:top-0">Completed</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="font-semibold">#06</td>
-                        <td class="whitespace-nowrap">Jan 26, 2022</td>
-                        <td class="whitespace-nowrap">Anna Bell</td>
-                        <td>$250.00</td>
-                        <td class="text-center">
-                          <span class="badge rounded-full bg-info/20 text-info hover:top-0">In Process</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+              <div class="panel tableDis">
+              <div class="mb-8 text-lg font-bold fixed">LAST ORDER</div>
+              
+              <div class="table-responsive mb-5" style="max-height: 400px; overflow-y: auto; margin-top: 50px;">
+                <hr class="mb-5">
+                <table >
+                  <tbody>
+                    <% RecentSold.forEach(e => { %>
+                    <tr>
+                      <td class="font-semibold jess "><span class="text-success"><%= e.username %></span> Purchased <%= e.account_category %> - ₦<%= e.amount %>.</td>
+                      <td class="text-center">
+                        <span class="badge rounded-full bg-success/20 text-success hover:top-0"><%= timeSince(e.date_purchased) %></span>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -1056,9 +1014,12 @@
 
     async function getTotalSmsProfit(period) {
       try {
+        console.log(period)
         const response = await fetch(`/totals/sms/${period}`);
         const data = await response.json();
         document.getElementById('totalSmsAmount').textContent = `₦ ${data.total_sms_completed}`;
+        document.getElementById('totalSmsSold').textContent = ` ${data.totalSmsSold}`;
+        
       } catch (error) {
         console.error('Error fetching withdrawal totals:', error);
       }
@@ -1076,7 +1037,7 @@
 
     async function overAllSms() {
       document.getElementById('totalSmsAmount').textContent = `₦ <%= totalSmsAmount.total_successful_sms_purchases %>`;
-
+      document.getElementById('totalSmsSold').textContent = ` <%= totalSmsAmount.total_sms_sold %>`;
     }
 
     async function overAllAdminProduct() {

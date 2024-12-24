@@ -3,7 +3,7 @@ import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import moment from "moment";
 import timeSince from "../controller/timeSince.js";
-import { v4 as uuidv4 } from 'uuid';
+import crypto from "crypto";
 import { sendOrderCompleteEmail } from "../config/emailMessages.js";
 import getExchangeRate from "../controller/exchangeRateService.js";
 import { convertPriceForProducts } from "../middlewares/convertUserProductPrice.js";
@@ -12,11 +12,10 @@ import { convertPriceForProducts } from "../middlewares/convertUserProductPrice.
 const router = express.Router();
 
 function generateTransferId() {
-  const prefix = "pur_ref";
-  const uniqueId = uuidv4(); // Generate a unique UUID
-  const buffer = Buffer.from(uniqueId.replace(/-/g, ''), 'hex'); // Remove dashes and convert to hex
-  const base64Id = buffer.toString('base64').replace(/=/g, '').slice(0, 6);
-  return `${prefix}_${base64Id}`;
+  const prefix = "#PU";
+  const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 2);
+  const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `${prefix}${timestamp}${randomPart}`;
 }
 
 router.get("/product/adminorderhistory", ensureAuthenticated, userRole, async (req, res) => {
@@ -180,7 +179,6 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
 
   const notifications = notificationsResult.rows;
 
-
     const getIconClass = (type) => {
       switch (type.toLowerCase()) {
         case "facebook":
@@ -198,7 +196,7 @@ router.get("/all/accounts", ensureAuthenticated, userRole, async (req, res) => {
           case "tiktok":
           return "bi bi-tiktok";
         default:
-          return "bi bi-question-circle"; // Default icon if type is unknown
+          return "bi bi-chat-square-quote-fill"; // Default icon if type is unknown
       }
     };
 
@@ -352,6 +350,150 @@ router.get("/purchase/account/:purchaseId", ensureAuthenticated, userRole, async
 }
 );
 
+router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const usersResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [userId]);
+    const user = usersResult.rows[0];
+
+      const query = `
+      SELECT 
+          account_category, 
+          COUNT(*) AS total_stock, 
+          ARRAY_AGG(json_build_object(
+              'id', id, 
+              'years', years, 
+              'profile_link', profile_link, 
+              'account_type', account_type, 
+              'country', country, 
+              'description', description, 
+              'amount', amount, 
+              'payment_status', payment_status,
+              'logindetails', logindetails
+          )) AS products
+      FROM admin_products
+      WHERE payment_status = $1
+      GROUP BY account_category
+      ORDER BY account_category;
+    `;
+    const { rows } = await db.query(query, ['not sold']);
+
+    const notificationsResult = await db.query(
+      'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
+      [userId, false]
+  );
+  const notifications = notificationsResult.rows;
+
+  const queryAccountType = `
+  SELECT 
+  account_type, 
+  COUNT(*) AS total 
+  FROM admin_products 
+  WHERE payment_status = $1 
+  GROUP BY account_type ORDER BY total DESC;`;
+  const result = await db.query(queryAccountType, ['not sold']);
+
+  const type = result.rows;
+
+    res.render('bulkproduct', {user, notifications, timeSince, 
+      messages: req.flash(), productsByCategory: rows, type
+    })
+  } catch (error) {
+    console.error("error fetching bulk page", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
+
+router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req, res) => {
+  const userId = req.user.id;
+  const { category, quantity } = req.body; 
+
+  if (!category || !quantity || quantity <= 0) {
+    return res.status(400).json({ error: "Invalid category or quantity specified." });
+  }
+
+  try {
+    const userResult = await db.query(
+      "SELECT balance, username, email FROM userprofile WHERE id = $1",
+      [userId]
+    );
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ error: "User not found." });
+    }
+
+    const productResult = await db.query(
+      "SELECT * FROM admin_products WHERE account_category = $1 AND payment_status = 'not sold' LIMIT $2",
+      [category, quantity]
+    );
+    const products = productResult.rows;
+
+    if (products.length < quantity) {
+      return res.status(400).json({ error: "Not enough stock available for this category." });
+    }
+
+    const totalCost = products.reduce((sum, product) => sum + Number(product.amount), 0);
+
+    if (user.balance < totalCost) {
+      return res.status(400).json({ error: "Insufficient balance. Please top up your account." });
+    }
+
+    const purchasePromises = products.map(async (product) => {
+      const purchaseId = generateTransferId();
+      const adminResult = await db.query("SELECT email FROM admins WHERE id = $1", [product.admin_id]);
+      const adminEmail = adminResult.rows[0]?.email;
+
+      await db.query(
+        "INSERT INTO purchases_admin_product (product_id, buyer_id, admin_id, status, purchase_id) VALUES ($1, $2, $3, $4, $5)",
+        [product.id, userId, product.admin_id, "confirmed", purchaseId]
+      );
+
+      await db.query(
+        "UPDATE admin_products SET payment_status = 'sold', sold_at = NOW() WHERE id = $1",
+        [product.id]
+      );
+
+      // Notify admin (if necessary) and user about the purchase
+      // await sendOrderCompleteEmail(user.email, user.username, purchaseNumber);
+
+      return { product, purchaseId}
+    });
+
+    const completedPurchases = await Promise.all(purchasePromises);
+
+    console.log(totalCost)
+    console.log(typeof totalCost)
+
+    // Deduct balance from the user
+    await db.query(
+      "UPDATE userprofile SET balance = balance - $1 WHERE id = $2",
+      [totalCost, userId]
+    );
+
+    const purchaseDetails = completedPurchases.map(
+      (p) => `Product ID: ${p.product.id}, Purchase ID: ${p.purchaseId}`
+    ).join("\n");
+
+    // Add notification for the user
+    await db.query(
+      "INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)",
+      [
+        userId,
+        "purchase",
+        `You have successfully purchased ${quantity} items from the ${category} category:\n${purchaseDetails}.`,
+      ]
+    );
+
+    res.status(200).json({
+      message: `You have successfully purchased ${quantity} items from the ${category} category.`,
+    });
+  } catch (error) {
+    console.error("Error purchasing account:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 
 export default router;

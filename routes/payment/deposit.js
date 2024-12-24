@@ -2,16 +2,13 @@ import express from "express";
 import db from "../../db/index.js";
 import dotenv from 'dotenv';
 import axios from "axios";
-import bodyParser from "body-parser";
 import crypto from "crypto"
 import ensureAuthenticated, {userRole} from "../../authMiddleware/authMiddleware.js";
 import timeSince from "../../controller/timeSince.js";
 import {createTransaction, updateTransactionStatus} from "../../api/cryptomusService.js"; 
 import { sendDepositPendingEmail, sendDepositPendingAdminEmail } from "../../config/emailMessages.js";
-import getExchangeRate, { getExchangeRateCryptomus } from "../../controller/exchangeRateService.js";
+import { getExchangeRateCryptomus } from "../../controller/exchangeRateService.js";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 
 
 dotenv.config();
@@ -35,20 +32,11 @@ function isIpWhitelisted(ip) {
   return CRYPTOMUS_WHITELISTED_IPS.includes(ip);
 }
 
-
 function generateSignature(data) {
   const jsonData = JSON.stringify(data); // Convert request body to JSON
   const base64Data = Buffer.from(jsonData).toString('base64'); // Base64 encode
   const combined = base64Data + CRYPTOMUS_API_KEY; // Append API key
   return crypto.createHash('md5').update(combined).digest('hex'); // MD5 hash
-}
-
-function verifySignature(req, apiKey) {
-  const rawBody = JSON.stringify(req.body);
-  const bodyHash = crypto.createHash('md5').update(rawBody).digest('base64');
-  const combinedString = bodyHash + apiKey;
-  const computedSignature = crypto.createHash('md5').update(combinedString).digest('hex');
-  return computedSignature === req.body.sign;
 }
 
 router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
@@ -72,7 +60,10 @@ router.get('/deposit', ensureAuthenticated, userRole, async(req, res) => {
   });
 
   function generateTransactionReference() {
-    return `trans_${crypto.randomBytes(8).toString('hex')}`;
+    const prefix = "#DEP";
+    const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 2);
+    const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
+    return `${prefix}${timestamp}${randomPart}`;
   }
   
 router.post('/deposit/bank', ensureAuthenticated, upload.single('paymentProof'), async (req, res) => {
@@ -243,6 +234,5 @@ router.post('/create-cryptomus-payment', ensureAuthenticated, async (req, res) =
       res.status(500).json({ success: false, error: 'Failed to process webhook' });
     }
   });
-
 
 export default router;

@@ -9,24 +9,51 @@
     SMMBIMEDIA | Build a better customer experience
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <base href="/">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
-  <style>
-    .pricing {
-      background-color: #ddd3;
-      padding: 2vh 2%;
-      font-weight: 400;
-      line-height: 2.5;
-    }
-  </style>
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="../assets/css/animate.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
+  <style>
+    .table-container .table thead tr th,
+    .table-container .table tbody tr td {
+      font-size: 14px;
+      letter-spacing: 0.35px;
+      border-left: 1px solid #dee2e685;
+      border-right: 1px solid #dee2e685;
+      border-bottom: 1px solid #dee2e685;
+    }
+
+    .table-container .table tbody .tdSec td {
+      text-align: center;
+      max-width: 200px;
+      word-break: break-word;
+    }
+
+    .table-container .table tbody tr td .btn {
+      text-align: center;
+      cursor: pointer;
+    }
+
+
+    @media (min-width: 769px) {
+      .table-container .sec {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .table-container .table thead,
+      .table-container .tdSec {
+        display: none;
+      }
+    }
+  </style>
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -117,34 +144,35 @@
                 class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
                 @click="toggle">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
+                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path
+                    d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
               </a>
               <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
                 class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark currency-list">
-                <% if (user.currency === "USD") { %>
+                <% if (user.currency==="USD" ) { %>
                   <li data-currency="NGN">
-                     <a href="javascript:;" class="hover:text-primary">
-                       <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
-                     </a>
-                   </li>
-                   <% } else { %>
-                     <li data-currency="USD">
-                     <a href="javascript:;" class="hover:text-primary">
-                       <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
-                     </a>
-                   </li>
-                <% } %>
-
+                    <a href="javascript:;" class="hover:text-primary">
+                      <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
+                    </a>
+                  </li>
+                  <% } else { %>
+                    <li data-currency="USD">
+                      <a href="javascript:;" class="hover:text-primary">
+                        <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
+                      </a>
+                    </li>
+                    <% } %>
               </ul>
             </div>
             <div x-data="header"
               class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
               <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
-                
+
               </div>
               <div>
                 <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'light'" href="javascript:;"
@@ -406,76 +434,140 @@
       <!-- end header section -->
 
       <div class="animate__animated p-6" :class="[$store.app.animation]">
-
-
         <!-- start main content section -->
+         <div >
+        <div class="table-container">
+          <div class="mb-8 mt-5" style="margin-bottom: 40px;">
+            <div class="flex flex-wrap items-center justify-center gap-2" id="product-buttons">
+              <button type="button" class="btn btn-secondary filter-btn" data-category="all">Show All</button>
+              <% type.forEach(et=> { %>
+                <button type="button" class="btn btn-dark filter-btn" data-category="<%= et.account_type %>">
+                  <%= et.account_type %>
+                </button>
+                <% }) %>
+            </div>
+          </div>
+          <% productsByCategory.forEach((category, index)=> { %>
+            <table class="table mb-8">
+              <!-- Table Header -->
+              <thead class="whitespace-nowrap">
+                <tr class="table-header" style="font-size: 12px; text-align: center;">
+                  <th>
+                    <%= category.account_category %>
+                  </th>
+                  <th>Country</th>
+                  <th>Stock</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <!-- Product Rows -->
+              <tbody class="product-rows" data-category="<%= category.products[0].account_type %>">
+                <tr class="tdSec">
+                  <td>
+                    <%= category.products[0].description %>
+                  </td>
+                  <td>
+                    <%= category.products[0].country %>
+                  </td>
+                  <td>Stock: <%= category.total_stock %>
+                  </td>
+                  <td>Price: <%= user.currency==='USD' ? '$' : '₦' %>
+                      <%= category.products[0].amount.toFixed(2) %>
+                  </td>
+                  <td>
+                    <div class="flex justify-center">
+                      <button type="button" class="btn btn-primary mt-3"
+                        onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
+                        Order
+                      </button>
+                    </div>
+                  </td>
+                </tr>
 
-        <div class="panel">
-          <div class="flex flex-wrap justify-between gap-4 px-4">
-            <div class="text-1xl font-semibold uppercase">Invoice</div>
-            <div id="countdown">Completed</div>
-          </div>
-          <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Purchase No :</div>
-            <div>
-              <%= purchase.purchase_id%>
-            </div>
-          </div>
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Order Date :</div>
-            <div>
-              <%= purchase.formattedDate%>
-            </div>
-          </div>
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Account Type :</div>
-            <div>
-              <%= product.account_type %>
-            </div>
-          </div>
-          <div class="flex w-full items-center justify-between">
-            <div class="text-white-dark">Account Country :</div>
-            <div>
-              <%= product.country%>
-            </div>
-          </div>
-          <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Amount Paid:</div>
-            <div><big>₦<%= product.amount %></big></div>
-          </div>
-          <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Your Order is completed:</div>
-            <div>✔️</div>
-          </div>
-          <div class="flex-1">
-            <div class="space-y-1 text-white-dark">
-              <div>Other login details:</div>
-              <textarea rows="6" class="form-textarea"  disabled><%= product.logindetails%></textarea>
-            </div>
-          </div>
-          <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-          <div class="mb-2 flex w-full items-center justify-between">
-            <div class="text-white-dark">Want any help? Contact Support &nbsp;
-              <a href="/knowledgebase">
-                <span style="cursor: pointer;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M13.0867 21.3877L13.6288 20.4718C14.0492 19.7614 14.2595 19.4062 14.5972 19.2098C14.9349 19.0134 15.36 19.0061 16.2104 18.9915C17.4658 18.9698 18.2531 18.8929 18.9134 18.6194C20.1386 18.1119 21.1119 17.1386 21.6194 15.9134C22 14.9946 22 13.8297 22 11.5V10.5C22 7.22657 22 5.58985 21.2632 4.38751C20.8509 3.71473 20.2853 3.14908 19.6125 2.7368C18.4101 2 16.7734 2 13.5 2H10.5C7.22657 2 5.58985 2 4.38751 2.7368C3.71473 3.14908 3.14908 3.71473 2.7368 4.38751C2 5.58985 2 7.22657 2 10.5V11.5C2 13.8297 2 14.9946 2.3806 15.9134C2.88807 17.1386 3.86144 18.1119 5.08658 18.6194C5.74689 18.8929 6.53422 18.9698 7.78958 18.9915C8.63992 19.0061 9.06509 19.0134 9.40279 19.2098C9.74049 19.4063 9.95073 19.7614 10.3712 20.4718L10.9133 21.3877C11.3965 22.204 12.6035 22.204 13.0867 21.3877ZM16 12C16.5523 12 17 11.5523 17 11C17 10.4477 16.5523 10 16 10C15.4477 10 15 10.4477 15 11C15 11.5523 15.4477 12 16 12ZM13 11C13 11.5523 12.5523 12 12 12C11.4477 12 11 11.5523 11 11C11 10.4477 11.4477 10 12 10C12.5523 10 13 10.4477 13 11ZM8 12C8.55228 12 9 11.5523 9 11C9 10.4477 8.55228 10 8 10C7.44772 10 7 10.4477 7 11C7 11.5523 7.44772 12 8 12Z"
-                      fill="#d0c6c6" />
-                  </svg>
-              </a>
-              </span>
-            </div>
-            <div>
-              <a href="product/adminorderhistory" style="cursor: pointer;">
-                <button style="cursor: pointer;">Back</button>
-              </a>
-            </div>
-          </div>
+                <!-- Additional Section for Category -->
+                <tr class="sec" style="background-color: #4361EE;">
+                  <td colspan="5">
+                    <h3 style="text-align: center;" class="font-semibold text-white-light">
+                      <%= category.account_category %>
+                    </h3>
+                  </td>
+                </tr>
+                <tr class="sec">
+                  <td colspan="5">
+                    <div class="py-7">
+                      <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 text-center dark:text-white-light">CLI
+                        Based</h5>
+                      <p class="text-white-dark text-center">
+                        <%= category.products[0].description %>
+                      </p>
+                      <div class="mt-2">
+                        <div class="flex flex-wrap items-center justify-center gap-3">
+                          <span class="badge badge-outline-primary">
+                            <%= category.products[0].country %>
+                          </span>
+                          <span class="badge badge-outline-success">Stock: <%= category.total_stock %></span>
+                          <span class="badge badge-outline-dark">Price: <%= user.currency==='USD' ? '$' : '₦' %>
+                              <%= category.products[0].amount.toFixed(2) %>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="flex justify-center mt-5">
+                        <button type="button" class="btn btn-primary"
+                          onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
+                          Order
+                        </button>
+                      </div>
 
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+            <% }); %>
+        </div>
+        </div>
+        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 px-4" id="purchaseModal">
+          <div class="flex min-h-screen items-center justify-center">
+            <div x-transition="" x-transition.duration.300=""
+              class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
+              <button type="button" class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4"
+                onclick="closeModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="h-6 w-6">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <div
+                class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">
+                Purchase Product</div>
+              <div class="p-5">
+                <div class="mb-5">
+                  <label for="title">Category: <span id="modalCategory"></span></label>
+                  <label for="title">Price per Unit: <%= user.currency==='USD' ? '$' : '₦' %><span
+                        id="modalUnitPrice"></label>
+                  <label for="title">Total Stock: <span id="modalStock"></label>
+                </div>
+                <div class="mb-5">
+                  <label for="title">Quantity to buy</label>
+                  <input type="number" id="modalQuantity" min="1" class="form-input">
+                </div>
+                <div class="mb-5">
+                  <label for="title">Total Price: <%= user.currency==='USD' ? '$' : '₦' %><span
+                        id="modalTotalPrice">0.00</span></label>
+                </div>
+                <div class="mt-8 flex items-center justify-end">
+                  <button type="button" class="btn btn-outline-danger gap-2" onclick="closeModal()">
+                    Cancel
+                  </button>
+                  <button id="confirmPurchaseBtn" class="btn btn-primary ltr:ml-4 rtl:mr-4">Order</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- end main content section -->
@@ -507,10 +599,11 @@
           <script defer="" src="../assets/js/alpine.min.js"></script>
           <script src="../assets/js/custom.js"></script>
           <script defer="" src="../assets/js/apexcharts.js"></script>
-          <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-          <script src="../assets/js/notification.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
           <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+          <script src="../assets/js/notification.js"></script>
           <script src="../assets/js/userCurrency.js"></script>
 
           <script>
@@ -527,6 +620,104 @@
               }
             });
           </script>
+
+          <script>
+            async function confirmOrder(detailsId) {
+              new window.Swal({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                showCancelButton: true,
+                confirmButtonText: 'Buy',
+                padding: '2em',
+              }).then((result) => {
+                if (result.value) {
+                  document.getElementById(`orderForm-${detailsId}`).submit();
+                }
+              });
+            }
+          </script>
+
+          <script>
+            function showPurchaseModal(category, price, stock) {
+              document.getElementById('modalCategory').textContent = category;
+              document.getElementById('modalUnitPrice').textContent = price.toFixed(2);
+              document.getElementById('modalStock').textContent = stock;
+              document.getElementById('modalQuantity').value = 1;
+              document.getElementById('modalTotalPrice').textContent = price.toFixed(2);
+
+              document.getElementById('modalQuantity').addEventListener('input', function () {
+                const quantity = parseInt(this.value) || 0; // Handle non-numeric inputs gracefully
+                const totalPrice = quantity * price;
+                document.getElementById('modalTotalPrice').textContent = totalPrice.toFixed(2);
+              });
+
+              document.getElementById('confirmPurchaseBtn').onclick = async function () {
+                const quantity = parseInt(document.getElementById('modalQuantity').value) || 0;
+
+                if (quantity > 0) {
+                  await confirmPurchase(category, quantity);
+                } else {
+                  toastr.error('Invalid quantity, Please enter a valid amount.')
+                }
+              };
+
+              document.getElementById('purchaseModal').style.display = 'block';
+            }
+
+            function closeModal() {
+              document.getElementById('purchaseModal').style.display = 'none';
+            }
+
+            async function confirmPurchase(category, quantity) {
+              try {
+                const response = await fetch('/purchase/bulk/account/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ category, quantity })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                  toastr.success(result.message);
+                  closeModal();
+                  setTimeout(() => {
+                    window.location.href = "/product/adminorderhistory";
+                  }, 1000);
+                } else {
+                  toastr.error(result.error);
+                }
+              } catch (err) {
+                console.error('Error confirming purchase:', err);
+                toastr.error('An error occurred.');
+              }
+            }
+          </script>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const filterButtons = document.querySelectorAll(".filter-btn");
+              const tableContainers = document.querySelectorAll(".table");
+
+              filterButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                  const selectedCategory = button.getAttribute("data-category");
+
+                  tableContainers.forEach(table => {
+                    const tableCategory = table.querySelector(".product-rows").getAttribute("data-category");
+
+                    // Show/Hide based on selected category
+                    if (selectedCategory === "all" || tableCategory === selectedCategory) {
+                      table.style.display = "";
+                    } else {
+                      table.style.display = "none";
+                    }
+                  });
+                });
+              });
+            });
+          </script>
+
 
           <script>
             // main section
