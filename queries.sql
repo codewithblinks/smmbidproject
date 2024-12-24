@@ -280,10 +280,6 @@ CREATE TABLE ticket_responses (
 
 -- remember to add
 
-ALTER TABLE admin_products
-ADD COLUMN account_category TEXT NOT NULL DEFAULT 'ADD';
-
-
 
 -- delete
 

@@ -704,7 +704,7 @@
                                 </svg>
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms class="ltr:right-0 rtl:left-0">
-                                    <li><a href="javascript:;" @click="showProductModal(<%= details.id%>, '<%= details.years %>', '<%= details.profile_link %>', '<%= details.account_type %>', '<%= details.country %>', `<%= details.description %>`, '<%= details.amount %>', '<%= details.loginusername %>', '<%= details.loginemail %>', '<%= details.loginpassword %>', `<%= details.logindetails %>`)">Edit</a></li>
+                                    <li><a href="javascript:;" @click="showProductModal(<%= details.id%>, '<%= details.years %>', '<%= details.profile_link %>', '<%= details.account_type %>', '<%= details.country %>', `<%= details.description %>`, '<%= details.amount %>', '<%= details.loginusername %>', '<%= details.loginemail %>', '<%= details.loginpassword %>', `<%= details.logindetails %>`, `<%= details.account_category %>`)">Edit</a></li>
                                     <form id="deleteProduct" action="/product/delete/active/account/<%= details.id%>" method="post">
                                       <li onclick="deleteProduct()"><a href="javascript:;" @click="toggle">Delete</a></li>
                                     </form>
@@ -740,7 +740,7 @@
           <!-- modal -->
           <div class="fixed w-100 inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="modalOpen && '!block'"
             x-data="modal"
-            @show-product-modal.window="modalOpen = true; productId = $event.detail.id; productYear = $event.detail.years; productProfileLink = $event.detail.profile_link; productAccountType = $event.detail.account_type; productAccountCountry = $event.detail.country; productDescription = $event.detail.description; productAmount = $event.detail.amount; productLoginUsername = $event.detail.loginusername; productLoginEmail = $event.detail.loginemail; productLoginPassword = $event.detail.loginpassword; productLoginDetails = $event.detail.logindetails;">
+            @show-product-modal.window="modalOpen = true; productId = $event.detail.id; productYear = $event.detail.years; productProfileLink = $event.detail.profile_link; productAccountType = $event.detail.account_type; productAccountCountry = $event.detail.country; productDescription = $event.detail.description; productAmount = $event.detail.amount; productLoginUsername = $event.detail.loginusername; productLoginEmail = $event.detail.loginemail; productLoginPassword = $event.detail.loginpassword; productLoginDetails = $event.detail.logindetails; productAccountCategory = $event.detail.account_category;">
             <div class="flex items-center justify-center min-h-screen px-4" @click.self="modalOpen = false">
               <div x-show="modalOpen" x-transition x-transition.duration.300
                 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
@@ -778,6 +778,10 @@
                               <input id="productAccountType" name="productAccountType" type="text" class="form-input" :value="productAccountType">
                         </div>
                     </div>
+                    <div class="mb-5">
+                      <label>Description</label>
+                      <textarea id="ctnCategory" name="productAccountCategory" rows="3" class="form-textarea" :value="productAccountCategory"></textarea>
+                  </div>
                       <div class="mb-5">
                           <label>Description</label>
                           <textarea id="ctnTextarea" name="productDescription" rows="3" class="form-textarea" :value="productDescription"></textarea>
@@ -878,11 +882,12 @@
         productLoginEmail: '',
         productLoginPassword: '',
         productLoginDetails: '',
+        productAccountCategory: '',
         showProductModal(
           id, years, profile_link, 
           account_type, country, description, 
           amount, loginusername, loginemail, 
-          loginpassword, logindetails) {
+          loginpassword, logindetails, account_category) {
 
           this.productId = id;
           this.productYear = years;
@@ -895,6 +900,7 @@
           this.productLoginEmail = loginemail;
           this.productLoginPassword = loginpassword;
           this.productLoginDetails = logindetails;
+          this.productAccountCategory = account_category;
           this.modalOpen = true;
         }
       }));
@@ -903,14 +909,14 @@
     function showProductModal(id, years, profile_link, 
           account_type, country, description, 
           amount, loginusername, loginemail, 
-          loginpassword, logindetails
+          loginpassword, logindetails, account_category
     ) {
       const event = new CustomEvent('show-product-modal', {
         detail: {
           id, years, profile_link, 
           account_type, country, description, 
           amount, loginusername, loginemail, 
-          loginpassword, logindetails
+          loginpassword, logindetails, account_category
         }
       });
       window.dispatchEvent(event);
