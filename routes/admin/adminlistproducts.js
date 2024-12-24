@@ -227,7 +227,7 @@ router.post("/product/delete/active/account/:id", adminEnsureAuthenticated, admi
 
 router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole, 
       async (req, res) => {
-        const {productid, productAmount, productYear, productAccountCountry, productAccountType, productDescription, productLoginDetails} = req.body;
+        const {productid, productAmount, productYear, productAccountCountry, productAccountType, productDescription, productLoginDetails, productAccountCategory} = req.body;
 
         const amount = parseFloat(productAmount.replace(/,/g, ''));
 
@@ -241,11 +241,11 @@ router.post("/product/edit/active/account", adminEnsureAuthenticated, adminRole,
               UPDATE admin_products 
               SET years = $1,
               account_type = $2, country = $3,
-              description = $4, amount = $5, logindetails = $6 WHERE id = $7`, 
+              description = $4, amount = $5, logindetails = $6, account_category = $7 WHERE id = $8`, 
               [productYear, productAccountType, productAccountCountry, productDescription, 
-               amount, productLoginDetails, productid]);
+               amount, productLoginDetails, productAccountCategory, productid]);
 
-               req.flash("success", "Account updated successfully");
+              req.flash("success", "Account updated successfully");
               res.redirect("/admin/active/products");
           } catch (error) {
               console.log("Error updating product:", error);
