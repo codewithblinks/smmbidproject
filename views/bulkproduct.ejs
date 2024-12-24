@@ -34,6 +34,15 @@
       word-break: break-word;
     }
 
+    .descri{
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  width: 400px !important;
+}
+.descrie{
+  width: 200px !important;
+}
+
     .table-container .table tbody tr td .btn {
       text-align: center;
       cursor: pointer;
@@ -452,13 +461,13 @@
               <!-- Table Header -->
               <thead class="whitespace-nowrap">
                 <tr class="table-header" style="font-size: 12px; text-align: center;">
-                  <th>
+                  <th class="descri">
                     <%= category.account_category %>
                   </th>
-                  <th>Country</th>
-                  <th>Stock</th>
-                  <th>Price</th>
-                  <th>Action</th>
+                  <th class="descrie">Country</th>
+                  <th class="descrie">Stock</th>
+                  <th class="descrie">Price</th>
+                  <th class="descrie">Action</th>
                 </tr>
               </thead>
               <!-- Product Rows -->
@@ -496,8 +505,7 @@
                 <tr class="sec">
                   <td colspan="5">
                     <div class="py-7">
-                      <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 text-center dark:text-white-light">CLI
-                        Based</h5>
+                      <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 text-center dark:text-white-light"><%= category.products[0].account_type %></h5>
                       <p class="text-white-dark text-center">
                         <%= category.products[0].description %>
                       </p>
