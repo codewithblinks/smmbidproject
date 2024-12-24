@@ -732,6 +732,7 @@
                           <option value="Discord">Discord</option>
                           <option value="TextNow">TextNow</option>
                           <option value="TextPlus">TextPlus</option>
+                          <option value="Talkatone">Talkatone</option>
                         </select>
                       </div>
                       <div class="mt-4 flex items-center">
@@ -902,6 +903,7 @@
                  })
 
                 const result = await response.json();
+                console.log("Raw Response:", result);
 
                 if (response.ok) {
                  toastr.success(result.message || "Product added successfully!")

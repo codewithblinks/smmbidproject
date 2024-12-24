@@ -268,7 +268,7 @@ async function getRecentSold() {
     const rows = result.rows.map(row => {
       row.username = row.username.length > 3 ? `...${row.username.slice(-3)}` : row.username;
 
-      const maxCategoryLength = 15;
+      const maxCategoryLength = 35;
       row.account_category = row.account_category.length > maxCategoryLength 
         ? `${row.account_category.slice(0, maxCategoryLength)}...` 
         : row.account_category;
