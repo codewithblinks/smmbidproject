@@ -29,11 +29,11 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
     option1,
     years,
     country,
-    price,
     description,
     logindetails,
     account_category,
   } = req.body;
+  const price = Number(req.body.price);
   
   if (!logindetails || !Array.isArray(logindetails) || logindetails.length === 0) {
     return res.status(400).json({ error: "At least one login detail is required." });
@@ -50,6 +50,31 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
       }
 
       const cleanedDetails = detail.replace(/url:\s*(https?:\/\/[^\s]+)/i, "").trim();
+
+      const categoryQuery = await db.query(`
+        SELECT * FROM admin_products WHERE account_category = $1
+      `, [account_category]);
+      
+      if (categoryQuery.rows.length > 0) {
+        const existingProduct = categoryQuery.rows[0]; 
+        
+        // Check if all attributes match
+        const userAmount = Number(existingProduct.amount);
+        const existingYears = Number(existingProduct.years);
+      
+        const isMatch =
+          userAmount === price &&
+          existingProduct.description === description &&
+          existingProduct.account_type === option1 &&
+          existingYears === Number(years) &&
+          existingProduct.country === country;
+      
+        if (!isMatch) {
+          return res.status(400).json({
+            error: `The category "${account_category}" already exists but with different details. Please create a new category.`,
+          });
+        }
+      }
 
       await db.query(
         `INSERT INTO admin_products

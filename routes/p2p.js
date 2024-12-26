@@ -407,7 +407,7 @@ router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
 
 router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
-  const { category, quantity } = req.body; 
+  const { category, quantity } = req.body;
 
   if (!category || !quantity || quantity <= 0) {
     return res.status(400).json({ error: "Invalid category or quantity specified." });
@@ -415,7 +415,7 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
 
   try {
     const userResult = await db.query(
-      "SELECT balance, username, email FROM userprofile WHERE id = $1",
+      "SELECT balance, username, email, currency FROM userprofile WHERE id = $1",
       [userId]
     );
     const user = userResult.rows[0];
@@ -440,10 +440,10 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
       return res.status(400).json({ error: "Insufficient balance. Please top up your account." });
     }
 
-    const purchasePromises = products.map(async (product) => {
+    // Process purchases
+    const completedPurchases = [];
+    for (const product of products) {
       const purchaseId = generateTransferId();
-      const adminResult = await db.query("SELECT email FROM admins WHERE id = $1", [product.admin_id]);
-      const adminEmail = adminResult.rows[0]?.email;
 
       await db.query(
         "INSERT INTO purchases_admin_product (product_id, buyer_id, admin_id, status, purchase_id) VALUES ($1, $2, $3, $4, $5)",
@@ -455,16 +455,15 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
         [product.id]
       );
 
-      // Notify admin (if necessary) and user about the purchase
-      // await sendOrderCompleteEmail(user.email, user.username, purchaseNumber);
-
-      return { product, purchaseId}
-    });
-
-    const completedPurchases = await Promise.all(purchasePromises);
-
-    console.log(totalCost)
-    console.log(typeof totalCost)
+      completedPurchases.push({
+        product: {
+          id: product.id,
+          name: product.account_category, // Assuming 'name' or fallback to category
+          amount: product.amount,
+        },
+        purchaseId,
+      });
+    }
 
     // Deduct balance from the user
     await db.query(
@@ -472,11 +471,22 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
       [totalCost, userId]
     );
 
-    const purchaseDetails = completedPurchases.map(
-      (p) => `Product ID: ${p.product.id}, Purchase ID: ${p.purchaseId}`
-    ).join("\n");
+    // Send a single email with all product details
+    const productDetails = completedPurchases.map((p) => ({
+      orderId: p.purchaseId,
+      orderName: p.product.name,
+      price: p.product.amount,
+    }));
 
-    // Add notification for the user
+    const userCurrency = user.currency === "USD" ? "$" : "₦"
+
+    await sendOrderCompleteEmail(user.email, user.username, productDetails, totalCost, userCurrency);
+
+    // Create notification message
+    const purchaseDetails = completedPurchases
+      .map((p) => `Product ID: ${p.product.id}, Purchase ID: ${p.purchaseId}`)
+      .join("\n");
+
     await db.query(
       "INSERT INTO notifications (user_id, type, message) VALUES ($1, $2, $3)",
       [
@@ -494,6 +504,7 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 export default router;

@@ -224,28 +224,30 @@ export const sendWelcomeEmail = async (email, username) => {
     }
   };
 
-  export const sendOrderCompleteEmail = async (email, username, purchaseId) => {
+  export const sendOrderCompleteEmail = async (email, username, products, totalCost, currency) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'orderCompleteEmail.ejs');
   
     const appName = 'SMMBIDMEDIA';
     
     try {
       const html = await ejs.renderFile(templatePath, {
-        email:email,
+        email: email,
         name: username,
-        purchaseId: purchaseId,
-        appName: appName
+        appName: appName,
+        products: products,
+        totalCost: totalCost, 
+        currency: currency,
       });
   
       const mailOptions = {
         to: email,
-        subject: 'Purchase Alert',
+        subject: 'Purchase Confirm invoice payment Success',
         html: html
       };
   
       await sendEmail(mailOptions);
   
-      console.log('Verification email sent');
+      console.log('Order complete email sent');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
@@ -260,7 +262,7 @@ export const sendWelcomeEmail = async (email, username) => {
     try {
       const html = await ejs.renderFile(templatePath, {
         name: username,
-        appName: appName
+        appName: appName,
       });
   
       const mailOptions = {

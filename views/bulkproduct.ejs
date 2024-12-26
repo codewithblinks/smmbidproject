@@ -34,14 +34,15 @@
       word-break: break-word;
     }
 
-    .descri{
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  width: 400px !important;
-}
-.descrie{
-  width: 200px !important;
-}
+    .descri {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      width: 400px !important;
+    }
+
+    .descrie {
+      width: 200px !important;
+    }
 
     .table-container .table tbody tr td .btn {
       text-align: center;
@@ -444,97 +445,99 @@
 
       <div class="animate__animated p-6" :class="[$store.app.animation]">
         <!-- start main content section -->
-         <div >
-        <div class="table-container">
-          <div class="mb-8 mt-5" style="margin-bottom: 40px;">
-            <div class="flex flex-wrap items-center justify-center gap-2" id="product-buttons">
-              <button type="button" class="btn btn-secondary filter-btn" data-category="all">Show All</button>
-              <% type.forEach(et=> { %>
-                <button type="button" class="btn btn-dark filter-btn" data-category="<%= et.account_type %>">
-                  <%= et.account_type %>
-                </button>
-                <% }) %>
+        <div>
+          <div class="table-container">
+            <div class="mb-8 mt-5" style="margin-bottom: 40px;">
+              <div class="flex flex-wrap items-center justify-center gap-2" id="product-buttons">
+                <button type="button" class="btn btn-secondary filter-btn" data-category="all">Show All</button>
+                <% type.forEach(et=> { %>
+                  <button type="button" class="btn btn-dark filter-btn" data-category="<%= et.account_type %>">
+                    <%= et.account_type %>
+                  </button>
+                  <% }) %>
+              </div>
             </div>
-          </div>
-          <% productsByCategory.forEach((category, index)=> { %>
-            <table class="table mb-8">
-              <!-- Table Header -->
-              <thead class="whitespace-nowrap">
-                <tr class="table-header" style="font-size: 12px; text-align: center;">
-                  <th class="descri">
-                    <%= category.account_category %>
-                  </th>
-                  <th class="descrie">Country</th>
-                  <th class="descrie">Stock</th>
-                  <th class="descrie">Price</th>
-                  <th class="descrie">Action</th>
-                </tr>
-              </thead>
-              <!-- Product Rows -->
-              <tbody class="product-rows" data-category="<%= category.products[0].account_type %>">
-                <tr class="tdSec">
-                  <td>
-                    <%= category.products[0].description %>
-                  </td>
-                  <td>
-                    <%= category.products[0].country %>
-                  </td>
-                  <td>Stock: <%= category.total_stock %>
-                  </td>
-                  <td>Price: <%= user.currency==='USD' ? '$' : '₦' %>
-                      <%= category.products[0].amount.toFixed(2) %>
-                  </td>
-                  <td>
-                    <div class="flex justify-center">
-                      <button type="button" class="btn btn-primary mt-3"
-                        onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
-                        Order
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- Additional Section for Category -->
-                <tr class="sec" style="background-color: #4361EE;">
-                  <td colspan="5">
-                    <h3 style="text-align: center;" class="font-semibold text-white-light">
+            <% productsByCategory.forEach((category, index)=> { %>
+              <table class="table mb-8">
+                <!-- Table Header -->
+                <thead class="whitespace-nowrap">
+                  <tr class="table-header" style="font-size: 12px; text-align: center;">
+                    <th class="descri">
                       <%= category.account_category %>
-                    </h3>
-                  </td>
-                </tr>
-                <tr class="sec">
-                  <td colspan="5">
-                    <div class="py-7">
-                      <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 text-center dark:text-white-light"><%= category.products[0].account_type %></h5>
-                      <p class="text-white-dark text-center">
-                        <%= category.products[0].description %>
-                      </p>
-                      <div class="mt-2">
-                        <div class="flex flex-wrap items-center justify-center gap-3">
-                          <span class="badge badge-outline-primary">
-                            <%= category.products[0].country %>
-                          </span>
-                          <span class="badge badge-outline-success">Stock: <%= category.total_stock %></span>
-                          <span class="badge badge-outline-dark">Price: <%= user.currency==='USD' ? '$' : '₦' %>
-                              <%= category.products[0].amount.toFixed(2) %>
-                          </span>
-                        </div>
-                      </div>
-                      <div class="flex justify-center mt-5">
-                        <button type="button" class="btn btn-primary"
+                    </th>
+                    <th class="descrie">Country</th>
+                    <th class="descrie">Stock</th>
+                    <th class="descrie">Price</th>
+                    <th class="descrie">Action</th>
+                  </tr>
+                </thead>
+                <!-- Product Rows -->
+                <tbody class="product-rows" data-category="<%= category.products[0].account_type %>">
+                  <tr class="tdSec">
+                    <td>
+                      <%= category.products[0].description %>
+                    </td>
+                    <td>
+                      <%= category.products[0].country %>
+                    </td>
+                    <td>Stock: <%= category.total_stock %>
+                    </td>
+                    <td>Price: <%= user.currency==='USD' ? '$' : '₦' %>
+                        <%= category.products[0].amount.toFixed(2) %>
+                    </td>
+                    <td>
+                      <div class="flex justify-center">
+                        <button type="button" class="btn btn-primary mt-3"
                           onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
                           Order
                         </button>
                       </div>
+                    </td>
+                  </tr>
 
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+                  <!-- Additional Section for Category -->
+                  <tr class="sec" style="background-color: #4361EE;">
+                    <td colspan="5">
+                      <h3 style="text-align: center;" class="font-semibold text-white-light">
+                        <%= category.account_category %>
+                      </h3>
+                    </td>
+                  </tr>
+                  <tr class="sec">
+                    <td colspan="5">
+                      <div class="py-7">
+                        <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 text-center dark:text-white-light">
+                          <%= category.products[0].account_type %>
+                        </h5>
+                        <p class="text-white-dark text-center">
+                          <%= category.products[0].description %>
+                        </p>
+                        <div class="mt-2">
+                          <div class="flex flex-wrap items-center justify-center gap-3">
+                            <span class="badge badge-outline-primary">
+                              <%= category.products[0].country %>
+                            </span>
+                            <span class="badge badge-outline-success">Stock: <%= category.total_stock %></span>
+                            <span class="badge badge-outline-dark">Price: <%= user.currency==='USD' ? '$' : '₦' %>
+                                <%= category.products[0].amount.toFixed(2) %>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="flex justify-center mt-5">
+                          <button type="button" class="btn btn-primary"
+                            onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
+                            Order
+                          </button>
+                        </div>
 
-            </table>
-            <% }); %>
-        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+              </table>
+              <% }); %>
+          </div>
         </div>
         <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 px-4" id="purchaseModal">
           <div class="flex min-h-screen items-center justify-center">
@@ -571,7 +574,8 @@
                   <button type="button" class="btn btn-outline-danger gap-2" onclick="closeModal()">
                     Cancel
                   </button>
-                  <button id="confirmPurchaseBtn" class="btn btn-primary ltr:ml-4 rtl:mr-4">Order</button>
+                  <button id="confirmPurchaseBtn" class="btn btn-primary ltr:ml-4 rtl:mr-4">Order
+                  </button>
                 </div>
               </div>
             </div>
@@ -647,38 +651,49 @@
           </script>
 
           <script>
+            const modalCategory = document.getElementById('modalCategory');
+            const modalUnitPrice = document.getElementById('modalUnitPrice');
+            const modalStock = document.getElementById('modalStock');
+            const modalQuantity = document.getElementById('modalQuantity');
+            const modalTotalPrice = document.getElementById('modalTotalPrice');
+            const orderButton = document.getElementById('confirmPurchaseBtn');
+            const purchaseModal = document.getElementById('purchaseModal');
+
             function showPurchaseModal(category, price, stock) {
-              document.getElementById('modalCategory').textContent = category;
-              document.getElementById('modalUnitPrice').textContent = price.toFixed(2);
-              document.getElementById('modalStock').textContent = stock;
-              document.getElementById('modalQuantity').value = 1;
-              document.getElementById('modalTotalPrice').textContent = price.toFixed(2);
+              modalCategory.textContent = category;
+              modalUnitPrice.textContent = price.toFixed(2);
+              modalStock.textContent = stock;
+              modalQuantity.value = 1;
+              modalTotalPrice.textContent = price.toFixed(2);
 
-              document.getElementById('modalQuantity').addEventListener('input', function () {
-                const quantity = parseInt(this.value) || 0; // Handle non-numeric inputs gracefully
+              modalQuantity.oninput = function () {
+                const quantity = parseInt(this.value) || 0;
                 const totalPrice = quantity * price;
-                document.getElementById('modalTotalPrice').textContent = totalPrice.toFixed(2);
-              });
+                modalTotalPrice.textContent = totalPrice.toFixed(2);
+              };
 
-              document.getElementById('confirmPurchaseBtn').onclick = async function () {
-                const quantity = parseInt(document.getElementById('modalQuantity').value) || 0;
+              orderButton.onclick = async function () {
+                const quantity = parseInt(modalQuantity.value) || 0;
 
                 if (quantity > 0) {
-                  await confirmPurchase(category, quantity);
+                  await confirmPurchase(category, quantity, price);
                 } else {
-                  toastr.error('Invalid quantity, Please enter a valid amount.')
+                  toastr.error('Quantity must be a positive number.');
                 }
               };
 
-              document.getElementById('purchaseModal').style.display = 'block';
+              purchaseModal.style.display = 'block';
             }
 
             function closeModal() {
-              document.getElementById('purchaseModal').style.display = 'none';
+              purchaseModal.style.display = 'none';
             }
 
-            async function confirmPurchase(category, quantity) {
+            async function confirmPurchase(category, quantity, price) {
               try {
+                orderButton.disabled = true;
+                orderButton.textContent = 'Processing...';
+
                 const response = await fetch('/purchase/bulk/account/', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -697,7 +712,10 @@
                 }
               } catch (err) {
                 console.error('Error confirming purchase:', err);
-                toastr.error('An error occurred.');
+                toastr.error('An error occurred while processing your request.');
+              } finally {
+                orderButton.disabled = false;
+                orderButton.textContent = 'Order';
               }
             }
           </script>
