@@ -22,32 +22,6 @@
   href="assets/images/favicon.png"
   type="image/x-icon"
 />
-<style>
- .alert-track {
-   display: flex;
-   animation: marquee 35s linear infinite !important;
- }
- .alert-container{
-  margin: 0;
-  padding: 0;
- }
- 
- .moving-alert {
-   display: inline-block;
-   white-space: nowrap;
-   margin-right: 50px;
- }
- 
- @keyframes marquee {
-   from {
-     transform: translateX(100%);
-   }
-   to {
-     transform: translateX(-100%);
-   }
- }
- 
-     </style>
   <script src="../assets/js/perfect-scrollbar.min.js"></script>
   <script defer="" src="../assets/js/popper.min.js"></script>
   <script defer="" src="../assets/js/tippy-bundle.umd.min.js"></script>
@@ -428,17 +402,6 @@
           <!-- horizontal menu -->
          
       </header>
-
-       <div class="flex items-center alert-container rounded text-primary bg-primary-light  p-0.5 dark:bg-primary-dark-light">
-            <div class="alert-track">
-            <span class="ltr:pr-2 rtl:pl-2 moving-alert"><strong class="ltr:mr-1 rtl:ml-1">✨ Compliments of the season!</strong>Wishing you joy, peace, and prosperity this festive period. 🎄 ✨</span>
-          
-            <span class="ltr:pr-2 rtl:pl-2 moving-alert"><strong class="ltr:mr-1 rtl:ml-1">Update!</strong>We've just launched the account bulk purchasing page! Visit now to buy accounts in bulk with ease.</span>
-          
-            <span class="ltr:pr-2 rtl:pl-2 moving-alert"><strong class="ltr:mr-1 rtl:ml-1">Alert!</strong>Lorem Ipsum is simply dummy text of the printing.</span>
-         
-        </div>
-        </div>
       <!-- end header section -->
 
       <div class="animate__animated p-6" :class="[$store.app.animation]">
