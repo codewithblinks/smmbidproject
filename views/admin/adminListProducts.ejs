@@ -789,7 +789,7 @@
                 </div>
                 <div class="panel">
                   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-1">
-                    <button type="submit" class="btn btn-success w-full">
+                    <button type="submit" class="btn btn-success w-full" id="addBTN">
                       Add
                     </button>
                     <a href="/admin/Dashboard" class="btn btn-primary w-full gap-2">
@@ -873,12 +873,14 @@
             document.getElementById("bulkUploadForm").addEventListener("submit", async function (e) {
               e.preventDefault();
 
+              const purchaseButton = document.getElementById('addBTN');
               const option1 = document.getElementById("option1").value;
               const account_category = document.getElementById("category").value;
               const years = document.getElementById("years").value;
               const country = document.getElementById("country").value;
               const price = document.getElementById("price").value;
               const description = document.getElementById("description").value;
+
               const logindetails = Array.from(document.querySelectorAll('textarea[name="logindetails[]"]'))
                              .map(textarea => textarea.value.trim())
                              .filter(Boolean); 
@@ -893,6 +895,9 @@
                 account_category
                };
 
+               purchaseButton.disabled = true;
+               purchaseButton.textContent = 'Uploadining...';
+
               try {
                 const response = await fetch("/admin/list/product", {
                   method: "POST",
@@ -903,18 +908,22 @@
                  })
 
                 const result = await response.json();
-                console.log("Raw Response:", result);
 
                 if (response.ok) {
                  toastr.success(result.message || "Product added successfully!")
-                  document.getElementById("bulkUploadForm").reset(); 
+                 setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
                 } else {
                   toastr.error(result.error || "Something went wrong.")
                 }
               } catch (err) {
                 toastr.error('An unexpected error occurred.')
-                console.error(err);
-              }
+                console.error('Error submitting form:', err);
+              } finally {
+                    purchaseButton.disabled = false;
+                    purchaseButton.textContent = 'Add';
+                  }
             });
 
           </script>

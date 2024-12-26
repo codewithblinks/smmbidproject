@@ -359,7 +359,7 @@ router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
 
       const query = `
       SELECT 
-          account_category, 
+          MIN(account_category) AS account_category,
           COUNT(*) AS total_stock, 
           ARRAY_AGG(json_build_object(
               'id', id, 
@@ -374,8 +374,8 @@ router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
           )) AS products
       FROM admin_products
       WHERE payment_status = $1
-      GROUP BY account_category
-      ORDER BY account_category;
+      GROUP BY UPPER(account_category)
+      ORDER BY UPPER(account_category);
     `;
     const { rows } = await db.query(query, ['not sold']);
 

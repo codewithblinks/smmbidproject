@@ -52,8 +52,8 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
       const cleanedDetails = detail.replace(/url:\s*(https?:\/\/[^\s]+)/i, "").trim();
 
       const categoryQuery = await db.query(`
-        SELECT * FROM admin_products WHERE account_category = $1
-      `, [account_category]);
+        SELECT * FROM admin_products WHERE UPPER(account_category) = $1
+      `, [account_category.toUpperCase()]);
       
       if (categoryQuery.rows.length > 0) {
         const existingProduct = categoryQuery.rows[0]; 
@@ -90,7 +90,7 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
           price,
           "not sold",
           cleanedDetails,
-          account_category,
+          account_category.toUpperCase(),
         ]
       );
     }
