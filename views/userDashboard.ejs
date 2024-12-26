@@ -27,6 +27,10 @@
    display: flex;
    animation: marquee 35s linear infinite !important;
  }
+ .alert-container{
+  margin: 0;
+  padding: 0;
+ }
  
  .moving-alert {
    display: inline-block;
@@ -425,7 +429,7 @@
          
       </header>
 
-       <div class="flex items-center rounded text-primary bg-primary-light  p-0.5 dark:bg-primary-dark-light alert-container">
+       <div class="flex items-center alert-container rounded text-primary bg-primary-light  p-0.5 dark:bg-primary-dark-light">
             <div class="alert-track">
             <span class="ltr:pr-2 rtl:pl-2 moving-alert"><strong class="ltr:mr-1 rtl:ml-1">✨ Compliments of the season!</strong>Wishing you joy, peace, and prosperity this festive period. 🎄 ✨</span>
           
@@ -434,7 +438,6 @@
             <span class="ltr:pr-2 rtl:pl-2 moving-alert"><strong class="ltr:mr-1 rtl:ml-1">Alert!</strong>Lorem Ipsum is simply dummy text of the printing.</span>
          
         </div>
-
         </div>
       <!-- end header section -->
 
