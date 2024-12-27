@@ -763,13 +763,15 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                             body: JSON.stringify({ orderId })
                           });
                           const result = await response.json();
+                          console.log(result)
 
                           if (result.success === true) {
-                            location.reload();
                             toastr.success(`The order has been cancelled, and you have been refunded`);
-
+                            setTimeout(() => {
+                              location.reload();
+                          }, 1000);
                           } else {
-                            toastr.error(`Refund failed: ${result.message}`);
+                            toastr.error(`${result.message}`);
                           }
                         } catch (error) {
                           console.error('Error processing refund:', error);
@@ -806,8 +808,10 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           const result = await response.json();
 
                           if (result.success === true) {
-                            location.reload();
                             toastr.success(`Refund success: ${result.message}`);
+                            setTimeout(() => {
+                              location.reload();
+                          }, 1000);
                           } else {
                             toastr.error(`Refund failed: ${result.message}`);
                           }
@@ -886,8 +890,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  const originalConsoleLog = console.log;
-                  console.log = function () { };
+                  // const originalConsoleLog = console.log;
+                  // console.log = function () { };
 
                   NiceSelect.bind((select1), { searchable: true });
                   NiceSelect.bind((select2), { searchable: true });

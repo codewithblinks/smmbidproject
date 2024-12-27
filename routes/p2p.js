@@ -357,6 +357,9 @@ router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
     const usersResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [userId]);
     const user = usersResult.rows[0];
 
+    const userCurrency = user.currency;
+    const rate = await getExchangeRate();
+
       const query = `
       SELECT 
           MIN(account_category) AS account_category,
@@ -393,11 +396,20 @@ router.get('/account/bulk', ensureAuthenticated, userRole, async (req, res) => {
   WHERE payment_status = $1 
   GROUP BY account_type ORDER BY total DESC;`;
   const result = await db.query(queryAccountType, ['not sold']);
-
   const type = result.rows;
 
+  const updatedData = await Promise.all(
+    rows.map(async (item) => {
+      const updatedProducts = await convertPriceForProducts(rate.NGN, item.products, userCurrency);
+      return {
+        ...item,
+        products: updatedProducts, 
+      };
+    })
+  );
+  
     res.render('bulkproduct', {user, notifications, timeSince, 
-      messages: req.flash(), productsByCategory: rows, type
+      messages: req.flash(), productsByCategory: updatedData, type
     })
   } catch (error) {
     console.error("error fetching bulk page", error);
@@ -436,7 +448,9 @@ router.post("/purchase/bulk/account/", ensureAuthenticated, userRole, async (req
 
     const totalCost = products.reduce((sum, product) => sum + Number(product.amount), 0);
 
-    if (user.balance < totalCost) {
+    const userBalance = Number(user.balance)
+
+    if (userBalance < totalCost) {
       return res.status(400).json({ error: "Insufficient balance. Please top up your account." });
     }
 

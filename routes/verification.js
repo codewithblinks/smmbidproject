@@ -491,7 +491,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const cancelOrders = response.data;
 
     if (cancelOrders.success !== 1) {
-      return res.status(400).json({ success: false, message: 'Your order cannot be cancelled yet, please try again later.' });
+      return res.status(400).json({ success: false, message: cancelOrders.message || 'Your order cannot be cancelled yet, please try again later.' });
     }
 
     await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', orderId]);
@@ -505,7 +505,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
       INSERT INTO notifications (user_id, type, message) 
       VALUES ($1, $2, $3)`, 
       [userId, 'purchase', 
-        `The order ${orderId} has been cancelled, and you have been refunded ${orderAmount}` 
+        `The order ${orderId} has been cancelled, and you have been refunded ₦${orderAmount}` 
       ])
 
     return res.status(200).json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
@@ -561,7 +561,7 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     }
 
     const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
-    const rate = rateResult.rows[0]?.rate || 1750;
+    const rate = Number(rateResult.rows[0]?.rate) || 1750;
     const orderCharge = checkResend.resendCost * rate;
     const charge = checkResend.charge === 0 ? 0 : Math.floor(orderCharge + 500);
 
@@ -579,14 +579,6 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     const errorMessage = error.response?.data?.message || 'Internal server error.';
     return res.status(500).json({ success: false, message: errorMessage })
   }
-})
-
-router.get('/hh', async(req, res) =>{
-  const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
-    const rate = Number(rateResult.rows[0]?.rate) || 1750;
-
-    console.log(rate)
-    console.log(typeof rate)
 })
 
 router.post("/ordersms", ensureAuthenticated, async (req, res) => {

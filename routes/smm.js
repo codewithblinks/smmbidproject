@@ -123,6 +123,7 @@ router.get("/exchange-rate", async (req, res) => {
 router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
   const userId = req.user.id;
   try {
+
     const response = await axios.get(
       `${API_URL}?key=${API_KEY}&action=services`
     );
@@ -133,9 +134,11 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       "WKSMM PROMO 📣",
       "WKSMM | High Demand Services | Never Failed",
     ];
-    const filteredData = await data.filter(
-      (item) => !excludedCategories.includes(item.category)
-    );
+    const filteredData = data
+  .filter((item) => !excludedCategories.includes(item.category))
+  .map((item) => item.category);
+
+  const uniqueCategories = [...new Set(filteredData)];
 
     const result = await db.query("SELECT * FROM userprofile WHERE id = $1", [
       userId,
@@ -163,7 +166,7 @@ router.get("/smm", ensureAuthenticated, userRole, async (req, res) => {
       messages: req.flash(),
       userDetails,
       details,
-      filteredData, notifications, timeSince
+      filteredData, notifications, timeSince, uniqueCategories
     });
   } catch (error) {
     console.error("error at smm route", error.message);

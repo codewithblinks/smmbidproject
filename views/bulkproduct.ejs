@@ -483,12 +483,12 @@
                     <td>Stock: <%= category.total_stock %>
                     </td>
                     <td>Price: <%= user.currency==='USD' ? '$' : '₦' %>
-                        <%= category.products[0].amount.toFixed(2) %>
+                      <%= parseFloat(category.products[0].convertedProductPrice).toFixed(2) %>
                     </td>
                     <td>
                       <div class="flex justify-center">
                         <button type="button" class="btn btn-primary mt-3"
-                          onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
+                          onclick="showPurchaseModal('<%= category.account_category %>', <%= parseFloat(category.products[0].convertedProductPrice).toFixed(2) %>, <%= category.total_stock %>)">
                           Order
                         </button>
                       </div>
@@ -519,13 +519,13 @@
                             </span>
                             <span class="badge badge-outline-success">Stock: <%= category.total_stock %></span>
                             <span class="badge badge-outline-dark">Price: <%= user.currency==='USD' ? '$' : '₦' %>
-                                <%= category.products[0].amount.toFixed(2) %>
+                              <%= parseFloat(category.products[0].convertedProductPrice).toFixed(2) %>
                             </span>
                           </div>
                         </div>
                         <div class="flex justify-center mt-5">
                           <button type="button" class="btn btn-primary"
-                            onclick="showPurchaseModal('<%= category.account_category %>', <%= category.products[0].amount %>, <%= category.total_stock %>)">
+                            onclick="showPurchaseModal('<%= category.account_category %>', <%= parseFloat(category.products[0].convertedProductPrice).toFixed(2) %>, <%= category.total_stock %>)">
                             Order
                           </button>
                         </div>
@@ -660,15 +660,18 @@
             const purchaseModal = document.getElementById('purchaseModal');
 
             function showPurchaseModal(category, price, stock) {
+
+              const numericPrice = parseFloat(price);
+
               modalCategory.textContent = category;
-              modalUnitPrice.textContent = price.toFixed(2);
+              modalUnitPrice.textContent = numericPrice.toFixed(2);
               modalStock.textContent = stock;
               modalQuantity.value = 1;
-              modalTotalPrice.textContent = price.toFixed(2);
+              modalTotalPrice.textContent = numericPrice.toFixed(2);
 
               modalQuantity.oninput = function () {
                 const quantity = parseInt(this.value) || 0;
-                const totalPrice = quantity * price;
+                const totalPrice = quantity * numericPrice;
                 modalTotalPrice.textContent = totalPrice.toFixed(2);
               };
 
@@ -676,7 +679,7 @@
                 const quantity = parseInt(modalQuantity.value) || 0;
 
                 if (quantity > 0) {
-                  await confirmPurchase(category, quantity, price);
+                  await confirmPurchase(category, quantity, numericPrice);
                 } else {
                   toastr.error('Quantity must be a positive number.');
                 }
