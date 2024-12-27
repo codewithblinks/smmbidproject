@@ -59,6 +59,11 @@ router.post("/smmpool/SuccessRate", ensureAuthenticated, async (req, res) => {
   const { country, service} = req.body;
 
   try {
+
+    if (!country || !service) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+
     const form = new FormData();
     form.append('country', country);
     form.append('service', service);
@@ -136,6 +141,10 @@ router.post("/sms/all_stock", ensureAuthenticated, async (req, res) => {
   const { country, service} = req.body;
 
   try {
+    if (!country || !service) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+
     const form = new FormData();
     form.append('key', BEARER_TOKEN);
     form.append('country', country);
@@ -169,6 +178,10 @@ router.post("/smmpool/pool/retrieve_valid", ensureAuthenticated, async (req, res
   const web = 1;
 
   try {
+    if (!country || !service) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+
     const form = new FormData();
     form.append('country', country);
     form.append('service', service);
@@ -197,6 +210,10 @@ router.post("/request/areacodes", ensureAuthenticated, async (req, res) => {
   const { country, service, pool} = req.body;
 
   try {
+    if (!country || !service || !pool) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+
     const form = new FormData();
     form.append('country', country);
     form.append('service', service);
@@ -225,6 +242,11 @@ router.post("/pool/successRate", ensureAuthenticated, async (req, res) => {
   const { country, service, pool} = req.body;
 
   try {
+
+    if (!country || !service || !pool) {
+      return res.status(400).json({ error: 'Country and service are required' });
+    }
+
     const form = new FormData();
     form.append('country', country);
     form.append('service', service);
@@ -445,6 +467,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
 
   try {
     const orderResult = await db.query('SELECT * FROM sms_order WHERE order_id = $1', [orderId]);
+    
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
@@ -468,7 +491,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const cancelOrders = response.data;
 
     if (cancelOrders.success !== 1) {
-      return res.status(200).json({ success: false, message: 'Your order cannot be cancelled yet, please try again later.' });
+      return res.status(400).json({ success: false, message: 'Your order cannot be cancelled yet, please try again later.' });
     }
 
     await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['refunded', orderId]);
@@ -485,8 +508,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
         `The order ${orderId} has been cancelled, and you have been refunded ${orderAmount}` 
       ])
 
-    return res.json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
-    
+    return res.status(200).json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
 
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -559,6 +581,14 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
   }
 })
 
+router.get('/hh', async(req, res) =>{
+  const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
+    const rate = Number(rateResult.rows[0]?.rate) || 1750;
+
+    console.log(rate)
+    console.log(typeof rate)
+})
+
 router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const { country, service, pricing_option, quantity, pool } = req.body;
@@ -612,7 +642,7 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
 
       await db.query('COMMIT');
 
-      return res.json({ message: data.message});
+      return res.status(200).json({ message: data.message});
 
   } catch (error) {
     await db.query('ROLLBACK');
@@ -695,7 +725,7 @@ router.post("/purchase/sms", ensureAuthenticated, async (req, res) => {
 
       await db.query('COMMIT');
 
-      return res.json({ message: data.message});
+      return res.status(200).json({ message: data.message});
 
   } catch (error) {
     await db.query('ROLLBACK');
