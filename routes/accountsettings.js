@@ -5,8 +5,8 @@ import flash from "connect-flash"
 import axios from "axios";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import {sendEmail} from "../config/transporter.js";
-import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
+import { sendEmail } from "../config/transporter.js";
+import ensureAuthenticated, { userRole } from "../authMiddleware/authMiddleware.js";
 import timeSince from "../controller/timeSince.js";
 import { sendChangeEmail, sendChangeEmailConfirmation, sendDeleteAccounEmail } from "../config/emailMessages.js";
 
@@ -28,9 +28,9 @@ router.get("/settings", ensureAuthenticated, userRole, async (req, res) => {
     const notificationsResult = await db.query(
       'SELECT * FROM notifications WHERE user_id = $1 AND read = $2 ORDER BY timestamp DESC LIMIT 5',
       [userId, false]
-  );
+    );
 
-  const notifications = notificationsResult.rows;
+    const notifications = notificationsResult.rows;
 
     if (!userDetails) {
       return res.status(404).json({ error: "User not found" });
@@ -85,7 +85,7 @@ router.post("/changeEmail", ensureAuthenticated, async (req, res) => {
         const username = userPassword.username;
 
         await sendChangeEmail(newEmail, username, verificationCode);
-        
+
 
         req.session.newEmail = newEmail;
         res.json({ success: true });
@@ -97,61 +97,89 @@ router.post("/changeEmail", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/change-email-verify-code', ensureAuthenticated, async(req, res) => {
+router.post('/change-email-verify-code', ensureAuthenticated, userRole, async (req, res) => {
   const { verificationCode } = req.body;
   const userId = req.user.id;
-  const newEmail = req.session.newEmail.toLowerCase();
 
   try {
-      const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
-      const user = userResult.rows[0];
+    if (!req.session.newEmail) {
+      return res.status(400).json({ success: false, error: "Session expired. Please initiate the email change process again." });
+    }
 
-      if (user.verification_code !== verificationCode) {
-          req.flash('error', 'Invalid verification code.');
-          return res.redirect('/settings');
-      } else {
-        await db.query('UPDATE userprofile SET email = $1, verification_code = NULL WHERE id = $2', [newEmail, userId]);
-        await db.query(
-          `INSERT INTO activity_log 
+    const newEmail = req.session.newEmail.toLowerCase();
+
+    if (!verificationCode || !newEmail) {
+      return res.status(400).json({
+        success: false,
+        error: "Verification code and new email are required.",
+      });
+    }
+
+    const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found.",
+      });
+    }
+
+    if (user.verification_code !== verificationCode) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid verification code.",
+      });
+    }
+
+    await db.query('UPDATE userprofile SET email = $1, verification_code = NULL WHERE id = $2', [newEmail, userId]);
+
+    await db.query(
+      `INSERT INTO activity_log 
           (user_id, activity)
           VALUES
           ($1, $2)`,
-          [userId, 'Email Address was changed']
-      );
+      [userId, 'Email Address was changed']
+    );
 
-      const username = user.username;
+    const username = user.username;
+    await sendChangeEmailConfirmation(newEmail, username);
 
-      await sendChangeEmailConfirmation(newEmail, username);
+    req.session.newEmail = null;
 
-        req.flash('success', 'Email updated successfully.');
-        res.redirect('/settings');
-      }
+    return res.json({
+      success: true,
+      message: "Email updated successfully.",
+    });
   } catch (err) {
-      console.log(error);
-      res.status(500).send('Server Error');
+    console.error("Error updating email:", err);
+    return res.status(500).json({
+      success: false,
+      error: "An unexpected server error occurred.",
+    });
   }
 });
 
-router.post('/cancelEmailVerify', ensureAuthenticated, async(req, res) => {
+router.post('/cancelEmailVerify', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
 
   try {
-      const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
-      const user = userResult.rows[0];
+    const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
+    const user = userResult.rows[0];
 
-        await db.query('UPDATE userprofile SET verification_code = NULL WHERE id = $1', [userId]);
-        req.flash('success', 'Update email cancel.');
-        res.redirect('/settings');
+    await db.query('UPDATE userprofile SET verification_code = NULL WHERE id = $1', [userId]);
+    req.flash('success', 'Update email cancel.');
+    res.redirect('/settings');
 
   } catch (err) {
-      console.log(error);
-      res.status(500).send('Server Error');
+    console.log(error);
+    res.status(500).send('Server Error');
   }
 });
 
-router.post("/updateUserInfo", ensureAuthenticated, async(req, res) => {
+router.post("/updateUserInfo", ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
-  const {firstname, lastname} = req.body;
+  const { firstname, lastname } = req.body;
 
   try {
     const userResult = await db.query("SELECT * FROM userprofile WHERE id = $1", [userId]);
@@ -200,18 +228,18 @@ router.post('/contact-home', async (req, res) => {
 });
 
 router.post('/update-notification-preference', ensureAuthenticated, userRole, async (req, res) => {
-  const userId = req.user.id; 
+  const userId = req.user.id;
 
   try {
-     const notifyUnusualActivity = req.body.notify_unusual_activity ? true : false;
+    const notifyUnusualActivity = req.body.notify_unusual_activity ? true : false;
 
-  await db.query('UPDATE userprofile SET notify_unusual_activity = $1 WHERE id = $2', [notifyUnusualActivity, userId]);
+    await db.query('UPDATE userprofile SET notify_unusual_activity = $1 WHERE id = $2', [notifyUnusualActivity, userId]);
 
-  res.redirect('/settings');
+    res.redirect('/settings');
   } catch (error) {
     console.log(error)
   }
- 
+
 });
 
 router.post('/account/delete', ensureAuthenticated, async (req, res) => {
@@ -241,7 +269,7 @@ router.post('/account/delete', ensureAuthenticated, async (req, res) => {
           return res.status(500).send('Error clearing session');
         }
 
-        res.redirect('/login'); 
+        res.redirect('/login');
       });
     });
 
@@ -253,18 +281,18 @@ router.post('/account/delete', ensureAuthenticated, async (req, res) => {
 
 router.post('/set-currency', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
-  const { currency } = req.body; 
+  const { currency } = req.body;
 
   if (!['USD', 'NGN'].includes(currency)) {
-      return res.status(400).json({ error: 'Invalid currency' });
+    return res.status(400).json({ error: 'Invalid currency' });
   }
 
   try {
-      await db.query('UPDATE userprofile SET currency = $1 WHERE id = $2', [currency, userId]);
-      res.json({ success: true, message: 'Currency preference updated' });
+    await db.query('UPDATE userprofile SET currency = $1 WHERE id = $2', [currency, userId]);
+    res.json({ success: true, message: 'Currency preference updated' });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Database error' });
+    console.error(error);
+    res.status(500).json({ error: 'Database error' });
   }
 });
 

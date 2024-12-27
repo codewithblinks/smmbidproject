@@ -18,12 +18,16 @@ router.get("/forgot", (req, res) => {
   
  router.post('/forgot', async (req, res) => {
     const email = req.body.email.toLowerCase();
+
     try {
+        if (!email) {
+            return res.status(400).json({ success: false, error: "Email cannot be empty." });
+          }    
         const userRes = await db.query('SELECT * FROM userprofile WHERE email = $1', [email]);
         const user = userRes.rows[0];
+
         if (!user) {
-            req.flash('error', 'Email does not exist');
-            return res.redirect('/forgot');
+            return res.status(400).json({ success: false, error: "Email does not exist" });
         }
   
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -39,12 +43,10 @@ router.get("/forgot", (req, res) => {
 
         await forgotPasswordEmail(email, username, resetLink);
   
-        req.flash('success', 'An email has been sent to ' + user.email + ' with further instructions.');
-        res.redirect('/login');
+        res.json({ success: true, message: 'An email has been sent to ' + user.email + ' with further instructions.'});
     } catch (error) {
-        console.log(error);
-        req.flash('error', 'An error occurred. Please try again.');
-        res.redirect('/forgot');
+        console.error("Error sending forget email:", err);
+       res.status(500).json({ success: false, error: "An unexpected server error occurred." });
     }
   });
 

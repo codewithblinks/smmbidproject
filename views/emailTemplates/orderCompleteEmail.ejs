@@ -99,11 +99,11 @@
             <th>Amount</th>
           </tr>
           <% products.forEach(product => { %>
-          <tr>
+          <tr style="background-color: rgb(242, 239, 239);">
             <td>
               <div style=" display: block;">
                 <div style="margin-bottom: 5px;"><%= product.orderName %></div>
-               <div><%= product.orderId %></div>
+                <div><small><%= product.orderId %></small></div>
             </div>
             </td>
             <td><%= currency %><%= product.price %></td>

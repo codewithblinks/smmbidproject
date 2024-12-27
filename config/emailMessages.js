@@ -131,13 +131,13 @@ export const sendWelcomeEmail = async (email, username) => {
   
       const mailOptions = {
         to: email,
-        subject: 'Password Reset',
+        subject: 'Email Confirmation - Password Changed',
         html: html
       };
   
       await sendEmail(mailOptions);
   
-      console.log('Verification email sent');
+      console.log('Email Confirmation - Password Changed email sent');
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
@@ -206,7 +206,8 @@ export const sendWelcomeEmail = async (email, username) => {
     try {
       const html = await ejs.renderFile(templatePath, {
         name: username,
-        appName: appName
+        appName: appName,
+        email: newEmail
       });
   
       const mailOptions = {
@@ -351,7 +352,7 @@ export const sendWelcomeEmail = async (email, username) => {
   
       const mailOptions = {
         to: email,
-        subject: 'Deposit Rjected',
+        subject: 'Deposit Rejected',
         html: html
       };
   

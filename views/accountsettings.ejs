@@ -16,11 +16,7 @@
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/perfect-scrollbar.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
   <link defer="" rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
-  <link
-  rel="shortcut icon"
-  href="assets/images/favicon.png"
-  type="image/x-icon"
-/>
+  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon" />
 
   <style>
     .fa h4 {
@@ -136,31 +132,33 @@
                 class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
                 @click="toggle">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
+                  <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path
+                    d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
               </a>
               <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
                 class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark currency-list">
-                <% if (user.currency === "USD") { %>
+                <% if (user.currency==="USD" ) { %>
                   <li data-currency="NGN">
-                     <a href="javascript:;" class="hover:text-primary">
-                       <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
-                     </a>
-                   </li>
-                   <% } else { %>
-                     <li data-currency="USD">
-                     <a href="javascript:;" class="hover:text-primary">
-                       <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
-                     </a>
-                   </li>
-                <% } %>
+                    <a href="javascript:;" class="hover:text-primary">
+                      <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
+                    </a>
+                  </li>
+                  <% } else { %>
+                    <li data-currency="USD">
+                      <a href="javascript:;" class="hover:text-primary">
+                        <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
+                      </a>
+                    </li>
+                    <% } %>
 
               </ul>
             </div>
-            
+
             <div x-data="header"
               class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
               <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
@@ -562,94 +560,23 @@
                   </form>
                 </div>
               </template>
-            <template x-if="tab === 'preferences'">
-              <div class="switch">
-                <div class="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold">Change Email Address</h5>
-                    <small>Update your current email address to new email address.</small>
-                    <div class="mb-5" x-data="modal">
-                      <div class="flex items-center">
-                        <button type="button" class="btn btn-primary" @click="toggle">Change Email</button>
-                      </div>
-                      <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 changeEmailModal"
-                        :class="open && '!block'">
-                        <div class="flex min-h-screen items-center justify-center px-4">
-                          <div x-show="open" x-transition="" x-transition.duration.300=""
-                            class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
-                            <div class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                              <h5 class="text-lg font-bold">Change Email</h5>
-                              <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                  stroke-linejoin="round" class="h-6 w-6">
-                                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                              </button>
-                            </div>
-                            <form id="changeEmailForm">
-                              <div class="p-5">
-                                <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
-                                  <div class="mb-5">
-                                    <label for="title" style="font-size: small; font-weight: bold;">Current Email
-                                      Address</label>
-                                    <input id="currentEmail" type="text" placeholder="" class="form-input"
-                                      value="<%= user.email %>" disabled>
-                                  </div>
-                                  <div class="mb-5">
-                                    <label for="title" style="font-size: small; font-weight: bold;">New Email Address
-                                      <span style="color: red;">*</span></label>
-                                    <input id="changeEmail" type="text" placeholder="" class="form-input" value=""
-                                      name="newEmail" autocomplete="email" required>
-                                  </div>
-                                  <div class="mb-5">
-                                    <label for="title" style="font-size: small; font-weight: bold;">Current Password
-                                      <span style="color: red;">*</span></label>
-                                    <input id="currentPassword" type="password" class="form-input"
-                                      name="currentPassword" autocomplete="new-password" value="" required>
-                                  </div>
-                                </div>
-                                <div class="mt-8 flex items-center justify-end">
-                                  <button type="button" id="changeEmailBTN"
-                                    class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
-                                </div>
-                              </div>
-                            </form>
-                          </div>
+              <template x-if="tab === 'preferences'">
+                <div class="switch">
+                  <div class="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold">Change Email Address</h5>
+                      <small>Update your current email address to new email address.</small>
+                      <div class="mb-5" x-data="modal">
+                        <div class="flex items-center">
+                          <button type="button" class="btn btn-primary" @click="toggle">Change Email</button>
                         </div>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold">Activity data</h5>
-                    <p>Download your account Summary, Purchase and Payment History Data</p>
-                    <button type="button" class="btn btn-primary">Download Data</button>
-                  </div>
-                </div>
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold" id="A2fa">2FA Authentication</h5>
-                    <p>Secure your <span class="text-primary">account</span> with 2FA security. When it is activated you
-                      will need to enter not only your password, but also a special code from your authenticator app.
-                    </p>
-                    <!-- 2fa modal button -->
-
-                    <div class="mb-5" x-data="modal">
-                      <div>
-                        <button type="button" class="btn btn-primary" @click="toggle" id="twofa-button">
-                          <%= user.two_factor_enabled ? 'Disable 2FA' : 'Enable 2FA' %>
-                        </button>
-                      </div>
-                      <% if (user.two_factor_enabled) { %>
-                        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60"
-                          :class="open && '!block'" id="disable2faModal">
-                          <div class="flex min-h-screen items-center justify-center px-4" @click.self="open = false">
+                        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 changeEmailModal"
+                          :class="open && '!block'">
+                          <div class="flex min-h-screen items-center justify-center px-4">
                             <div x-show="open" x-transition="" x-transition.duration.300=""
                               class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
                               <div class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                                <h5 class="text-lg font-bold">Disable 2FA Authentication</h5>
+                                <h5 class="text-lg font-bold">Change Email</h5>
                                 <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -659,38 +586,69 @@
                                   </svg>
                                 </button>
                               </div>
-                              <div class="p-5">
-                                <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
-                                  <p>
-                                    If you want to disable 2FA authentication from your account then enter your current
-                                    code.
-                                  </p>
-                                </div>
-                                <form id="disable-2fa-form">
-                                  <div class="mt-3">
-                                    <h5 class="mb-1">Enter Authenticator Code</h5>
-                                    <input type="text" name="token" id="tokendisabled" required
-                                      placeholder="Enter code to verify" class="form-input flex-1" />
+                              <form id="changeEmailForm">
+                                <div class="p-5">
+                                  <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
+                                    <div class="mb-5">
+                                      <label for="title" style="font-size: small; font-weight: bold;">Current Email
+                                        Address</label>
+                                      <input id="currentEmail" type="text" placeholder="" class="form-input"
+                                        value="<%= user.email %>" disabled>
+                                    </div>
+                                    <div class="mb-5">
+                                      <label for="title" style="font-size: small; font-weight: bold;">New Email Address
+                                        <span style="color: red;">*</span></label>
+                                      <input id="changeEmail" type="text" placeholder="" class="form-input" value=""
+                                        name="newEmail" autocomplete="email" required>
+                                    </div>
+                                    <div class="mb-5">
+                                      <label for="title" style="font-size: small; font-weight: bold;">Current Password
+                                        <span style="color: red;">*</span></label>
+                                      <input id="currentPassword" type="password" class="form-input"
+                                        name="currentPassword" autocomplete="new-password" value="" required>
+                                    </div>
                                   </div>
                                   <div class="mt-8 flex items-center justify-end">
-                                    <button type="button" class="btn btn-outline-danger"
-                                      @click="toggle">Discard</button>
-                                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
+                                    <button type="button" id="changeEmailBTN"
+                                      class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
                                   </div>
-                                </form>
-                              </div>
+                                </div>
+                              </form>
                             </div>
                           </div>
                         </div>
-                        <% } else { %>
+                      </div>
 
+                    </div>
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold">Activity data</h5>
+                      <p>Download your account Summary, Purchase and Payment History Data</p>
+                      <button type="button" class="btn btn-primary">Download Data</button>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold" id="A2fa">2FA Authentication</h5>
+                      <p>Secure your <span class="text-primary">account</span> with 2FA security. When it is activated
+                        you
+                        will need to enter not only your password, but also a special code from your authenticator app.
+                      </p>
+                      <!-- 2fa modal button -->
+
+                      <div class="mb-5" x-data="modal">
+                        <div>
+                          <button type="button" class="btn btn-primary" @click="toggle" id="twofa-button">
+                            <%= user.two_factor_enabled ? 'Disable 2FA' : 'Enable 2FA' %>
+                          </button>
+                        </div>
+                        <% if (user.two_factor_enabled) { %>
                           <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60"
-                            :class="open && '!block'" id="enable2faModal">
-                            <div class="flex min-h-screen items-center justify-center px-4">
+                            :class="open && '!block'" id="disable2faModal">
+                            <div class="flex min-h-screen items-center justify-center px-4" @click.self="open = false">
                               <div x-show="open" x-transition="" x-transition.duration.300=""
                                 class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
                                 <div class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-                                  <h5 class="text-lg font-bold">Enable 2FA Authentication</h5>
+                                  <h5 class="text-lg font-bold">Disable 2FA Authentication</h5>
                                   <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
                                       viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -702,24 +660,18 @@
                                 </div>
                                 <div class="p-5">
                                   <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
-                                    <p>Step 1: Install the Google Authenticator app from Google Play or App Store.</p>
-                                    <p>Step 2: Scan below QR code by your Google Authenticator app, or you can add
-                                      account manually into
-                                      the
-                                      app.</p>
-                                    <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-                                    <img id="qr-code" src="" alt="QR Code">
-                                    <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-                                    <div>
-                                      <p>If you can't scan the QR code, manually enter this code into your authenticator
-                                        app:</p>
-                                      <small style="color: rgb(250, 128, 128);" id="secret-key"></small>
-                                    </div>
+                                    <p>
+                                      If you want to disable 2FA authentication from your account then enter your
+                                      current
+                                      code.
+                                    </p>
                                   </div>
-                                  <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-                                  <form id="verify-2fa-form">
-                                    <input type="text" name="token" id="token" required
-                                      placeholder="Enter code to verify" class="form-input flex-1" />
+                                  <form id="disable-2fa-form">
+                                    <div class="mt-3">
+                                      <h5 class="mb-1">Enter Authenticator Code</h5>
+                                      <input type="text" name="token" id="tokendisabled" required
+                                        placeholder="Enter code to verify" class="form-input flex-1" />
+                                    </div>
                                     <div class="mt-8 flex items-center justify-end">
                                       <button type="button" class="btn btn-outline-danger"
                                         @click="toggle">Discard</button>
@@ -730,125 +682,176 @@
                               </div>
                             </div>
                           </div>
+                          <% } else { %>
 
-                          <% } %>
+                            <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60"
+                              :class="open && '!block'" id="enable2faModal">
+                              <div class="flex min-h-screen items-center justify-center px-4">
+                                <div x-show="open" x-transition="" x-transition.duration.300=""
+                                  class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
+                                  <div
+                                    class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                    <h5 class="text-lg font-bold">Enable 2FA Authentication</h5>
+                                    <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
+                                        viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                  <div class="p-5">
+                                    <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
+                                      <p>Step 1: Install the Google Authenticator app from Google Play or App Store.</p>
+                                      <p>Step 2: Scan below QR code by your Google Authenticator app, or you can add
+                                        account manually into
+                                        the
+                                        app.</p>
+                                      <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                      <img id="qr-code" src="" alt="QR Code">
+                                      <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                      <div>
+                                        <p>If you can't scan the QR code, manually enter this code into your
+                                          authenticator
+                                          app:</p>
+                                        <small style="color: rgb(250, 128, 128);" id="secret-key"></small>
+                                      </div>
+                                    </div>
+                                    <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <form id="verify-2fa-form">
+                                      <input type="text" name="token" id="token" required
+                                        placeholder="Enter code to verify" class="form-input flex-1" />
+                                      <div class="mt-8 flex items-center justify-end">
+                                        <button type="button" class="btn btn-outline-danger"
+                                          @click="toggle">Discard</button>
+                                        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Confirm</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
 
+                            <% } %>
+
+                      </div>
+
+                      <!-- 2fa modal end -->
+                    </div>
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold">Show my email</h5>
+                      <p>Your <span class="text-primary">Email</span> will be visible to anyone on the network.</p>
+                      <label class="relative h-6 w-12">
+                        <input type="checkbox"
+                          class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
+                          id="custom_switch_checkbox2">
+                        <span for="custom_switch_checkbox2"
+                          class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
+                      </label>
+                    </div>
+                    <div class="panel space-y-5">
+                      <form method="POST" action="/update-notification-preference">
+                        <h5 class="mb-4 text-lg font-semibold">Email me if encounter unusual activity</h5>
+                        <p>You will get <span class="text-primary">Email</span> notification whenever encounter invalid
+                          login activity.</p>
+                        <label class="relative h-6 w-12">
+                          <input type="checkbox"
+                            class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
+                            id="notify_unusual_activity" name="notify_unusual_activity" <%=user.notify_unusual_activity
+                            ? 'checked' : '' %> onchange="this.form.submit()"
+                          >
+                          <span for="custom_switch_checkbox3"
+                            class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
+                        </label>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <template x-if="tab === 'danger-zone'">
+                <div class="switch">
+                  <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold">Purge Cache</h5>
+                      <p>Remove the active resource from the cache without waiting for the predetermined cache expiry
+                        time.</p>
+                      <button class="btn btn-secondary">Clear</button>
+                    </div>
+                    <div class="panel space-y-5">
+                      <h5 class="mb-4 text-lg font-semibold">Deactivate Account</h5>
+                      <p>You will not be able to receive messages, notifications for up to 24 hours.</p>
+                      <label class="relative h-6 w-12">
+                        <input type="checkbox"
+                          class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
+                          id="custom_switch_checkbox7">
+                        <span for="custom_switch_checkbox7"
+                          class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
+                      </label>
                     </div>
 
-                    <!-- 2fa modal end -->
-                  </div>
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold">Show my email</h5>
-                    <p>Your <span class="text-primary">Email</span> will be visible to anyone on the network.</p>
-                    <label class="relative h-6 w-12">
-                      <input type="checkbox"
-                        class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                        id="custom_switch_checkbox2">
-                      <span for="custom_switch_checkbox2"
-                        class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
-                    </label>
-                  </div>
-                  <div class="panel space-y-5">
-                    <form method="POST" action="/update-notification-preference">
-                    <h5 class="mb-4 text-lg font-semibold">Email me if encounter unusual activity</h5>
-                    <p>You will get <span class="text-primary">Email</span> notification whenever encounter invalid login activity.</p>
-                    <label class="relative h-6 w-12">
-                      <input type="checkbox"
-                        class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                        id="notify_unusual_activity" name="notify_unusual_activity" 
-                        <%= user.notify_unusual_activity ? 'checked' : '' %> onchange="this.form.submit()"
-                        >
-                      <span for="custom_switch_checkbox3"
-                        class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
-                    </label>
-                  </form>
+                    <div class="panel space-y-5">
+                      <form id="deleteAccountForm" action="/account/delete" method="post">
+                        <h5 class="mb-4 text-lg font-semibold">Delete Account</h5>
+                        <p>Once you delete the account, there is no going back. Please be certain.</p>
+                        <button type="button" class="btn btn-danger btn-delete-account"
+                          onclick="confirmAccountDelete()">Delete my account</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
-            <template x-if="tab === 'danger-zone'">
-              <div class="switch">
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold">Purge Cache</h5>
-                    <p>Remove the active resource from the cache without waiting for the predetermined cache expiry
-                      time.</p>
-                    <button class="btn btn-secondary">Clear</button>
-                  </div>
-                  <div class="panel space-y-5">
-                    <h5 class="mb-4 text-lg font-semibold">Deactivate Account</h5>
-                    <p>You will not be able to receive messages, notifications for up to 24 hours.</p>
-                    <label class="relative h-6 w-12">
-                      <input type="checkbox"
-                        class="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                        id="custom_switch_checkbox7">
-                      <span for="custom_switch_checkbox7"
-                        class="block h-full rounded-full bg-[#ebedf2] before:absolute before:left-1 before:bottom-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
-                    </label>
-                  </div>
+              </template>
+            </div>
+          </div>
 
-                  <div class="panel space-y-5">
-                    <form id="deleteAccountForm" action="/account/delete" method="post">
-                    <h5 class="mb-4 text-lg font-semibold">Delete Account</h5>
-                    <p>Once you delete the account, there is no going back. Please be certain.</p>
-                    <button type="button" class="btn btn-danger btn-delete-account" onclick="confirmAccountDelete()">Delete my account</button>
-                  </form>
-                  </div>
+
+        </div>
+
+        <!-- end main content section -->
+      </div>
+
+      <!-- start footer section -->
+      <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
+        © <span id="footer-year">2022</span>.
+      </div>
+      <!-- end footer section -->
+    </div>
+    <!-- Verification Code Modal -->
+    <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 verificationCodeModal"
+      id="verificationCodeModal">
+      <div class="flex min-h-screen items-center justify-center px-4">
+        <div class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
+          <div class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+            <h5 class="text-lg font-bold">Verify Email</h5>
+          </div>
+          <form id="verifyCodeForm">
+            <div class="p-5">
+              <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
+                <p> <small>
+                    Now we need to verify your new email address.
+                    We have sent an email to new email to verify your address. Please check your inbox (including spam
+                    folder)
+                    for the verification code.
+                  </small>
+                </p>
+                <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
+              </div>
+              <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
+                <div class="mb-5">
+                  <label for="verificationCode" style="font-size: small; font-weight: bold;">Enter Verification
+                    Code<span style="color: red;">*</span></label>
+                  <input id="verificationCode" type="text" placeholder="" class="form-input" required>
                 </div>
               </div>
-            </template>
-          </div>
-        </div>
-
-
-      </div>
-
-      <!-- end main content section -->
-    </div>
-
-    <!-- start footer section -->
-    <div class="p-6 pt-0 mt-auto text-center dark:text-white-dark ltr:sm:text-left rtl:sm:text-right">
-      © <span id="footer-year">2022</span>.
-    </div>
-    <!-- end footer section -->
-  </div>
-  <!-- Verification Code Modal -->
-  <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 verificationCodeModal"
-    id="verificationCodeModal">
-    <div class="flex min-h-screen items-center justify-center px-4">
-      <div class="panel my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0">
-        <div class="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
-          <h5 class="text-lg font-bold">Verify Email</h5>
-        </div>
-        <form id="verifyCodeForm" action="/change-email-verify-code" method="POST">
-          <div class="p-5">
-            <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
-              <p> <small>
-                  Now we need to verify your new email address.
-                  We have sent an email to new email to verify your address. Please check your inbox (including spam
-                  folder)
-                  for the verification code.
-                </small>
-              </p>
-              <hr class="my-6 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            </div>
-            <div class="text-base font-medium text-[#1f2937] dark:text-white-dark/70">
-              <div class="mb-5">
-                <label for="verificationCode" style="font-size: small; font-weight: bold;">Enter Verification Code<span
-                    style="color: red;">*</span></label>
-                <input id="verificationCode" type="text" placeholder="" class="form-input" name="verificationCode"
-                  required>
+              <div class="mt-8 flex items-center justify-end">
+                <button type="button" id="cancelEmailVerify" class="btn btn-outline-danger">Cancel</button>
+                <button type="submit" class="btn btn-outline-primary ltr:ml-4 rtl:mr-4" id="verifyBTN">Verify</button>
               </div>
             </div>
-            <div class="mt-8 flex items-center justify-end">
-              <button type="button" id="cancelEmailVerify" class="btn btn-outline-danger">Cancel</button>
-              <button type="submit" class="btn btn-outline-primary ltr:ml-4 rtl:mr-4">Verify</button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
   </div>
   <% if (messages.error) { %>
@@ -904,7 +907,7 @@
           </script>
 
           <script>
-             async function confirmAccountDelete() {
+            async function confirmAccountDelete() {
               new window.Swal({
                 icon: 'warning',
                 title: 'Are you sure?',
@@ -967,7 +970,7 @@
               if (profilePicture) {
 
                 profilePicture.addEventListener('click', () => {
-                  fileInput.click(); 
+                  fileInput.click();
                 });
 
                 fileInput.addEventListener('change', () => {
@@ -1078,6 +1081,9 @@
                     const newEmail = document.getElementById('changeEmail').value;
                     const currentPassword = document.getElementById('currentPassword').value;
 
+                    changeEmailBTN.disabled = true;
+                    changeEmailBTN.textContent = 'Processing...';
+
                     try {
                       const response = await fetch('/changeEmail', {
                         method: 'POST',
@@ -1101,6 +1107,10 @@
                     } catch (error) {
                       console.error('Error:', error);
                       toastr.error('Something went wrong. Please try again.');
+                    } finally {
+                      // Restore button state
+                      changeEmailBTN.disabled = false;
+                      changeEmailBTN.textContent = 'Add';
                     }
                   });
 
@@ -1109,6 +1119,51 @@
               }
             }
 
+            document.getElementById('verifyCodeForm').addEventListener("submit", async function (e) {
+              e.preventDefault();
+
+              const verificationCode = document.getElementById("verificationCode").value.trim();
+              const verifyBTN = document.getElementById('verifyBTN');
+
+              if (!verificationCode) {
+                toastr.error('Verification code cannot be empty.');
+                return;
+              }
+
+              const data = {
+                verificationCode,
+              }
+
+              verifyBTN.disabled = true;
+              verifyBTN.textContent = 'Verifying...';
+
+              try {
+                const response = await fetch('/change-email-verify-code', {
+                  method: 'POST',
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                  toastr.success(result.message || "Email updated successfully.");
+                  setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
+                } else {
+                  toastr.error(result.error || "Something went wrong.");
+                }
+              } catch (error) {
+                toastr.error('An unexpected error occurred.');
+                console.error('Error submitting form:', error);
+              } finally {
+                verifyBTN.disabled = false;
+                verifyBTN.textContent = 'Verify';
+              }
+            })
           </script>
 
           <script>
