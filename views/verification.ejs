@@ -747,13 +747,14 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   document.addEventListener('click', async (event) => {
                     if (event.target.closest('.refund-button')) {
                       const refundButton = event.target.closest('.refund-button')
-
+                      const originalContent = refundButton.innerHTML;
                       const orderId = refundButton.getAttribute('data-order-id');
-
-                      refundButton.disabled = true;
 
 
                       if (confirm('Are you sure you want to cancel and refund this order?')) {
+                        refundButton.disabled = true;
+                        refundButton.innerHTML = `<span class="flex items-center">Processing...</span>`;
+
                         try {
                           const response = await fetch('/sms/cancel', {
                             method: 'POST',
@@ -779,6 +780,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         } finally {
                           setTimeout(() => {
                             refundButton.disabled = false;
+                            refundButton.innerHTML = originalContent;
                           }, 60000);
                         }
                       } else {
@@ -790,13 +792,16 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   document.addEventListener('click', async (event) => {
                     if (event.target.closest('.resend-button')) {
-                      const button = event.target.closest('.resend-button')
+                      const resendButton = event.target.closest('.resend-button')
+                      const resendoriginalContent = resendButton.innerHTML;
+                      const orderId = resendButton.getAttribute('data-order-id');
 
-                      const orderId = button.getAttribute('data-order-id');
-
-                      button.disabled = true;
 
                       if (confirm('Are you sure you would like to resend this order??')) {
+
+                        resendButton.disabled = true;
+                        resendoriginalContent.innerHTML = `<span class="flex items-center">Processing...</span>`;
+
                         try {
                           const response = await fetch('/sms/resend', {
                             method: 'POST',
@@ -808,22 +813,24 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           const result = await response.json();
 
                           if (result.success === true) {
-                            toastr.success(`Refund success: ${result.message}`);
+                            toastr.success(`${result.message}`);
                             setTimeout(() => {
                               location.reload();
                           }, 1000);
                           } else {
-                            toastr.error(`Refund failed: ${result.message}`);
+                            toastr.error(`${result.message}`);
                           }
                         } catch (error) {
-                          toastr.error('Error processing refund');
+                          console.error('Error processing refund:', error);
+                          toastr.error('An error occurred while processing your request.');
                         } finally {
                           setTimeout(() => {
-                            button.disabled = false;
+                            resendButton.disabled = false;
+                            resendButton.innerHTML = resendoriginalContent;
                           }, 60000);
                         }
                       } else {
-                        button.disabled = false;
+                        resendButton.disabled = false;
                       }
                     }
                   });
