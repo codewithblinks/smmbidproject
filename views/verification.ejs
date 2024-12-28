@@ -683,7 +683,6 @@
 
                   const socket = io();
 
-
                   socket.on('orderStatusUpdated', (data) => {
                     const { order_code, cc, number, code, short_name, service, status, time_left } = data;
                     updateTable(order_code, cc, number, code, short_name, service, status, time_left);
@@ -716,7 +715,7 @@
             ${item.status === 'pending' ? `Awaiting code(${item.time_left})` : `${item.status}`}</span></td>
            <td class="action">
             ${item.status === 'pending' ? getRefundButton(item.order_code)
-                          : (item.status === 'expired' && item.cost !== 0.00 ? getRefundButton(item.order_code)
+                          : (item.status === 'expired' && parseFloat(item.cost) !== 0.00 ? getRefundButton(item.order_code)
                             : getResendButton(item.order_code))}
              </td>
            

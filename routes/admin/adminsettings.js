@@ -25,6 +25,27 @@ router.get('/admin/settings', adminEnsureAuthenticated, adminRole, async (req, r
   
 });
 
+router.get('/admin/setting', adminEnsureAuthenticated, adminRole, async (req, res) => {
+  
+  const adminId = req.user.id;
+  try {
+    const adminResult = await db.query("SELECT * FROM admins WHERE id = $1", [adminId]);
+    const user = adminResult.rows[0];
+
+    const userResult = await db.query("SELECT email, id FROM userprofile WHERE email_verified = $1", [true]);
+    const usersEmail = userResult.rows.map(row => row);
+
+    const rateResult = await db.query("SELECT * FROM Miscellaneous WHERE id = $1", [1]);
+    const rate = rateResult.rows[0];
+
+    res.render('admin/settingsAdmin.ejs', {rate, user, usersEmail, messages: req.flash(),});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+  
+});
+
 router.post('/admin/rates', adminEnsureAuthenticated, adminRole, async (req, res) => {
     const rate = req.body.rate
 
