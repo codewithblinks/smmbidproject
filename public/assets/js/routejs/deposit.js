@@ -57,17 +57,6 @@
     }
   });
 
-  // function checkMinAmountCrytomus(input) {
-  //   const minAmount = userCurrency === "USD" ? 3 : 1500;
-  //   const sign = userCurrency === "USD" ? '$' : '₦';
-  //   const value = parseFloat(input.value);
-
-  //   if (isNaN(value) || value < minAmount) {
-  //     input.setCustomValidity(`Minimum deposit is ${sign}${minAmount}`);
-  //   } else {
-  //     input.setCustomValidity('');
-  //   }
-  // }
 
 //bank deposit
   const depositForm = document.getElementById('depositForm');
@@ -93,6 +82,12 @@
     
     if (!paymentProof) {
       toastr.error("Please upload a valid payment proof.");
+      return;
+    }
+
+    const validImageTypes = ['image/png', 'image/jpeg'];
+    if (!validImageTypes.includes(paymentProof.type)) {
+      toastr.error("Only PNG and JPEG images are allowed.");
       return;
     }
    
@@ -129,3 +124,27 @@
       submitBtn.textContent = "I've sent the money";
     }
   });
+
+  function checkMinAmount(input) {
+    const minAmount = 500;
+    const value = parseFloat(input.value);
+
+    if (isNaN(value) || value < minAmount) {
+      toastr.error(`Minimum deposit is ₦${minAmount}`);
+      input.setCustomValidity(`Minimum deposit is ₦${minAmount}`);
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+
+  function checkMinAmountCrytomus(input) {
+    const minAmount = userCurrency === "USD" ? 3 : 1500;
+    const sign = userCurrency === "USD" ? '$' : '₦';
+    const value = parseFloat(input.value);
+
+    if (isNaN(value) || value < minAmount) {
+      input.setCustomValidity(`Minimum deposit is ${sign}${minAmount}`);
+    } else {
+      input.setCustomValidity('');
+    }
+  }
