@@ -275,9 +275,13 @@ router.post("/all/account/buy", ensureAuthenticated, userRole, async (req, res) 
 
     const email = user.email;
     const username = user.username;
-    const purchaseId = purchaseNumber;
 
-    await sendOrderCompleteEmail(email, username, purchaseId);
+    await sendOrderCompleteEmail(email, username, [{
+      orderId: purchaseNumber,
+      orderName: product.account_type,
+      price: product.amount
+    }], product.amount, user.currency);
+    
 
     req.flash("success", `You have successfully purchase a ${product.account_type} account with the purchase id : ${purchaseNumber}`);
 

@@ -98,6 +98,7 @@
             <th>Service Provided</th>
             <th>Amount</th>
           </tr>
+          <% if (products && Array.isArray(products) && products.length > 0) { %>
           <% products.forEach(product => { %>
           <tr style="background-color: rgb(242, 239, 239);">
             <td>
@@ -109,6 +110,11 @@
             <td><%= currency %><%= product.price %></td>
           </tr>
           <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="2" style="text-align: center; padding: 10px;">No products available</td>
+            </tr>
+          <% } %>
           <tr class="total">
             <th>Total</th>
             <th><%= currency %><%= totalCost %></th>

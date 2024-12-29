@@ -18,7 +18,7 @@
       isNaN(cryptoAmountValue) ||
       cryptoAmountValue < minAmount
     ) {
-      toastr.error(`Please fill in all fields with a valid deposit amount minimum ${sign}${minAmount}).`);
+      toastr.error(`Minimum deposit amount is ${sign}${minAmount}).`);
       return;
     }
 
@@ -57,17 +57,17 @@
     }
   });
 
-  function checkMinAmountCrytomus(input) {
-    const minAmount = userCurrency === "USD" ? 3 : 1500;
-    const sign = userCurrency === "USD" ? '$' : '₦';
-    const value = parseFloat(input.value);
+  // function checkMinAmountCrytomus(input) {
+  //   const minAmount = userCurrency === "USD" ? 3 : 1500;
+  //   const sign = userCurrency === "USD" ? '$' : '₦';
+  //   const value = parseFloat(input.value);
 
-    if (isNaN(value) || value < minAmount) {
-      input.setCustomValidity(`Minimum deposit is ${sign}${minAmount}`);
-    } else {
-      input.setCustomValidity('');
-    }
-  }
+  //   if (isNaN(value) || value < minAmount) {
+  //     input.setCustomValidity(`Minimum deposit is ${sign}${minAmount}`);
+  //   } else {
+  //     input.setCustomValidity('');
+  //   }
+  // }
 
 //bank deposit
   const depositForm = document.getElementById('depositForm');
@@ -78,15 +78,26 @@
 
     const bankAmountInput = document.getElementById('bank-amount');
     const bankAmountValue = parseFloat(bankAmountInput.value);
+    const transactionReference = document.getElementById('transaction_reference').value;
+    const paymentProof = document.getElementById('paymentProof').files[0];
 
-    if (
-      !bankAmountValue ||
-      isNaN(bankAmountValue) || 
-      bankAmountValue < 500 || 
-      !document.getElementById('transaction_reference').value || 
-      !document.getElementById('paymentProof').files.length
-    ) {
-      toastr.error("Please fill in all fields with a valid deposit amount (minimum ₦500) and upload a payment proof.");
+    if (!bankAmountValue || isNaN(bankAmountValue) || bankAmountValue < 500) {
+      toastr.error("Minimum deposit amount is ₦500.");
+      return;
+    }
+
+    if (!transactionReference) {
+      toastr.error("Transaction reference is required.");
+      return;
+    }
+    
+    if (!paymentProof) {
+      toastr.error("Please upload a valid payment proof.");
+      return;
+    }
+   
+    if (paymentProof.size > 5 * 1024 * 1024) { 
+      toastr.error("File size must be less than 5MB.");
       return;
     }
 
@@ -103,9 +114,8 @@
 
       if (response.ok) {
         toastr.success("Deposit submitted successfully. Awaiting approval.");
-        const redirectUrl = '/transactions';
         setTimeout(() => {
-          window.location.href = redirectUrl;
+          window.location.href = '/transactions';
         }, 1000);
       } else {
         const errorData = await response.json();
@@ -113,18 +123,9 @@
       }
     } catch (error) {
       toastr.error("An error occurred while processing the deposit.");
+      console.log(error)
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "I've sent the money";
     }
   });
-  function checkMinAmount(input) {
-    const minAmount = 500;
-    const value = parseFloat(input.value);
-
-    if (isNaN(value) || value < minAmount) {
-      input.setCustomValidity(`Minimum deposit is ₦${minAmount}`);
-    } else {
-      input.setCustomValidity('');
-    }
-  }
