@@ -198,7 +198,7 @@ async function getTotalSmsProfit(period) {
         FROM 
             sms_order
         WHERE 
-            status = 'complete'
+            status = 'completed'
             AND DATE(timestamp) = CURRENT_DATE;
       `;
       break;
@@ -211,7 +211,7 @@ async function getTotalSmsProfit(period) {
         FROM 
             sms_order
         WHERE 
-            status = 'complete'
+            status = 'completed'
             AND EXTRACT(WEEK FROM timestamp) = EXTRACT(WEEK FROM CURRENT_DATE)
             AND EXTRACT(YEAR FROM timestamp) = EXTRACT(YEAR FROM CURRENT_DATE);
       `;
@@ -225,7 +225,7 @@ async function getTotalSmsProfit(period) {
         FROM 
             sms_order
         WHERE 
-            status = 'complete'
+            status = 'completed'
             AND EXTRACT(MONTH FROM timestamp) = EXTRACT(MONTH FROM CURRENT_DATE)
             AND EXTRACT(YEAR FROM timestamp) = EXTRACT(YEAR FROM CURRENT_DATE);
       `;
@@ -318,7 +318,7 @@ const smsResult = await db.query(`
   SELECT SUM(amount) AS total_successful_sms_purchases,
   COUNT(*) AS total_sms_sold
   FROM sms_order
-  WHERE status = 'complete';
+  WHERE status = 'completed';
 `);
 
 const totalSmsAmount = smsResult.rows[0];

@@ -306,7 +306,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
               console.warn(`Order ${order.order_code} not found in sms_order table.`);
             } else {
             notifyOrderStatusChange(order);
-            console.log(`Order ${order.order_code} updated to complete with code ${order.code}`);
+            console.log(`Order ${order.order_code} updated to completed with code ${order.code}`);
           }
           } catch (dbError) {
             console.error(`Error updating order ${order.order_code}:`, dbError);
@@ -419,7 +419,7 @@ const getPhoneNumbersByStatus = async (userId) => {
     );
     const completedResult = await db.query(
       'SELECT * FROM sms_order WHERE user_id = $1 AND status = $2',
-      [userId, 'complete']
+      [userId, 'completed']
     );
     const expiredResult = await db.query(
       'SELECT * FROM sms_order WHERE user_id = $1 AND status = $2',
@@ -522,7 +522,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
           return res.status(200).json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
 
         } else if (activeOrder.status === 'refunded' && parseFloat(activeOrder.cost) === 0.00) {
-          await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', ['cancelled_no_refund', orderId]);
+          await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [activeOrder.status, orderId]);
       
           await db.query(
             `INSERT INTO notifications (user_id, type, message) 
