@@ -582,8 +582,20 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     const checkResendResponse = await axios.post('https://api.smspool.net/sms/check_resend', checkForm, { headers });
     const checkResend = checkResendResponse.data;
 
-    if ( checkResend.success !== 1) {
+    if (checkResend.success !== 1) {
       return res.status(400).json({ success: false, message: `${checkResend.message}` });
+    }
+
+    const result = await db.query('SELECT balance FROM userprofile WHERE id = $1', [userId]);
+    const user = result.rows[0];
+    const userBalance = Number(user.balance)
+    const resendCost = Number(checkResend.resendCost);
+
+    console.log(checkResend.resendCost)
+    console.log(typeof checkResend.resendCost)
+
+    if (!user || userBalance < resendCost) {
+      return res.status(400).json({ error: `Insufficient balance to proceed with resend, please top up your balance! Resend Cost: ₦${resendCost}` });
     }
 
     const resendForm = new FormData();
@@ -603,10 +615,10 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
 
     const rateResult = await db.query('SELECT rate FROM miscellaneous WHERE id = 1');
     const rate = Number(rateResult.rows[0]?.rate) || 1750;
-    const orderCharge = checkResend.resendCost * rate;
-    const charge = checkResend.charge === 0 ? 0 : Math.floor(orderCharge + 500);
+    const orderCharge = resend.charge * rate;
+    const charge = resend.charge === 0 ? 0 :  Math.ceil(orderCharge + 500);
 
-    if (charge > 0) {
+    if (resend.charge > 0) {
       const updateBalanceQuery = 'UPDATE userprofile SET balance = balance - $1 WHERE id = $2';
       await db.query(updateBalanceQuery, [charge, userId]);
     }
@@ -616,9 +628,9 @@ router.post("/sms/resend", ensureAuthenticated, async (req, res) => {
     return res.status(200).json({ success: true, message: resend.message });
 
   } catch (error) {
-    console.error('Error in /sms/resend:', error);
+    console.error('Error in /sms/resend:', error.message || error);
     const errorMessage = error.response?.data?.message || 'Internal server error.';
-    return res.status(500).json({ success: false, message: errorMessage })
+    return res.status(500).json({ success: false, message: errorMessage });
   }
 })
 
