@@ -778,9 +778,9 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           console.error('Error processing refund:', error);
                           alert('Error processing refund');
                         } finally {
+                          refundButton.innerHTML = originalContent;
                           setTimeout(() => {
                             refundButton.disabled = false;
-                            refundButton.innerHTML = originalContent;
                           }, 60000);
                         }
                       } else {
@@ -800,7 +800,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                       if (confirm('Are you sure you would like to resend this order??')) {
 
                         resendButton.disabled = true;
-                        resendoriginalContent.innerHTML = `<span class="flex items-center">Processing...</span>`;
+                        resendButton.innerHTML = `<span class="flex items-center">Processing...</span>`;
 
                         try {
                           const response = await fetch('/sms/resend', {
@@ -825,8 +825,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           toastr.error('An error occurred while processing your request.');
                         } finally {
                           setTimeout(() => {
-                            resendButton.disabled = false;
                             resendButton.innerHTML = resendoriginalContent;
+                            resendButton.disabled = false;
                           }, 60000);
                         }
                       } else {
