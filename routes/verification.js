@@ -471,8 +471,7 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     }
 
     const order = orderResult.rows[0];
-
-    console.log(order.status)
+    console.log('Order status:', order.status);
     
     if (order.status !== 'pending' && order.status !== 'expired') {
       return res.status(400).json({ success: false, message: 'Order is not eligible for refund' });
@@ -481,70 +480,43 @@ router.post("/sms/cancel", ensureAuthenticated, async (req, res) => {
     const form = new FormData();
     form.append('orderid', orderId);
     form.append('key', BEARER_TOKEN);
+    const response = await axios.post('https://api.smspool.net/sms/cancel', form, { headers: form.getHeaders() });
 
-    const headers = {
-      ...form.getHeaders(),
-    };
-
-    const response = await axios.post('https://api.smspool.net/sms/cancel', form, { headers });
-
-    const cancelOrders = response.data;
-    if (cancelOrders.success !== 1) {
-      return res.status(400).json({ success: false, message: cancelOrders.message || 'Your order cannot be cancelled yet, please try again later.' });
+    if (response.data.success !== 1) {
+      return res.status(400).json({ success: false, message: response.data.message || 'Your order cannot be cancelled yet, please try again later.' });
     }
 
-    const activeform = new FormData();
-    activeform.append('key', BEARER_TOKEN);
-    const activeheaders = {
-      ...activeform.getHeaders(),
-    };
-    const activeresponse = await axios.post('https://api.smspool.net/request/history', form, { headers: activeheaders });
+    const activeForm = new FormData();
+    activeForm.append('key', BEARER_TOKEN);
+    const activeResponse = await axios.post('https://api.smspool.net/request/history', activeForm, { headers: activeForm.getHeaders() });
 
-    const activeOrders = activeresponse.data;
-
-    let userNotified = false; 
+    const activeOrders = activeResponse.data;
+    console.log('Active orders:', activeOrders);
 
     for (const activeOrder of activeOrders) {
       if (orderId.includes(activeOrder.order_code)) {
-        if (activeOrder.status === 'refunded' && parseFloat(activeOrder.cost) > 0.00) {
-          await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [activeOrder.status, orderId]);
-
-          const orderAmount = Number(order.amount);
-          const updateBalanceQuery = 'UPDATE userprofile SET balance = balance + $1 WHERE id = $2';
-          await db.query(updateBalanceQuery, [orderAmount, userId]);
-
-          await db.query(
-            `INSERT INTO notifications (user_id, type, message) 
-             VALUES ($1, $2, $3)`,
-            [userId, 'purchase', `The order ${orderId} has been cancelled, and you have been refunded ₦${orderAmount}`]
-          );
-
-          return res.status(200).json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
-
-        } else if (activeOrder.status === 'refunded' && parseFloat(activeOrder.cost) === 0.00) {
-          await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [activeOrder.status, orderId]);
-      
-          await db.query(
-            `INSERT INTO notifications (user_id, type, message) 
-             VALUES ($1, $2, $3)`,
-            [userId, 'purchase', `The order ${orderId} has been cancelled. However, no refund was provided as the cost is ₦0.00.`]
-          );
-      
-          return res.status(200).json({ success: true, message: 'The order has been cancelled, but no refund was issued as the cost was ₦0.00.' });
-        } else {
-          // Notify the user that the order was cancelled but no refund is provided
-          await db.query(
-            `INSERT INTO notifications (user_id, type, message) 
-             VALUES ($1, $2, $3)`,
-            [userId, 'purchase', `The order ${orderId} has been cancelled, but you are not eligible for a refund.`]
-          );
-          userNotified = true;
+        await db.query('UPDATE sms_order SET status = $1 WHERE order_id = $2', [activeOrder.status, orderId]);
+        if (activeOrder.status === 'refunded') {
+          
+          if (parseFloat(activeOrder.cost) > 0.00) {
+            const orderAmount = Number(order.amount);
+            await db.query('UPDATE userprofile SET balance = balance + $1 WHERE id = $2', [orderAmount, userId]);
+            await db.query(
+              `INSERT INTO notifications (user_id, type, message) 
+               VALUES ($1, $2, $3)`,
+              [userId, 'purchase', `The order ${orderId} has been cancelled, and you have been refunded ₦${orderAmount}`]
+            );
+            return res.status(200).json({ success: true, message: 'The order has been cancelled, and you have been refunded.' });
+          } else {
+            await db.query(
+              `INSERT INTO notifications (user_id, type, message) 
+               VALUES ($1, $2, $3)`,
+              [userId, 'purchase', `The order ${orderId} has been cancelled. No refund issued as the cost is ₦0.00.`]
+            );
+            return res.status(200).json({ success: true, message: 'The order has been cancelled, but no refund was issued as the cost was ₦0.00.' });
+          }
         }
       }
-    }
-
-    if (userNotified) {
-      return res.status(200).json({ success: true, message: 'The order has been cancelled, but no refund was issued.' });
     }
 
     return res.status(400).json({ success: false, message: 'No eligible active order found for cancellation.' });

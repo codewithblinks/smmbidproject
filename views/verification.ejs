@@ -776,7 +776,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                           }
                         } catch (error) {
                           console.error('Error processing refund:', error);
-                          alert('Error processing refund');
+                          toastr.error('Error processing refund');
                         } finally {
                           refundButton.innerHTML = originalContent;
                           setTimeout(() => {
@@ -810,7 +810,16 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                             },
                             body: JSON.stringify({ orderId })
                           });
+
+                          if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                          }
+
+
                           const result = await response.json();
+
+                          console.log('API response:', result);
+
 
                           if (result.success === true) {
                             toastr.success(`${result.message}`);
