@@ -24,7 +24,7 @@ async function getEmailConfig() {
 async function createTransporter() {
   const config = await getEmailConfig();
   return nodemailer.createTransport({
-    host: 'zifinvest.com',
+    host: 'mail.privateemail.com',
     port: 465,
     secure: true, // Use SSL
     auth: {

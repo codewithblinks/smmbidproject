@@ -22,19 +22,16 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
       }
     });
 
-    const serviceResponse = await axios.get('https://api.smspool.net/service/retrieve_all', {
-      headers: {
-        'Authorization': `Bearer ${BEARER_TOKEN}`
-      }
-    });
-
     const poolResponse = await axios.post('https://api.smspool.net/pool/retrieve_all', {
       headers: {
         'Authorization': `Bearer ${BEARER_TOKEN}`
       }
     });
-    const countries = countryResponse.data;
+
+    const serviceResponse = await axios.get(`https://api.smspool.net/service/retrieve_all?key=${BEARER_TOKEN}`);
+
     const services = serviceResponse.data;
+    const countries = countryResponse.data;
     const pools = poolResponse.data;
 
     const userResult = await db.query('SELECT * FROM userprofile WHERE id = $1', [userId]);
@@ -51,6 +48,27 @@ router.get("/verification", ensureAuthenticated, userRole, async (req, res) => {
   } catch (error) {
     console.error("error at verification", error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.get('/get-services', ensureAuthenticated, async (req, res) => {
+  const { countryId } = req.query;
+  console.log(countryId)
+
+  if (!countryId) {
+    return res.status(400).json({ error: 'Country ID is required' });
+  }
+
+  try {
+    const serviceResponse = await axios.get(`https://api.smspool.net/service/retrieve_all?key=${BEARER_TOKEN}&country=${countryId}`);
+
+    const services = serviceResponse.data;
+
+    res.json(services);
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -317,7 +335,7 @@ const fetchAndFilterActiveOrders = async (orderCodes) => {
 
     // Filter only pending orders to return
     const filteredOrders = activeOrders.filter(order => 
-      (order.status === 'pending' || order.status === 'completed' || order.status === 'expired') 
+      (order.status === 'pending' || order.status === 'completed' || order.status === 'activating' || order.status === 'expired') 
       && orderCodes.includes(order.order_code));
       
     return filteredOrders;

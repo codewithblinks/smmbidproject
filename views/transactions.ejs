@@ -137,35 +137,7 @@
             <div x-data="header"
               class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
               <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
-                <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
-                  <a href="javascript:;"
-                    class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
-                    @click="toggle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                      <path d="M12 17V17.5V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      <path d="M12 6V6.5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      <path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      </svg>
-                  </a>
-                  <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
-                    class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark currency-list">
-                    <% if (user.currency === "USD") { %>
-                      <li data-currency="NGN">
-                         <a href="javascript:;" class="hover:text-primary">
-                           <span class="ltr:ml-3 rtl:mr-3">Naira (₦)</span>
-                         </a>
-                       </li>
-                       <% } else { %>
-                         <li data-currency="USD">
-                         <a href="javascript:;" class="hover:text-primary">
-                           <span class="ltr:ml-3 rtl:mr-3">Dollar ($)</span>
-                         </a>
-                       </li>
-                    <% } %>
-    
-                  </ul>
-                </div>
+             
               </div>
               <div>
                 <a href="javascript:;" x-cloak="" x-show="$store.app.theme === 'light'" href="javascript:;"
