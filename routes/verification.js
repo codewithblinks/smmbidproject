@@ -630,7 +630,6 @@ router.post("/ordersms", ensureAuthenticated, async (req, res) => {
   const displaycharge1 = Number(req.body.displaycharge1);
   const charge = Number(req.body.charge);
 
-
   try {
     await db.query('BEGIN');
 
