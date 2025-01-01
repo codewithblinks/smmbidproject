@@ -203,7 +203,7 @@ router.get("/admin/active/products", adminEnsureAuthenticated, adminRole, async(
             ON purchases_admin_product.product_id = admin_products.id
             WHERE 
             admin_products.payment_status = $1 
-            ORDER BY created_at 
+            ORDER BY sold_at 
             DESC LIMIT $2 OFFSET $3`, 
             ["sold", limit, offset]);
 

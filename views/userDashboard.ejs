@@ -527,11 +527,11 @@
               <div class="panel h-full">
                 <div class="mb-5 items-center justify-between dark:text-white-light">
                   <h5 class="text-lg font-semibold">Weekly Transaction Challenge</h5>
-                  <p id="show"><small>Complete transactions totaling <%= user.currency === 'USD' ? '$11.947' : '₦20,000'%> to win a prize!</small></p>
+                  <p id="show"><small>Complete transactions totaling <span id="total">₦20,000</span> to win a prize!</small></p>
                   <p style="display: none;" id="win"><small>Congratulations you have completed this week Challenge</small></p>
                 </div>
                 <div class="my-10 text-3xl font-bold text-[#e95f2b]">
-                  <small><span id="progress-text"></span></small>
+                  <small><span id="progress-text">₦0.00 / ₦20,000</span></small>
                   <span class="text-sm text-black ltr:mr-1 rtl:ml-1 dark:text-white-light">this week
                   </span>
                   <svg class="inline h-5 w-5 text-success" viewbox="0 0 24 24" fill="none"

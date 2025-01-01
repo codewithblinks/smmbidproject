@@ -83,12 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const progressBar = document.getElementById('progress-bar');
                     const progressBarCount = document.getElementById('progress-bar-count');
                     const progressText = document.getElementById('progress-text');
+                    const total = document.getElementById('total');
 
                     if (progressBar && progressBarCount && progressText) {
                     const progressValue = Math.floor(data.progress) || 0;
                     progressBar.style.width = `${progressValue}%`;
                     progressBarCount.innerText = `${progressValue}%`;
                     progressText.innerText = `${sign}${data.totalSuccessfulTransaction} / ${sign}${formattedPrize}`;
+                    total.innerText = `${sign}${formattedPrize}`;
                     }
 
                     let totalTransaction = parseFloat(

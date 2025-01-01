@@ -113,7 +113,8 @@ CREATE TABLE IF NOT EXISTS commissions (
     user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     referred_user_id INT REFERENCES userprofile(id) ON DELETE CASCADE,
     deposit_number INT,
-    commission_amount DECIMAL(10, 2)
+    commission_amount DECIMAL(10, 2),
+    commissions_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS deposits (
@@ -160,7 +161,8 @@ CREATE TABLE IF NOT EXISTS referrals (
     id SERIAL PRIMARY KEY,
     referred_by INT REFERENCES userprofile(id) ON DELETE CASCADE,
     referred_user INT REFERENCES userprofile(id) ON DELETE CASCADE,
-    commission_earned BOOLEAN DEFAULT FALSE
+    commission_earned BOOLEAN DEFAULT FALSE,
+    referrals_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS challenge (
@@ -279,12 +281,6 @@ CREATE TABLE ticket_responses (
 );
 
 -- remember to add
-ALTER TABLE commissions
-ADD COLUMN commissions_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-
-
-ALTER TABLE referrals
-ADD COLUMN referrals_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 
 -- delete

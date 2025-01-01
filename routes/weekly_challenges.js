@@ -2,11 +2,11 @@ import express from "express";
 import db from "../db/index.js";
 import ensureAuthenticated, {userRole} from "../authMiddleware/authMiddleware.js";
 import moment from "moment";
-import timeSince from "../controller/timeSince.js";
 import cron from "node-cron";
 import numeral from "numeral";
-const router = express.Router();
+import { getExchangeRateCryptomus } from "../controller/exchangeRateService.js";
 
+const router = express.Router();
 
 function getCurrentWeek() {
   const startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
@@ -14,8 +14,9 @@ function getCurrentWeek() {
   return { startOfWeek, endOfWeek };
 }
 
-async function calculateUserProgress(userId) {
+async function calculateUserProgress(userId, userCurrency) {
   const { startOfWeek, endOfWeek } = getCurrentWeek();
+  const rate = await getExchangeRateCryptomus();
 
   // SQL query for calculating total successful transactions
   const query = `
@@ -55,7 +56,11 @@ async function calculateUserProgress(userId) {
     const result = await db.query(query, [userId, startOfWeek, endOfWeek]);
 
     // Total successful transactions in the current week
-    const totalSuccessfulTransaction = result.rows[0].total_transactions;
+    let totalSuccessfulTransaction = Number(result.rows[0].total_transactions);
+
+    if (userCurrency === 'USD') {
+    totalSuccessfulTransaction =  totalSuccessfulTransaction / rate.NGN
+    }
 
     // Calculate progress (up to a max of 100%)
     const progress = Math.min((totalSuccessfulTransaction / 20000) * 100, 100);
@@ -78,7 +83,15 @@ async function calculateUserProgress(userId) {
 router.get('/weekly-progress', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
 try {
-    const { totalSuccessfulTransaction, progress } = await calculateUserProgress(userId);
+  const user = await db.query(`
+    SELECT currency FROM userprofile 
+    WHERE id = $1
+    `, [userId])
+
+    const userCurrency = user.rows[0];
+
+    const { totalSuccessfulTransaction, progress } = await calculateUserProgress(userId, userCurrency.currency);
+    console.log(totalSuccessfulTransaction)
     const formattedTransaction = numeral(totalSuccessfulTransaction).format('0,0.00');
     res.json({
         totalSuccessfulTransaction: formattedTransaction,
