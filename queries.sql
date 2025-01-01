@@ -279,6 +279,12 @@ CREATE TABLE ticket_responses (
 );
 
 -- remember to add
+ALTER TABLE commissions
+ADD COLUMN commissions_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
+ALTER TABLE referrals
+ADD COLUMN referrals_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 
 -- delete

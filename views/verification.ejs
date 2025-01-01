@@ -412,7 +412,7 @@
                   Looking to buy in bulk and think the price is a bit too steep? Feel free to open a ticket for possible
                   bulk discounts! Keep in mind that these are temporary SMS and are usually used for one-time
                   verifications.</h5>
-                <small> <span style="color: red;">Important Requirement </span>:
+                <small> <span style="color: red;">Important Requirement Please Note</span>:
                   <ul style="list-style: circle; padding-left: 15px;">
                     <li>
                       Please use the regular WhatsApp if you are having issues receiving the verification code on
@@ -421,6 +421,13 @@
                     <li>
                       We recommend setting up two-step verification on WhatsApp or another app for any numbers purchased
                       from us.
+                    </li>
+                    <li>
+                      If you didn’t receive the code, we recommend using a VPN to change your IP address, 
+                      as Telegram or similar apps may have identified your device fingerprint.
+                    </li>
+                    <li>
+                      Once the code is delivered, refunds are not available. However, you can request a resend for the code within 24 to 98 hours after purchasing the number.
                     </li>
                   </ul>
 
@@ -443,8 +450,9 @@
                       <div>
                         <label for="service-select">Service</label>
                         <select id="service-select" name="service">
-                          <% services.forEach((service, index)=> { %>
-                            <option value="<%= service.ID %>" <%=index===0 ? 'selected' : '' %>>
+                          <option value="" selected disabled>Please select a service</option>
+                            <% services.forEach(service => { %>
+                              <option value="<%= service.ID %>" >
                               <%= service.name %>
                             </option>
                             <% }) %>
@@ -633,7 +641,7 @@
                 document.getElementById('orderForm').addEventListener('submit', async function (event) {
                   event.preventDefault();
 
-                  const purchaseButton = document.getElementById('purchaseBTN');
+                  let purchaseButton = document.getElementById('purchaseBTN');
                   purchaseButton.disabled = true;
                   purchaseButton.textContent = 'Processing...';
 
@@ -902,8 +910,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                   const pools = document.getElementById('pools');
 
                   // Suppress console logs temporarily
-                  const originalConsoleLog = console.log;
-                  console.log = function () { };
+                  // const originalConsoleLog = console.log;
+                  // console.log = function () { };
 
                   NiceSelect.bind((select1), { searchable: true });
                   NiceSelect.bind((select2), { searchable: true });
@@ -944,6 +952,23 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                       return null;
                     }
                   };
+
+                  const togglePurchaseButton = () => {
+                    const serviceSelected = select2 && select2.value.trim() !== '';
+                    let purchaseButton = document.getElementById('purchaseBTN');
+                    let advancedBTN = document.getElementById('advancedBTN');
+                    purchaseButton.disabled = !serviceSelected;
+                    advancedBTN.disabled = !serviceSelected;
+                  };
+                  const attachServiceChangeListener = () => {
+                    if (select2) {
+                      select2.addEventListener('change', () => {
+                        togglePurchaseButton();
+                        handleSelectChange(); // Updates the UI after change
+                      });
+                    }
+                  };
+
 
                   const updateUI = async () => {
                     const country = select1.value;
@@ -1229,6 +1254,7 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
                         }
                       });
                     });
+                    togglePurchaseButton();
                   };
 
 
@@ -1239,6 +1265,8 @@ ${status === 'pending' ? `Awaiting code(${time_left})` : status}</span>`;
 
                   // Initial load
                   updateUI();
+                  attachServiceChangeListener();
+                  togglePurchaseButton();
                 });
               </script>
 

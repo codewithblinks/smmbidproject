@@ -739,7 +739,7 @@
               <!-- Sessions -->
               <div class="panel bg-gradient-to-r from-violet-500 to-violet-400">
                 <div class="flex justify-between">
-                  <div class="text-md font-semibold ltr:mr-1 rtl:ml-1">Total Accounts Sold</div>
+                  <div class="text-md font-semibold ltr:mr-1 rtl:ml-1">Total Referral Paid</div>
                   <div x-data="dropdown" @click.outside="open = false" class="dropdown">
                     <a href="javascript:;" @click="toggle">
                       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -904,7 +904,7 @@
                       </div>
                       <div>
                         <div class="text-primary">Total Sold Amount</div>
-                        <div class="mt-2 text-2xl font-semibold" id="totalAdminSoldAmount">₦ <%= totalAdminSoldp2p %></div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalAdminSoldAmount">₦<%= totalAdminSoldp2p %></div>
                       </div>
                     </div>
                   </div>
@@ -914,7 +914,7 @@
                 <div class="panel overflow-hidden">
                   <div class="flex items-center justify-between">
                     <div>
-                      <div class="text-lg font-bold">P2P Market Statement</div>
+                      <div class="text-lg font-bold">Referral Statement</div>
                     </div>
                     <div x-data="dropdown" @click.outside="open = false" class="dropdown">
                       <a href="javascript:;" @click="toggle">
@@ -927,10 +927,10 @@
                       </a>
                       <ul x-cloak="" x-show="open" x-transition="" x-transition.duration.300ms=""
                         class="ltr:right-0 rtl:left-0">
-                        <li><a href="javascript:;" >Today</a></li>
-                        <li><a href="javascript:;" >This Week</a></li>
-                        <li><a href="javascript:;" >This Month</a></li>
-                        <li><a href="javascript:;">Overall</a></li>
+                        <li><a href="javascript:;" onclick="getTotalReferral('today')">Today</a></li>
+                        <li><a href="javascript:;" onclick="getTotalReferral('week')">This Week</a></li>
+                        <li><a href="javascript:;" onclick="getTotalReferral('month')">This Month</a></li>
+                        <li><a href="javascript:;" onclick="overAllTotalReferral()">Overall</a></li>
                       </ul>
                     </div>
                   </div>
@@ -945,19 +945,21 @@
                     </div>
                     <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
                       <div>
-                        <div class="text-primary">Total Sold Accounts</div>
-                        <div class="mt-2 text-2xl font-semibold " id="totalProductsSold">
-                         
+                        <div class="text-primary">Total Referred Accounts</div>
+                        <div class="mt-2 text-2xl font-semibold " id="totalreferral">
+                         <%= referral.length %>
                         </div>
                       </div>
                       <div>
-                        <div class="text-primary">Total Sold Amount</div>
-                        <div class="mt-2 text-2xl font-semibold" id="totalSoldAmount">
+                        <div class="text-primary">Total Referral Earned</div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalReferralEarned">
+                          ₦<%= totalReferralEarned.totalReferralEarned %>
                         </div>
                       </div>
                       <div>
-                        <div class="text-primary">Profits</div>
-                        <div class="mt-2 text-2xl font-semibold" id="totalProfitAmount">
+                        <div class="text-primary">Total Referral Paid</div>
+                        <div class="mt-2 text-2xl font-semibold" id="totalReferralPaid">
+                          ₦<%= totalReferralPaid.totalReferralWithdraw %>
                         </div>
                       </div>
                     </div>
@@ -1021,7 +1023,7 @@
       try {
         const response = await fetch(`/totals/deposits/${period}`);
         const data = await response.json();
-        document.getElementById('depositTotal').textContent = `₦ ${data.totalDeposits}`;
+        document.getElementById('depositTotal').textContent = `₦${data.totalDeposits}`;
       } catch (error) {
         console.error('Error fetching deposit totals:', error);
       }
@@ -1031,7 +1033,7 @@
       try {
         const response = await fetch(`/totals/smmpanel/${period}`);
         const data = await response.json();
-        document.getElementById('totalSmmAmount').textContent = `₦ ${data.totalSmm}`;
+        document.getElementById('totalSmmAmount').textContent = `₦${data.totalSmm}`;
       } catch (error) {
         console.error('Error fetching withdrawal totals:', error);
       }
@@ -1042,7 +1044,7 @@
         console.log(period)
         const response = await fetch(`/totals/sms/${period}`);
         const data = await response.json();
-        document.getElementById('totalSmsAmount').textContent = `₦ ${data.total_sms_completed}`;
+        document.getElementById('totalSmsAmount').textContent = `₦${data.total_sms_completed}`;
         document.getElementById('totalSmsSold').textContent = ` ${data.totalSmsSold}`;
         
       } catch (error) {
@@ -1050,24 +1052,42 @@
       }
     }
 
+    async function getTotalReferral(period) {
+      try {
+        console.log(period)
+        const response = await fetch(`/totals/referral/${period}`);
+        const data = await response.json();
+        document.getElementById('totalReferralEarned').textContent = `₦${data.ReferralEarned}`;
+        document.getElementById('totalReferralPaid').textContent = `₦${data.ReferralPaid}`;
+        
+      } catch (error) {
+        console.error('Error fetching withdrawal totals:', error);
+      }
+    }
+
     async function overAllDeposit() {
-      document.getElementById('depositTotal').textContent = `₦ <%= totalDeposit %>`;
+      document.getElementById('depositTotal').textContent = `₦<%= totalDeposit %>`;
 
     }
 
     async function overAllSmm() {
-      document.getElementById('totalSmmAmount').textContent = `₦ <%= totalSmmAmount1 %>`;
+      document.getElementById('totalSmmAmount').textContent = `₦<%= totalSmmAmount1 %>`;
 
     }
 
     async function overAllSms() {
-      document.getElementById('totalSmsAmount').textContent = `₦ <%= totalSmsAmount.total_successful_sms_purchases %>`;
+      document.getElementById('totalSmsAmount').textContent = `₦<%= totalSmsAmount.total_successful_sms_purchases %>`;
       document.getElementById('totalSmsSold').textContent = ` <%= totalSmsAmount.total_sms_sold %>`;
     }
 
     async function overAllAdminProduct() {
       document.getElementById('totalAdminProductsSold').textContent = `<%= adminSold.length %>`;
-      document.getElementById('totalAdminSoldAmount').textContent = `₦ <%= totalAdminSoldp2p %>`;
+      document.getElementById('totalAdminSoldAmount').textContent = `₦<%= totalAdminSoldp2p %>`;
+    }
+
+    async function overAllTotalReferral() {
+      document.getElementById('totalReferralEarned').textContent = `₦<%= totalReferralEarned.totalReferralEarned %>`;
+      document.getElementById('totalReferralPaid').textContent = `₦<%= totalReferralPaid.totalReferralWithdraw %>`;
     }
 
 

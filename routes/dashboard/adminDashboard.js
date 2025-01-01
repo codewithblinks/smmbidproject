@@ -282,6 +282,138 @@ async function getRecentSold() {
   }
 }
 
+async function getAdminTotalReferralEarned() {
+  const query = `
+    SELECT 
+        COALESCE(SUM(commission_amount), 0) AS total_referral_earned
+    FROM 
+        commissions
+  `;
+
+  try {
+    const result = await db.query(query);
+    const totalReferralEarned = result.rows[0]?.total_referral_earned || 0;
+
+    return { totalReferralEarned };
+  } catch (error) {
+    console.error('Error executing query:', error.message);
+    throw error;
+  }
+}
+
+async function getAdminTotalReferralPaid() {
+  const query = `
+    SELECT 
+        COALESCE(SUM(amount), 0) AS total_referral_withdraw
+    FROM 
+        referral_withdrawals
+  `;
+
+  try {
+    const result = await db.query(query);
+    const totalReferralWithdraw = result.rows[0]?.total_referral_withdraw || 0;
+
+    return { totalReferralWithdraw };
+  } catch (error) {
+    console.error('Error executing query:', error.message);
+    throw error;
+  }
+}
+
+async function getTotalReferralEarned(period) {
+  let query;
+
+  switch (period) {
+    case 'today':
+      query = `
+        SELECT 
+            COALESCE(SUM(commission_amount), 0) AS total_referral_earned
+        FROM 
+            commissions
+        WHERE
+            DATE(commissions_date) = CURRENT_DATE;
+      `;
+      break;
+
+    case 'week':
+      query = `
+          SELECT 
+            COALESCE(SUM(commission_amount), 0) AS total_referral_earned
+        FROM 
+            commissions
+        WHERE 
+            EXTRACT(WEEK FROM commissions_date) = EXTRACT(WEEK FROM CURRENT_DATE);
+      `;
+      break;
+
+    case 'month':
+      query = `
+       SELECT 
+            COALESCE(SUM(commission_amount), 0) AS total_referral_earned
+        FROM 
+            commissions
+        WHERE 
+            EXTRACT(MONTH FROM commissions_date) = EXTRACT(MONTH FROM CURRENT_DATE);
+      `;
+      break;
+
+    default:
+      throw new Error('Invalid period');
+  }
+
+  const result = await db.query(query);
+  const totalEarnedCommission = result.rows[0]?.total_referral_earned || 0;
+
+  return { totalEarnedCommission };
+}
+
+async function getTotalReferralPaid(period) {
+  let query;
+
+  switch (period) {
+    case 'today':
+      query = `
+         SELECT 
+        COALESCE(SUM(amount), 0) AS total_referral_withdraw
+    FROM 
+        referral_withdrawals
+        WHERE
+            DATE(withdrawal_date) = CURRENT_DATE;
+      `;
+      break;
+
+    case 'week':
+      query = `
+          SELECT 
+        COALESCE(SUM(amount), 0) AS total_referral_withdraw
+    FROM 
+        referral_withdrawals
+        WHERE 
+            EXTRACT(WEEK FROM withdrawal_date) = EXTRACT(WEEK FROM CURRENT_DATE);
+      `;
+      break;
+
+    case 'month':
+      query = `
+        SELECT 
+        COALESCE(SUM(amount), 0) AS total_referral_withdraw
+    FROM 
+        referral_withdrawals
+        WHERE 
+            EXTRACT(MONTH FROM withdrawal_date) = EXTRACT(MONTH FROM CURRENT_DATE);
+      `;
+      break;
+
+    default:
+      throw new Error('Invalid period');
+  }
+
+  const result = await db.query(query);
+  console.log(result.rows[0])
+  const totalReferralWithdrawn = result.rows[0]?.total_referral_withdraw || 0;
+
+  return { totalReferralWithdrawn };
+}
 
 router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, res) => {
   const userId = req.user.id;
@@ -290,6 +422,9 @@ router.get("/admin/dashboard", adminEnsureAuthenticated, adminRole, async (req, 
     const totalsThisWeek = await getWeeklyTotals();
 
     const RecentSold = await getRecentSold();
+
+    const totalReferralEarned = await  getAdminTotalReferralEarned();
+    const totalReferralPaid = await getAdminTotalReferralPaid();
 
     const userResult = await db.query('SELECT * FROM admins WHERE id = $1', [userId]);
     const userDetails = userResult.rows[0];
@@ -340,6 +475,9 @@ let totalSmmAmount1 = totalCompleted + totalNotRefunded;
   const avalableStocks = await db.query("SELECT * FROM admin_products WHERE payment_status = 'not sold'");
   const stock = avalableStocks.rows;
 
+  const refQuery = await db.query("SELECT * FROM referrals");
+  const referral = refQuery.rows;
+
 const resultAdminSold = await db.query(`
   SELECT
        SUM(amount) AS total_admin_sold
@@ -356,7 +494,8 @@ const totalAdminSoldp2p = numeral(resultAdminSold.rows[0]?.total_admin_sold || 0
         user: userDetails,
         totalDeposit: totals.total_deposit,
         weekTotalDeposit, totalSmmAmount1, 
-        totalSmsAmount, adminSold, totalAdminSoldp2p, stock, RecentSold, timeSince
+        totalSmsAmount, adminSold, totalAdminSoldp2p, stock, RecentSold, timeSince, 
+        referral, totalReferralEarned, totalReferralPaid
        });
     
   } catch (error) {
@@ -422,6 +561,27 @@ router.get('/totals/sms/:period', adminEnsureAuthenticated, adminRole, async (re
     console.log(totalSmsSold)
 
     res.json({ total_sms_completed, totalSmsSold });
+  } catch (err) {
+    console.error('Error fetching total sold amount and profit', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/totals/referral/:period', adminEnsureAuthenticated, adminRole, async (req, res) => {
+  const period = req.params.period;
+
+  try {
+   const TotalReferralEarned = await getTotalReferralEarned(period)
+    const TotalReferralPaid = await getTotalReferralPaid(period)
+
+    console.log(TotalReferralPaid)
+
+    const ReferralEarned = numeral(TotalReferralEarned.totalEarnedCommission).format('0,0.00');
+    const ReferralPaid = numeral(TotalReferralPaid.totalReferralWithdrawn).format('0,0.00');
+
+    console.log(ReferralPaid)
+    console.log(ReferralEarned)
+    res.json({ ReferralEarned, ReferralPaid });
   } catch (err) {
     console.error('Error fetching total sold amount and profit', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
