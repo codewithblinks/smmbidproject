@@ -475,7 +475,7 @@ export const sendWelcomeEmail = async (email, username) => {
     }
   };
 
-  export const sendUnusualActivityEmail = async (email, username, currentIP) => {
+  export const sendUnusualActivityEmail = async (email, username, currentIP, city) => {
     const templatePath = path.join(__dirname, '..', 'views', 'emailTemplates', 'UnusualActivity.ejs');
     const appName = 'SMMBIDMEDIA';
   
@@ -483,6 +483,7 @@ export const sendWelcomeEmail = async (email, username) => {
       const html = await ejs.renderFile(templatePath, {
         name: username,
         currentIP: currentIP,
+        city: city,
         appName: appName
       });
   

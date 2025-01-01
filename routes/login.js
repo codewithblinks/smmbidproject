@@ -108,12 +108,12 @@ router.post("/login", async (req, res, next) => {
                 );
 
                 if (last_login_ip && last_login_ip !== currentLocation.city) {
-                  await sendUnusualActivityEmail(email, username, currentIP);
+                  await sendUnusualActivityEmail(email, username, currentIP, currentLocation.city);
                 }
 
                 await db.query(
                   "UPDATE userprofile SET last_login_ip = $1 WHERE id = $2",
-                  [currentLocation.city, user.id]
+                  [currentIP, user.id]
                 );
               } else {
                 console.log(`Location not found for IP: ${currentIP}`);
