@@ -62,16 +62,31 @@ router.post("/admin/list/product", adminEnsureAuthenticated, adminRole, async (r
         const userAmount = Number(existingProduct.amount);
         const existingYears = Number(existingProduct.years);
       
-        const isMatch =
-          userAmount === price &&
-          existingProduct.description === description &&
-          existingProduct.account_type === option1 &&
-          existingYears === Number(years) &&
-          existingProduct.country === country;
+        const mismatches = [];
+  
+        if (userAmount !== price) {
+          mismatches.push(`Amount: Expected ${userAmount}, got ${price}`);
+        }
+        if (existingProduct.description !== description) {
+          mismatches.push(`Description: Expected "${existingProduct.description}", got "${description}"`);
+        }
+        if (existingProduct.account_type !== option1) {
+          mismatches.push(`Account Type: Expected "${existingProduct.account_type}", got "${option1}"`);
+        }
+        if (existingYears !== Number(years)) {
+          mismatches.push(`Years: Expected ${existingYears}, got ${years}`);
+        }
+        if (existingProduct.country !== country) {
+          mismatches.push(`Country: Expected "${existingProduct.country}", got "${country}"`);
+        }
+
+        console.log(mismatches)
       
-        if (!isMatch) {
+        // If there are mismatches, return the details
+        if (mismatches.length > 0) {
           return res.status(400).json({
-            error: `The category "${account_category}" already exists but with different details. Please create a new category.`,
+            error: `The category "${account_category}" already exists but with different details.`,
+            mismatches,
           });
         }
       }

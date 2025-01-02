@@ -915,7 +915,10 @@
                         window.location.reload();
                       }, 1000);
                 } else {
-                  toastr.error(result.error || "Something went wrong.")
+                  const errorMessage = result.mismatches 
+                    ? result.mismatches.join('<br>') // Join mismatches with line breaks
+                    : "Something went wrong.";
+                  toastr.error(errorMessage);
                 }
               } catch (err) {
                 toastr.error('An unexpected error occurred.')
