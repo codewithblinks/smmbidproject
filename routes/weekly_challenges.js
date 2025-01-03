@@ -132,7 +132,7 @@ async function awardPrizes() {
     for (const row of completedChallenges.rows) {
       const userId = row.user_id;
       const totalTransaction = row.total_transaction;
-      const prize = totalTransaction * 0.1; // 20% of total transactions
+      const prize = totalTransaction * 0.02; // 20% of total transactions
   
       // Update the user's balance
       await db.query(`

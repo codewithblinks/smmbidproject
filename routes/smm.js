@@ -46,6 +46,14 @@ cron.schedule("*/2 * * * *", async () => {
       if (orderData.status === "Partial" && purchase.status !== "Partial") {
         const amountRefund = (purchase.charge / purchase.quantity) * purchase.remain;
 
+        console.log(purchase.status)
+        console.log(orderData.status);
+        const usetQury = await db.query(
+          `SELECT email FROM userprofile 
+          WHERE id = $1`, [purchase.user_id]
+        ); const userff = usetQury.rows[0].email;
+        console.log(userff)
+
         // Refund the user balance
         const userId = await db.query(
           "UPDATE userprofile SET balance = balance + $1 WHERE id = $2 RETURNING id",
