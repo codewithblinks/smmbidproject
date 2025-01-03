@@ -135,7 +135,6 @@ router.post("/login", async (req, res, next) => {
         return res.redirect("/dashboard");
       });
     } catch (dbErr) {
-      console.log(dbErr);
       console.error(dbErr);
       req.flash("error", "An error occurred. Please try again.");
       return res.redirect("/login");

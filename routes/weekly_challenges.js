@@ -91,7 +91,6 @@ try {
     const userCurrency = user.rows[0];
 
     const { totalSuccessfulTransaction, progress } = await calculateUserProgress(userId, userCurrency.currency);
-    console.log(totalSuccessfulTransaction)
     const formattedTransaction = numeral(totalSuccessfulTransaction).format('0,0.00');
     res.json({
         totalSuccessfulTransaction: formattedTransaction,
